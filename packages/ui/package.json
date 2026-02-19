@@ -1,0 +1,17 @@
+{
+    "name": "ui",
+    "version": "0.0.0",
+    "main": "./src/index.tsx",
+    "types": "./src/index.tsx",
+    "exports": {
+        ".": "./src/index.tsx"
+    },
+    "dependencies": {
+        "react": "^19.0.0",
+        "lucide-react": "latest"
+    },
+    "devDependencies": {
+        "@types/react": "^19.0.0",
+        "typescript": "^5.3.0"
+    }
+}
