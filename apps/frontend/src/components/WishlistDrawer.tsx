@@ -1,15 +1,33 @@
 'use client';
 import { useAppContext } from '../context/AppContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ShoppingBag, Trash2, ExternalLink } from 'lucide-react';
+import { X, ShoppingBag, Trash2, ExternalLink, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 export const WishlistDrawer = () => {
     const { wishlist, showWishlistDrawer, setShowWishlistDrawer, removeFromWishlist, requireAuth } = useAppContext();
 
-    const handleSendInquiry = () => {
+    const handleSendWishlistToWhatsApp = () => {
         if (!requireAuth('send inquiry to vendor')) return;
-        alert("Inquiry Sent to Vendor!");
+        
+        const vendorPhone = "919313449825";
+
+        if (wishlist.length === 0) return;
+
+        let message = `Hello! I am interested in the following items from my wishlist:\n\n`;
+        
+        wishlist.forEach((item, index) => {
+            message += `${index + 1}. *${item.name}*\n`;
+            message += `   Category: ${item.category}\n`;
+            message += `   Price: ₹${item.price.toLocaleString()}\n\n`;
+        });
+        
+        message += `Please let me know about the availability and next steps. Thank you!`;
+
+        const encodedMessage = encodeURIComponent(message);
+        const url = `https://wa.me/${vendorPhone}?text=${encodedMessage}`;
+        
+        window.open(url, '_blank', 'noopener,noreferrer');
     };
 
     return (
@@ -115,11 +133,11 @@ export const WishlistDrawer = () => {
                         {wishlist.length > 0 && (
                             <div className="absolute bottom-0 left-0 right-0 border-t border-gold-100 bg-white/80 backdrop-blur-sm p-6 space-y-3">
                                 <Button
-                                    onClick={handleSendInquiry}
-                                    className="w-full bg-luxury-black hover:bg-gold-600 text-white py-4"
+                                    onClick={handleSendWishlistToWhatsApp}
+                                    className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-4"
                                 >
-                                    <ExternalLink className="mr-2 h-4 w-4" />
-                                    Send Inquiry to Vendor
+                                    <MessageCircle className="mr-2 h-4 w-4" />
+                                    Send Wishlist via WhatsApp
                                 </Button>
                                 <button
                                     onClick={() => setShowWishlistDrawer(false)}

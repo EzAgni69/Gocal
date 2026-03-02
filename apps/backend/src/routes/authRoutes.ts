@@ -1,121 +1,77 @@
-import { Router, Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
-import { db, users, eq } from 'database';
-import { generateToken } from '../middleware/auth';
+import { Router, Response } from 'express';
+import { db } from 'database';
+import { users } from 'database/src/schema/users';
+import { eq } from 'drizzle-orm';
+import { authenticate, AuthenticatedRequest } from '../middleware/auth';
 
 const router = Router();
 
 /**
- * POST /api/auth/register
- * Register a new user
+ * POST /api/auth/sync
+ * Syncs the authenticated Firebase user with the Postgres Database
  */
-router.post('/register', async (req: Request, res: Response) => {
+router.post('/sync', authenticate, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-        const { email, password, name, phone, role = 'CONSUMER', preferredLanguage = 'en' } = req.body;
+        const firebaseUser = req.user;
 
-        if (!email || !password || !name) {
-            res.status(400).json({ error: 'Email, password, and name are required' });
+        if (!firebaseUser || !firebaseUser.uid) {
+            res.status(401).json({ error: 'Unauthorized: No valid user payload' });
             return;
         }
 
-        // Check if user already exists
-        const existing = await db.select().from(users).where(eq(users.email, email)).limit(1);
-        if (existing.length > 0) {
-            res.status(409).json({ error: 'User with this email already exists' });
-            return;
+        const { uid, email, name, phone, picture } = firebaseUser;
+
+        // Check if user already exists in DB
+        const existingUsers = await db.select().from(users).where(eq(users.firebaseUid, uid)).limit(1);
+        let dbUser = existingUsers[0];
+
+        if (!dbUser && email) {
+            // Fallback check by email (in case they existed before Firebase migration)
+            const usersByEmail = await db.select().from(users).where(eq(users.email, email)).limit(1);
+            if (usersByEmail.length > 0) {
+                // Link the existing user to Firebase
+                const updatedUsers = await db.update(users)
+                    .set({ firebaseUid: uid })
+                    .where(eq(users.email, email))
+                    .returning();
+                dbUser = updatedUsers[0];
+            }
         }
 
-        // Only SUPER_ADMIN can create ADMIN or SUPER_ADMIN users (handled at route level)
-        const allowedRoles = ['CONSUMER', 'VENDOR'];
-        const userRole = allowedRoles.includes(role) ? role : 'CONSUMER';
-
-        const passwordHash = await bcrypt.hash(password, 12);
-
-        const [newUser] = await db.insert(users).values({
-            email,
-            passwordHash,
-            name,
-            phone,
-            role: userRole,
-            preferredLanguage,
-        }).returning();
-
-        const token = generateToken({
-            id: newUser.id,
-            email: newUser.email,
-            role: newUser.role,
-            name: newUser.name,
-        });
-
-        res.status(201).json({
-            user: {
-                id: newUser.id,
-                email: newUser.email,
-                name: newUser.name,
-                role: newUser.role,
-                preferredLanguage: newUser.preferredLanguage,
-            },
-            token,
-        });
-    } catch (error) {
-        console.error('Registration error:', error);
-        res.status(500).json({ error: 'Registration failed' });
-    }
-});
-
-/**
- * POST /api/auth/login
- * Login with email and password
- */
-router.post('/login', async (req: Request, res: Response) => {
-    try {
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            res.status(400).json({ error: 'Email and password are required' });
-            return;
+        if (!dbUser) {
+            // Create a new user in Postgres
+            const newUsers = await db.insert(users).values({
+                firebaseUid: uid,
+                email: email || '',
+                name: name || email?.split('@')[0] || 'Unknown User',
+                phone: phone || null,
+                avatarUrl: picture || null,
+                role: 'CONSUMER', // Default role
+                preferredLanguage: 'en',
+            }).returning();
+            dbUser = newUsers[0];
         }
 
-        const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
-
-        if (!user) {
-            res.status(401).json({ error: 'Invalid email or password' });
-            return;
-        }
-
-        if (!user.isActive) {
+        if (!dbUser.isActive) {
             res.status(403).json({ error: 'Account is deactivated' });
             return;
         }
 
-        const validPassword = await bcrypt.compare(password, user.passwordHash);
-        if (!validPassword) {
-            res.status(401).json({ error: 'Invalid email or password' });
-            return;
-        }
-
-        const token = generateToken({
-            id: user.id,
-            email: user.email,
-            role: user.role,
-            name: user.name,
-        });
-
-        res.json({
+        res.status(200).json({
             user: {
-                id: user.id,
-                email: user.email,
-                name: user.name,
-                role: user.role,
-                phone: user.phone,
-                avatarUrl: user.avatarUrl,
-                preferredLanguage: user.preferredLanguage,
-            },
-            token,
+                id: dbUser.id,
+                firebaseUid: dbUser.firebaseUid,
+                email: dbUser.email,
+                name: dbUser.name,
+                role: dbUser.role,
+                phone: dbUser.phone,
+                avatarUrl: dbUser.avatarUrl,
+                preferredLanguage: dbUser.preferredLanguage,
+            }
         });
     } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ error: 'Login failed' });
+        console.error('Sync error:', error);
+        res.status(500).json({ error: 'Failed to sync user data' });
     }
 });
 

@@ -1,5 +1,5 @@
 import { Router, Response } from 'express';
-import { db, wishlists, wishlistItems, products, eq } from 'database';
+import { db, wishlists, wishlistItems, eq, and } from 'database';
 import { authenticate, AuthenticatedRequest } from '../middleware/auth';
 
 const router = Router();
@@ -10,16 +10,12 @@ const router = Router();
  */
 router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
+        if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
+
         const result = await db.query.wishlists.findMany({
             where: eq(wishlists.userId, req.user!.id),
             with: {
-                items: {
-                    with: {
-                        product: {
-                            with: { vendor: { columns: { id: true, name: true, phone: true } } },
-                        },
-                    },
-                },
+                items: true,
             },
             orderBy: (wishlists, { desc }) => [desc(wishlists.createdAt)],
         });
@@ -37,6 +33,8 @@ router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) =
  */
 router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
+        if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
+
         const { name = 'My Wishlist' } = req.body;
 
         const [wishlist] = await db.insert(wishlists).values({
@@ -57,8 +55,10 @@ router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) 
  */
 router.post('/:id/items', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
+        if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
+
         const wishlistId = req.params.id;
-        const { productId, quantity = 1 } = req.body;
+        const { productId, productData, quantity = 1 } = req.body;
 
         if (!productId) {
             res.status(400).json({ error: 'productId is required' });
@@ -74,18 +74,10 @@ router.post('/:id/items', authenticate, async (req: AuthenticatedRequest, res: R
             return;
         }
 
-        // Verify product exists
-        const [product] = await db.select().from(products)
-            .where(eq(products.id, productId)).limit(1);
-
-        if (!product) {
-            res.status(404).json({ error: 'Product not found' });
-            return;
-        }
-
         const [item] = await db.insert(wishlistItems).values({
             wishlistId,
             productId,
+            productData: productData || null,
             quantity,
         }).returning();
 
@@ -97,14 +89,19 @@ router.post('/:id/items', authenticate, async (req: AuthenticatedRequest, res: R
 });
 
 /**
- * DELETE /api/wishlists/:id/items/:itemId
- * Remove an item from a wishlist
+ * DELETE /api/wishlists/:id/products/:productId
+ * Remove an item from a wishlist by productId
  */
-router.delete('/:id/items/:itemId', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+router.delete('/:id/products/:productId', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const { itemId } = req.params;
+        const { id: wishlistId, productId } = req.params;
 
-        await db.delete(wishlistItems).where(eq(wishlistItems.id, itemId));
+        await db.delete(wishlistItems).where(
+            and(
+                eq(wishlistItems.wishlistId, wishlistId),
+                eq(wishlistItems.productId, productId)
+            )
+        );
         res.json({ message: 'Item removed from wishlist' });
     } catch (error) {
         console.error('Error removing from wishlist:', error);
@@ -118,18 +115,14 @@ router.delete('/:id/items/:itemId', authenticate, async (req: AuthenticatedReque
  */
 router.get('/:id/whatsapp', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
+        if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
+
         const wishlistId = req.params.id;
 
         const wishlist = await db.query.wishlists.findFirst({
             where: eq(wishlists.id, wishlistId),
             with: {
-                items: {
-                    with: {
-                        product: {
-                            with: { vendor: { columns: { id: true, name: true, phone: true } } },
-                        },
-                    },
-                },
+                items: true,
             },
         });
 
@@ -142,16 +135,19 @@ router.get('/:id/whatsapp', authenticate, async (req: AuthenticatedRequest, res:
         const vendorGroups: Record<string, { vendorName: string; phone: string | null; items: string[] }> = {};
 
         for (const item of wishlist.items) {
-            const vendorId = item.product.vendor.id;
+            // MOCK_VENDORS product structure isn't relational, it's just raw data
+            // We assume frontend or MOCK_VENDORS gives vendor details inside productData
+            const pData = item.productData as any;
+            const vendorId = pData?.vendorId || 'unknown';
             if (!vendorGroups[vendorId]) {
                 vendorGroups[vendorId] = {
-                    vendorName: item.product.vendor.name,
-                    phone: item.product.vendor.phone,
+                    vendorName: pData?.vendorName || 'Unknown Vendor',
+                    phone: pData?.vendorPhone || null,
                     items: [],
                 };
             }
             vendorGroups[vendorId].items.push(
-                `• ${item.product.name} (Qty: ${item.quantity}) - ₹${item.product.price}`
+                `• ${pData?.name || 'Product'} (Qty: ${item.quantity}) - ₹${pData?.price || 0}`
             );
         }
 

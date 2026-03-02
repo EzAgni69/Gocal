@@ -4,7 +4,7 @@ import { userRoleEnum, languageEnum } from './enums';
 export const users = pgTable('users', {
     id: uuid('id').defaultRandom().primaryKey(),
     email: varchar('email', { length: 255 }).notNull().unique(),
-    passwordHash: varchar('password_hash', { length: 255 }).notNull(),
+    firebaseUid: varchar('firebase_uid', { length: 128 }).unique(),
     name: varchar('name', { length: 255 }).notNull(),
     phone: varchar('phone', { length: 20 }),
     avatarUrl: text('avatar_url'),

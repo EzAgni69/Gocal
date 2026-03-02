@@ -10,6 +10,8 @@ import { wishlists, wishlistItems } from './wishlists';
 import { reviews } from './reviews';
 import { reports } from './reports';
 import { ads } from './ads';
+import { tags, vendorTags } from './tags';
+import { homeCards } from './homeCards';
 
 // ── User Relations ──────────────────────────────────────────────
 export const usersRelations = relations(users, ({ many }) => ({
@@ -32,16 +34,16 @@ export const vendorsRelations = relations(vendors, ({ one, many }) => ({
     products: many(products),
     galleryImages: many(galleryImages),
     offers: many(offers),
-    favorites: many(favorites),
     reviews: many(reviews),
     reports: many(reports),
     ads: many(ads),
+    tags: many(vendorTags),
+    homeCards: many(homeCards),
 }));
 
 // ── Product Relations ───────────────────────────────────────────
-export const productsRelations = relations(products, ({ one, many }) => ({
+export const productsRelations = relations(products, ({ one }) => ({
     vendor: one(vendors, { fields: [products.vendorId], references: [vendors.id] }),
-    wishlistItems: many(wishlistItems),
 }));
 
 // ── Gallery Relations ───────────────────────────────────────────
@@ -57,7 +59,6 @@ export const offersRelations = relations(offers, ({ one }) => ({
 // ── Favorite Relations ──────────────────────────────────────────
 export const favoritesRelations = relations(favorites, ({ one }) => ({
     user: one(users, { fields: [favorites.userId], references: [users.id] }),
-    vendor: one(vendors, { fields: [favorites.vendorId], references: [vendors.id] }),
 }));
 
 // ── Wishlist Relations ──────────────────────────────────────────
@@ -68,7 +69,6 @@ export const wishlistsRelations = relations(wishlists, ({ one, many }) => ({
 
 export const wishlistItemsRelations = relations(wishlistItems, ({ one }) => ({
     wishlist: one(wishlists, { fields: [wishlistItems.wishlistId], references: [wishlists.id] }),
-    product: one(products, { fields: [wishlistItems.productId], references: [products.id] }),
 }));
 
 // ── Review Relations ────────────────────────────────────────────
@@ -86,4 +86,19 @@ export const reportsRelations = relations(reports, ({ one }) => ({
 // ── Ad Relations ────────────────────────────────────────────────
 export const adsRelations = relations(ads, ({ one }) => ({
     vendor: one(vendors, { fields: [ads.vendorId], references: [vendors.id] }),
+}));
+
+// ── Tag Relations ───────────────────────────────────────────────
+export const tagsRelations = relations(tags, ({ many }) => ({
+    vendors: many(vendorTags),
+}));
+
+export const vendorTagsRelations = relations(vendorTags, ({ one }) => ({
+    vendor: one(vendors, { fields: [vendorTags.vendorId], references: [vendors.id] }),
+    tag: one(tags, { fields: [vendorTags.tagId], references: [tags.id] }),
+}));
+
+// ── Home Card Relations ─────────────────────────────────────────
+export const homeCardsRelations = relations(homeCards, ({ one }) => ({
+    vendor: one(vendors, { fields: [homeCards.vendorId], references: [vendors.id] }),
 }));

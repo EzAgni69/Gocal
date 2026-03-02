@@ -1,6 +1,5 @@
-import { pgTable, uuid, varchar, integer, timestamp, index } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, integer, timestamp, index, jsonb } from 'drizzle-orm/pg-core';
 import { users } from './users';
-import { products } from './products';
 
 export const wishlists = pgTable('wishlists', {
     id: uuid('id').defaultRandom().primaryKey(),
@@ -14,7 +13,8 @@ export const wishlists = pgTable('wishlists', {
 export const wishlistItems = pgTable('wishlist_items', {
     id: uuid('id').defaultRandom().primaryKey(),
     wishlistId: uuid('wishlist_id').notNull().references(() => wishlists.id, { onDelete: 'cascade' }),
-    productId: uuid('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }),
+    productId: varchar('product_id', { length: 255 }).notNull(),
+    productData: jsonb('product_data'), // Store Mock Product
     quantity: integer('quantity').notNull().default(1),
     addedAt: timestamp('added_at', { withTimezone: true }).notNull().defaultNow(),
 }, (table) => [

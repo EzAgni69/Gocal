@@ -10,6 +10,7 @@ const router = Router();
  */
 router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
+        if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
         const { vendorId, reason, comment } = req.body;
 
         if (!vendorId || !reason) {
@@ -25,7 +26,7 @@ router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) 
         }
 
         const [report] = await db.insert(reports).values({
-            reporterId: req.user!.id,
+            reporterId: req.user!.id!,
             vendorId,
             reason,
             comment,
@@ -72,6 +73,7 @@ router.get('/', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), async (req: A
  */
 router.put('/:id/resolve', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), async (req: AuthenticatedRequest, res: Response) => {
     try {
+        if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
         const reportId = req.params.id;
         const { status, resolutionNote } = req.body;
 
@@ -83,7 +85,7 @@ router.put('/:id/resolve', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), as
         const [updated] = await db.update(reports)
             .set({
                 status,
-                resolvedBy: req.user!.id,
+                resolvedBy: req.user!.id!,
                 resolutionNote,
                 resolvedAt: new Date(),
             })

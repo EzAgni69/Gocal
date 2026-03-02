@@ -56,25 +56,93 @@ export interface PlaceDetailsResult {
 }
 
 /**
- * Search for places (stores/services) in Vadodara city
+ * Convert PIN code to geographic coordinates using Google Places API
  */
-export async function searchVadodaraPlaces(query: string): Promise<PlacesSearchResult> {
+export async function geocodePincode(pincode: string): Promise<{ latitude: number; longitude: number } | null> {
+    if (!API_KEY) return null;
+
+    try {
+        const requestBody = {
+            textQuery: `${pincode}, Vadodara, Gujarat, India`,
+            maxResultCount: 1,
+            languageCode: 'en',
+        };
+
+        const response = await fetch(`${BASE_URL}:searchText`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Goog-Api-Key': API_KEY,
+                'X-Goog-FieldMask': 'places.location',
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        const data = await response.json();
+        if (data.places && data.places.length > 0 && data.places[0].location) {
+            console.log(`[Pincode Geocoding] Resolved ${pincode} to Lat: ${data.places[0].location.latitude}, Lng: ${data.places[0].location.longitude}`);
+            return {
+                latitude: data.places[0].location.latitude,
+                longitude: data.places[0].location.longitude
+            };
+        }
+        return null;
+    } catch (error) {
+        console.error('Error finding pincode location:', error);
+        return null;
+    }
+}
+
+/**
+ * Search for places (stores/services) in Vadodara city or by specific coordinates
+ */
+export async function searchVadodaraPlaces(query: string, lat?: number, lng?: number): Promise<PlacesSearchResult> {
     if (!API_KEY) {
         return { places: [], error: 'Google Places API key not configured' };
     }
 
     try {
-        const requestBody = {
-            textQuery: `${query} in Vadodara, Gujarat, India`,
-            locationBias: {
-                circle: {
-                    center: VADODARA_LOCATION,
-                    radius: VADODARA_RADIUS,
-                },
-            },
+        const hasLocation = lat !== undefined && lng !== undefined;
+        let requestBody: any = {
+            textQuery: hasLocation ? query : `${query} in Vadodara, Gujarat, India`,
             maxResultCount: 20,
             languageCode: 'en',
         };
+
+        if (hasLocation) {
+            // 1 degree of latitude is ~111km -> 5km is ~0.045
+            // 1 degree of longitude at ~22 lat is ~103km -> 5km is ~0.048
+            const latDelta = 0.045;
+            const lngDelta = 0.048;
+
+            // If location is provided, search within a bounding box and sort by distance
+            requestBody.locationRestriction = {
+                rectangle: {
+                    low: { 
+                        latitude: lat - latDelta, 
+                        longitude: lng - lngDelta 
+                    },
+                    high: { 
+                        latitude: lat + latDelta, 
+                        longitude: lng + lngDelta 
+                    }
+                },
+            };
+            requestBody.rankPreference = 'DISTANCE';
+        } else {
+            // Apply Vadodara center bias if there is NO location provided
+            requestBody.locationBias = {
+                circle: {
+                    center: { 
+                        latitude: VADODARA_LOCATION.latitude, 
+                        longitude: VADODARA_LOCATION.longitude 
+                    },
+                    radius: VADODARA_RADIUS,
+                },
+            };
+        }
+
+        console.log(`[Places API] Request Body:`, JSON.stringify(requestBody, null, 2));
 
         const response = await fetch(`${BASE_URL}:searchText`, {
             method: 'POST',
@@ -108,6 +176,7 @@ export async function searchVadodaraPlaces(query: string): Promise<PlacesSearchR
         }
 
         const data = await response.json();
+        console.log(`[Places API] Returned ${data.places?.length || 0} places.`);
         return { places: data.places || [] };
     } catch (error) {
         console.error('Error fetching places:', error);

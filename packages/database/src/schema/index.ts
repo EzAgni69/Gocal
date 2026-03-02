@@ -11,4 +11,6 @@ export * from './wishlists';
 export * from './reviews';
 export * from './reports';
 export * from './ads';
+export * from './tags';
+export * from './homeCards';
 export * from './relations';

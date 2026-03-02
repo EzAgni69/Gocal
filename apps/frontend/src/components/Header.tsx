@@ -1,5 +1,5 @@
 'use client';
-import { ShoppingBag, User, Globe, ChevronDown, LogIn, LogOut, Settings, Heart } from 'lucide-react';
+import { ShoppingBag, User, Globe, ChevronDown, LogIn, LogOut, Settings, Heart, Menu, X, ChevronRight } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { UserRole, Language } from '../types';
 import { useRouter, usePathname } from 'next/navigation';
@@ -23,6 +23,7 @@ export const Header = () => {
     const pathname = usePathname();
     const [scrolled, setScrolled] = useState(false);
     const [showUserMenu, setShowUserMenu] = useState(false);
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
     const userMenuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -120,24 +121,51 @@ export const Header = () => {
                             <option value="gu">Gujarati</option>
                         </select>
                     </div>
+
                 </div>
 
-                <div className="flex items-center gap-4">
-                    {/* Role Switcher - Elegant Pill */}
-                    <div className="flex items-center bg-gradient-to-r from-gold-100/60 to-gold-100/40 rounded-full px-1 sm:px-1.5 py-1 sm:py-1.5 border border-gold-200/50 shadow-inner mr-1">
-                        <div className="relative">
-                            <select
-                                value={currentRole}
-                                onChange={(e) => handleRoleChange(e.target.value as UserRole)}
-                                className="appearance-none bg-transparent text-[10px] sm:text-xs font-semibold text-gold-700 py-1 sm:py-1.5 pl-2 sm:pl-3 pr-6 sm:pr-8 rounded-full outline-none cursor-pointer hover:text-gold-600 transition-colors"
-                            >
-                                <option value={UserRole.CONSUMER}>Consumer</option>
-                                <option value={UserRole.VENDOR}>Vendor</option>
-                                <option value={UserRole.SUPER_ADMIN}>Admin</option>
-                            </select>
-                            <User className="absolute right-1.5 sm:right-2 top-1/2 transform -translate-y-1/2 w-3 sm:w-3.5 h-3 sm:h-3.5 text-gold-500 pointer-events-none" />
+                {/* Mobile Top Bar Actions */}
+                <div className="flex md:hidden items-center gap-3">
+                     <button
+                        onClick={() => setShowWishlistDrawer(true)}
+                        className="p-2 text-luxury-black hover:text-gold-600 transition-colors relative"
+                    >
+                        <ShoppingBag className="w-5 h-5" />
+                         {wishlist.length > 0 && (
+                            <span className="absolute top-1 right-1 w-2 h-2 bg-gold-500 rounded-full" />
+                        )}
+                    </button>
+                     <button
+                        className="p-2 text-luxury-black hover:text-gold-600 transition-colors"
+                        onClick={() => setShowMobileMenu(true)}
+                    >
+                        <Menu className="w-6 h-6" />
+                    </button>
+                </div>
+
+                {/* Desktop Actions */}
+                <div className="hidden md:flex items-center gap-4">
+                    {/* Role Switcher - Elegant Pill - Only shown when authenticated and user has permission */}
+                    {isAuthenticated && user && user.role !== UserRole.CONSUMER && (
+                        <div className="flex items-center bg-gradient-to-r from-gold-100/60 to-gold-100/40 rounded-full px-1 sm:px-1.5 py-1 sm:py-1.5 border border-gold-200/50 shadow-inner mr-1">
+                            <div className="relative">
+                                <select
+                                    value={currentRole}
+                                    onChange={(e) => handleRoleChange(e.target.value as UserRole)}
+                                    className="appearance-none bg-transparent text-[10px] sm:text-xs font-semibold text-gold-700 py-1 sm:py-1.5 pl-2 sm:pl-3 pr-6 sm:pr-8 rounded-full outline-none cursor-pointer hover:text-gold-600 transition-colors"
+                                >
+                                    <option value={UserRole.CONSUMER}>Consumer</option>
+                                    {(user.role === UserRole.VENDOR || user.role === UserRole.SUPER_ADMIN) && (
+                                        <option value={UserRole.VENDOR}>Vendor</option>
+                                    )}
+                                    {user.role === UserRole.SUPER_ADMIN && (
+                                        <option value={UserRole.SUPER_ADMIN}>Admin</option>
+                                    )}
+                                </select>
+                                <User className="absolute right-1.5 sm:right-2 top-1/2 transform -translate-y-1/2 w-3 sm:w-3.5 h-3 sm:h-3.5 text-gold-500 pointer-events-none" />
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Favorites - Heart Button */}
                     <Button
@@ -263,6 +291,180 @@ export const Header = () => {
                     )}
                 </div>
             </div>
+
+            {/* Mobile Menu Drawer - Premium Redesign */}
+            <AnimatePresence>
+                {showMobileMenu && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 bg-luxury-black/60 z-[60] backdrop-blur-sm md:hidden"
+                            onClick={() => setShowMobileMenu(false)}
+                        />
+                        <motion.div
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                            className="fixed right-0 top-0 bottom-0 w-[85%] max-w-[320px] bg-luxury-cream z-[70] shadow-2xl md:hidden flex flex-col overflow-hidden"
+                        >
+                            {/* Drawer Header - User Profile */}
+                            <div className="p-6 bg-white/50 border-b border-gold-100/50 pt-12">
+                                <div className="flex justify-between items-start mb-6">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-12 h-12 rounded-full bg-gold-100 flex items-center justify-center border border-gold-200 overflow-hidden">
+                                            {user?.avatar ? (
+                                                <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <User className="w-6 h-6 text-gold-600" />
+                                            )}
+                                        </div>
+                                        <div>
+                                            <h3 className="font-serif text-lg font-bold text-luxury-black">
+                                                {user ? `Hello, ${user.name.split(' ')[0]}` : 'Welcome Guest'}
+                                            </h3>
+                                            <p className="text-xs text-gray-500">
+                                                {user ? 'Member' : 'Sign in to access more'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowMobileMenu(false)}
+                                        className="p-2 hover:bg-black/5 rounded-full transition-colors"
+                                    >
+                                        <X className="w-6 h-6 text-luxury-black" />
+                                    </button>
+                                </div>
+
+                                {!isAuthenticated && (
+                                    <Button
+                                        onClick={() => {
+                                            handleSignInClick();
+                                            setShowMobileMenu(false);
+                                        }}
+                                        className="w-full bg-luxury-black text-white hover:bg-gold-600 transition-colors"
+                                    >
+                                        Sign In / Register
+                                    </Button>
+                                )}
+                            </div>
+
+                            {/* Main Navigation */}
+                            <div className="flex-1 overflow-y-auto py-6 px-6 space-y-6">
+                                <div className="space-y-1">
+                                    <p className="text-xs uppercase tracking-widest text-gray-400 font-semibold mb-3 pl-2">Menu</p>
+                                    <button
+                                        onClick={() => {
+                                            router.push('/');
+                                            setShowMobileMenu(false);
+                                        }}
+                                        className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white transition-colors group"
+                                    >
+                                        <span className="font-serif text-xl text-luxury-black group-hover:text-gold-600 transition-colors">Home</span>
+                                        <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gold-500" />
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            router.push('/vadodara');
+                                            setShowMobileMenu(false);
+                                        }}
+                                        className={cn(
+                                            "w-full flex items-center justify-between p-3 rounded-xl hover:bg-white transition-colors group",
+                                            pathname === '/vadodara' && "bg-white shadow-sm"
+                                        )}
+                                    >
+                                        <span className={cn(
+                                            "font-serif text-xl text-luxury-black transition-colors",
+                                            pathname === '/vadodara' ? "text-gold-600" : "group-hover:text-gold-600"
+                                        )}>Explore Vadodara</span>
+                                        <ChevronRight className={cn(
+                                            "w-4 h-4 transition-colors",
+                                            pathname === '/vadodara' ? "text-gold-600" : "text-gray-300 group-hover:text-gold-500"
+                                        )} />
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            router.push('/favourites');
+                                            setShowMobileMenu(false);
+                                        }}
+                                        className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white transition-colors group"
+                                    >
+                                        <span className="font-serif text-xl text-luxury-black group-hover:text-gold-600 transition-colors">Favorites</span>
+                                        <div className="flex items-center gap-2">
+                                            {favoritesCount > 0 && (
+                                                <span className="text-xs font-bold text-white bg-gold-500 px-2 py-0.5 rounded-full">{favoritesCount}</span>
+                                            )}
+                                            <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gold-500" />
+                                        </div>
+                                    </button>
+                                </div>
+
+                                <div className="h-px bg-gold-100/50" />
+
+                                {/* Settings & Preferences */}
+                                <div className="space-y-4">
+                                     <p className="text-xs uppercase tracking-widest text-gray-400 font-semibold pl-2">Preferences</p>
+                                     <div className="flex items-center justify-between p-3 bg-white/50 rounded-xl border border-gold-100/30">
+                                        <div className="flex items-center gap-3">
+                                            <Globe className="w-5 h-5 text-gold-600" />
+                                            <span className="text-sm font-medium text-luxury-black">Language</span>
+                                        </div>
+                                        <select
+                                            value={language}
+                                            onChange={(e) => setLanguage(e.target.value as Language)}
+                                            className="bg-transparent text-sm font-semibold text-gray-600 outline-none text-right"
+                                        >
+                                            <option value="en">English</option>
+                                            <option value="hi">Hindi</option>
+                                            <option value="gu">Gujarati</option>
+                                        </select>
+                                     </div>
+
+                                     {isAuthenticated && user && user.role !== UserRole.CONSUMER && (
+                                         <div className="flex items-center justify-between p-3 bg-white/50 rounded-xl border border-gold-100/30">
+                                            <div className="flex items-center gap-3">
+                                                <User className="w-5 h-5 text-gold-600" />
+                                                <span className="text-sm font-medium text-luxury-black">Role</span>
+                                            </div>
+                                            <select
+                                                value={currentRole}
+                                                onChange={(e) => handleRoleChange(e.target.value as UserRole)}
+                                                className="bg-transparent text-sm font-semibold text-gray-600 outline-none text-right"
+                                            >
+                                                <option value={UserRole.CONSUMER}>Consumer</option>
+                                                {(user.role === UserRole.VENDOR || user.role === UserRole.SUPER_ADMIN) && (
+                                                    <option value={UserRole.VENDOR}>Vendor</option>
+                                                )}
+                                                {user.role === UserRole.SUPER_ADMIN && (
+                                                    <option value={UserRole.SUPER_ADMIN}>Admin</option>
+                                                )}
+                                            </select>
+                                         </div>
+                                     )}
+                                </div>
+                            </div>
+
+                            {/* Drawer Footer */}
+                            <div className="p-6 bg-white border-t border-gold-100">
+                                {isAuthenticated && (
+                                    <button
+                                        onClick={() => {
+                                            handleLogout();
+                                            setShowMobileMenu(false);
+                                        }}
+                                        className="w-full flex items-center justify-center gap-2 text-red-500 hover:bg-red-50 p-3 rounded-xl transition-colors text-sm font-medium"
+                                    >
+                                        <LogOut className="w-4 h-4" />
+                                        Log Out
+                                    </button>
+                                )}
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </motion.nav>
     );
 }

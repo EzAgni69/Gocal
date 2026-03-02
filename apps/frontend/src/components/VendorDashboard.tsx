@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { Upload, Save, Sparkles, Image as ImageIcon, LayoutGrid, FileText, Trash2, Edit2, Package } from 'lucide-react';
+import { Upload, Save, Sparkles, Image as ImageIcon, LayoutGrid, FileText, Trash2, Edit2, Package, Menu, X } from 'lucide-react';
 import { Vendor, Product, AnalyticsData } from '../types';
 import { generateVendorDescription } from '../services/geminiService';
 import { AddProductModal } from './AddProductModal';
@@ -23,6 +23,7 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor, analyt
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const config = VENDOR_CATEGORY_CONFIG[vendor.category] || {
     requiresImage: false,
@@ -101,7 +102,7 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor, analyt
   return (
     <div className="flex min-h-screen pt-22 bg-gray-50">
       {/* Sidebar */}
-      <aside className="w-64 bg-luxury-black text-white hidden md:flex flex-col">
+      <aside className="w-64 bg-luxury-black text-white hidden md:flex flex-col fixed md:relative h-full z-10">
         <div className="p-6">
           <h2 className="text-2xl font-serif text-gold-400">Vanij Vendor</h2>
           <p className="text-gray-300 text-xs mt-1">Plan: {vendor.isPremium ? 'Premium Website' : 'Standard'}</p>
@@ -129,8 +130,64 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor, analyt
         </nav>
       </aside>
 
+       {/* Mobile Sidebar Overlay & Drawer */}
+       {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          <div 
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <aside className="relative w-64 bg-luxury-black text-white flex flex-col h-full shadow-2xl animate-in slide-in-from-left duration-300">
+             <div className="p-6 flex justify-between items-start">
+              <div>
+                <h2 className="text-2xl font-serif text-gold-400">Vanij Vendor</h2>
+                <p className="text-gray-300 text-xs mt-1">Plan: {vendor.isPremium ? 'Premium Website' : 'Standard'}</p>
+              </div>
+              <button onClick={() => setIsMobileMenuOpen(false)} className="text-gray-400 hover:text-white">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <nav className="flex-1 px-4 space-y-2">
+              <button
+                onClick={() => { setActiveTab('profile'); setIsMobileMenuOpen(false); }}
+                className={`w-full flex items-center p-3 rounded text-sm transition-colors ${activeTab === 'profile' ? 'bg-gray-800 text-gold-400' : 'text-gray-300 hover:text-white'}`}
+              >
+                <FileText className="w-4 h-4 mr-3" /> Profile
+              </button>
+              <button
+                onClick={() => { setActiveTab('products'); setIsMobileMenuOpen(false); }}
+                className={`w-full flex items-center p-3 rounded text-sm transition-colors ${activeTab === 'products' ? 'bg-gray-800 text-gold-400' : 'text-gray-300 hover:text-white'}`}
+              >
+                <LayoutGrid className="w-4 h-4 mr-3" /> Products
+              </button>
+              <button
+                onClick={() => { setActiveTab('analytics'); setIsMobileMenuOpen(false); }}
+                className={`w-full flex items-center p-3 rounded text-sm transition-colors ${activeTab === 'analytics' ? 'bg-gray-800 text-gold-400' : 'text-gray-300 hover:text-white'}`}
+              >
+                <Sparkles className="w-4 h-4 mr-3" /> Analytics
+              </button>
+            </nav>
+          </aside>
+        </div>
+      )}
+
       {/* Main Content */}
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto">
+        {/* Mobile Header */}
+        <div className="md:hidden flex items-center justify-between mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+            <div className="flex items-center gap-3">
+                <button 
+                    onClick={() => setIsMobileMenuOpen(true)}
+                    className="p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                >
+                    <Menu className="w-6 h-6" />
+                </button>
+                <h1 className="text-lg font-serif font-bold text-luxury-black">Dashboard</h1>
+            </div>
+            <span className="text-xs font-medium px-2 py-1 bg-gold-100 text-gold-700 rounded-full">
+                {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+            </span>
+        </div>
 
         {/* PROFILE MANAGEMENT */}
         {activeTab === 'profile' && (

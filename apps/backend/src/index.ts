@@ -7,6 +7,7 @@ import vendorRoutes from './routes/vendorRoutes';
 import reportRoutes from './routes/reportRoutes';
 import favoriteRoutes from './routes/favoriteRoutes';
 import wishlistRoutes from './routes/wishlistRoutes';
+import userRoutes from './routes/userRoutes';
 
 dotenv.config();
 
@@ -37,6 +38,9 @@ app.use('/api/favorites', favoriteRoutes);
 
 // Wishlist routes
 app.use('/api/wishlists', wishlistRoutes);
+
+// User routes
+app.use('/api/users', userRoutes);
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);

@@ -1,6 +1,16 @@
 import { Vendor, Report, AnalyticsData, VendorCategoryConfig } from './types';
 
-export const CITIES = ['Mumbai', 'Ahmedabad', 'Delhi', 'Surat', 'Bangalore', 'Vadodara'];
+export const VADODARA_PINCODES = [
+  '390001', '390002', '390003', '390004', '390005', '390006', '390007', '390008', '390009', '390010',
+  '390011', '390012', '390013', '390014', '390015', '390016', '390017', '390018', '390019', '390020',
+  '390021', '390022', '390023', '390024', '390025', '390026', '390027', '390028', '390029', '390030',
+  '391101', '391105', '391107', '391110', '391115', '391120', '391121', '391125', '391130', '391135',
+  '391140', '391145', '391210', '391220', '391230', '391240', '391243', '391250', '391310', '391320',
+  '391330', '391340', '391350', '391410', '391420', '391421', '391430', '391440', '391445', '391450',
+  '391455', '391510', '391520', '391530', '391540', '391605', '391610', '391720', '391730', '391740',
+  '391745', '391750', '391760', '391761', '391770', '391774', '391775', '391811', '391812', '391814',
+  '391816', '391820', '391821', '391830', '391831', '391839', '392012', '392020', '393001', '393002'
+];
 export const CATEGORIES = ['Jewelry', 'Fashion', 'Decor', 'Electronics', 'Services', 'Fruits & Vegetables', 'Grocery'];
 export const UNIT_OPTIONS = ['kg', 'g', 'pieces', 'dozen', 'liters', 'ml', 'box', 'packet'];
 
@@ -174,6 +184,87 @@ export const MOCK_VENDORS: Vendor[] = [
       'https://picsum.photos/600/400?random=36',
       'https://picsum.photos/600/400?random=37',
     ]
+  },
+  {
+    id: 'v-elec-1',
+    name: 'Electrician - Harshil Solanki',
+    shortDescription: 'Professional electrical services for home and office.',
+    description: 'Expert electrician providing services for all your electrical needs, from repairs to new installations. Available for emergency calls.',
+    city: 'Vadodara',
+    category: 'Services',
+    address: 'Pin Code: 391760, Vadodara',
+    phone: '+91 97374 32384',
+    email: 'harshil.solanki@example.com',
+    coverImage: '/elc.jpg',
+    isOpen: true,
+    rating: 4.8,
+    reviewCount: 42,
+    isPremium: true,
+    websiteUuid: 'uuid-elec-harshil',
+    verified: true,
+    products: [
+      { id: 'p-e1', name: 'AC Installation/Repair', price: 1500, image: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?q=80&w=2069&auto=format&fit=crop', description: 'Air conditioning installation, service, and gas filling', category: 'Appliances' },
+      { id: 'p-e2', name: 'Electrical Wiring', price: 500, image: 'https://plus.unsplash.com/premium_photo-1682144706912-88d447f5517f?q=80&w=2070&auto=format&fit=crop', description: 'Fault finding and complete house wiring solutions', category: 'Wiring' },
+      { id: 'p-e3', name: 'Switchboard Fixing', price: 200, image: 'https://images.unsplash.com/photo-1596765796791-a1e6878b6672?q=80&w=2070&auto=format&fit=crop', description: 'Repairing or replacing electrical switches and sockets', category: 'Repairs' },
+    ],
+    gallery: [
+      'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?q=80&w=2069&auto=format&fit=crop'
+    ],
+  },
+  {
+    id: 'v-plumb-1',
+    name: 'Plumber - Vinod bhai ',
+    shortDescription: 'Reliable plumbing services and repairs.',
+    description: 'Experienced plumber offering quick and efficient solutions for leaks, pipe fittings, and bathroom installations.',
+    city: 'Vadodara',
+    category: 'Services',
+    address: 'Pin Code: 391760, Vadodara',
+    phone: '+91 95864 53366',
+    email: 'vinod.plumber@example.com',
+    coverImage: 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=2070&auto=format&fit=crop',
+    isOpen: true,
+    rating: 4.6,
+    reviewCount: 38,
+    isPremium: true,
+    websiteUuid: 'uuid-plumb-vinod',
+    verified: true,
+    products: [
+      { id: 'p-pl1', name: 'Pipe Leakage Repair', price: 300, image: 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=2070&auto=format&fit=crop', description: 'Fixing water leaks in bathroom and kitchen pipelines', category: 'Repairs' },
+      { id: 'p-pl2', name: 'Tap/Faucet Change', price: 150, image: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=2070&auto=format&fit=crop', description: 'Installation of new sanitary ware and taps', category: 'Installation' },
+      { id: 'p-pl3', name: 'Geyser Installation', price: 600, image: 'https://plus.unsplash.com/premium_photo-1681400685040-5e60d5b76615?q=80&w=2080&auto=format&fit=crop', description: 'Safe mounting and connection of water heaters', category: 'Appliances' },
+    ],
+    gallery: [
+      'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=2070&auto=format&fit=crop'
+    ],
+  },
+  {
+    id: 'v-marble-1',
+    name: 'Shreeji Marble Arts',
+    shortDescription: 'Premium handcrafted marble articles and statues.',
+    description: 'Discover elegance with our handcrafted marble products. We offer custom statues, home decor items, and architectural marble elements designed to perfection.',
+    city: 'Ahmedabad',
+    category: 'Decor',
+    address: 'Sarkhej-Gandhinagar Highway, Ahmedabad',
+    phone: '+91 98765 11111',
+    email: 'contact@shreejimarble.com',
+    coverImage: 'https://images.unsplash.com/photo-1584857187123-fadb717ce01d?q=80&w=2070&auto=format&fit=crop',
+    isOpen: true,
+    rating: 4.9,
+    reviewCount: 156,
+    isPremium: true,
+    websiteUuid: 'uuid-marble-arts',
+    verified: true,
+    products: [
+      { id: 'p-m1', name: 'Marble Elephant Set', price: 4500, image: 'https://images.unsplash.com/photo-1541414777501-792773347f3e?q=80&w=2064&auto=format&fit=crop', description: 'Hand-carved marble elephants (Set of 2)', category: 'Statues' },
+      { id: 'p-m2', name: 'Intricate Marble Tulsi Kyara', price: 12500, image: 'https://images.unsplash.com/photo-1610488052402-92144d034267?q=80&w=2102&auto=format&fit=crop', description: 'White Makrana marble Tulsi pot', category: 'Decor' },
+      { id: 'p-m3', name: 'Marble Inlay Table Top', price: 28000, image: 'https://images.unsplash.com/photo-1605335198031-6e866e4a2e58?q=80&w=2050&auto=format&fit=crop', description: 'Pietra Dura floral inlay work', category: 'Furniture' },
+      { id: 'p-m4', name: 'Buddha Head Bust', price: 8500, image: 'https://images.unsplash.com/photo-1534066060851-d96a77fbedca?q=80&w=2112&auto=format&fit=crop', description: 'Serene meditating Buddha statue', category: 'Statues' },
+    ],
+    gallery: [
+      'https://images.unsplash.com/photo-1586716402243-7b4d13e2f9d3?q=80&w=2071&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1574577189600-41ab64d0bb02?q=80&w=2074&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1632882830869-7da7a1bc7e20?q=80&w=2070&auto=format&fit=crop'
+    ],
   }
 ];
 

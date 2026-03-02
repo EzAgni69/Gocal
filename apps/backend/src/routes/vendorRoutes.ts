@@ -1,5 +1,5 @@
 import { Router, Response } from 'express';
-import { db, vendors, products, galleryImages, offers, reviews, eq, ilike, sql, and } from 'database';
+import { db, vendors, products, galleryImages, offers, reviews, tags, vendorTags, homeCards, eq, ilike, sql, and } from 'database';
 import { authenticate, requireRole, AuthenticatedRequest } from '../middleware/auth';
 
 const router = Router();
@@ -33,6 +33,29 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
 });
 
 /**
+ * GET /api/vendors/home
+ * Get vendors marked for the home screen
+ */
+router.get('/home', async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const home_cards = await db.query.homeCards.findMany({
+            where: eq(homeCards.isActive, true),
+            with: { vendor: { with: { products: true, category: true, galleryImages: true, tags: { with: { tag: true } } } } },
+            orderBy: (homeCards, { asc }) => [asc(homeCards.displayOrder)],
+        });
+
+        const result = home_cards.map((hc: any) => ({
+            ...hc.vendor,
+            tags: hc.vendor.tags?.map((vt: any) => vt.tag) || []
+        }));
+        res.json({ vendors: result });
+    } catch (error) {
+        console.error('Error fetching home vendors:', error);
+        res.status(500).json({ error: 'Failed to fetch home vendors' });
+    }
+});
+
+/**
  * GET /api/vendors/nearby
  * Find vendors within a radius using PostGIS
  * Query params: lat, lng, radius (meters, default 2000)
@@ -46,27 +69,26 @@ router.get('/nearby', async (req: AuthenticatedRequest, res: Response) => {
             return;
         }
 
-        // PostGIS proximity query using raw SQL
+        // PostGIS (Earthdistance) proximity query using raw SQL
+        // This leverages the idx_vendors_location GiST index for fast nearest-neighbor filtering
         const result = await db.execute(sql`
             SELECT *,
-                (6371000 * acos(
-                    cos(radians(${Number(lat)})) *
-                    cos(radians(CAST(latitude AS DOUBLE PRECISION))) *
-                    cos(radians(CAST(longitude AS DOUBLE PRECISION)) - radians(${Number(lng)})) +
-                    sin(radians(${Number(lat)})) *
-                    sin(radians(CAST(latitude AS DOUBLE PRECISION)))
-                )) AS distance_meters
+                earth_distance(
+                    ll_to_earth(CAST(latitude AS DOUBLE PRECISION), CAST(longitude AS DOUBLE PRECISION)),
+                    ll_to_earth(${Number(lat)}, ${Number(lng)})
+                ) AS distance_meters
             FROM vendors
             WHERE latitude IS NOT NULL
                 AND longitude IS NOT NULL
-                AND (6371000 * acos(
-                    cos(radians(${Number(lat)})) *
-                    cos(radians(CAST(latitude AS DOUBLE PRECISION))) *
-                    cos(radians(CAST(longitude AS DOUBLE PRECISION)) - radians(${Number(lng)})) +
-                    sin(radians(${Number(lat)})) *
-                    sin(radians(CAST(latitude AS DOUBLE PRECISION)))
-                )) <= ${Number(radius)}
-            ORDER BY distance_meters ASC
+                AND ll_to_earth(CAST(latitude AS DOUBLE PRECISION), CAST(longitude AS DOUBLE PRECISION)) 
+                    <@ earth_box(ll_to_earth(${Number(lat)}, ${Number(lng)}), ${Number(radius)})
+                AND earth_distance(
+                    ll_to_earth(CAST(latitude AS DOUBLE PRECISION), CAST(longitude AS DOUBLE PRECISION)),
+                    ll_to_earth(${Number(lat)}, ${Number(lng)})
+                ) <= ${Number(radius)}
+            ORDER BY 
+                ll_to_earth(CAST(latitude AS DOUBLE PRECISION), CAST(longitude AS DOUBLE PRECISION)) 
+                <-> ll_to_earth(${Number(lat)}, ${Number(lng)}) ASC
         `);
 
         res.json({ vendors: result, radius: Number(radius) });
@@ -115,10 +137,12 @@ router.get('/:id', async (req: AuthenticatedRequest, res: Response) => {
  */
 router.post('/', authenticate, requireRole('VENDOR', 'SUPER_ADMIN'), async (req: AuthenticatedRequest, res: Response) => {
     try {
+        if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
         const {
             name, description, shortDescription, city, address,
             phone, email, coverImageUrl, categoryId,
             miniWebsiteConfig, latitude, longitude, googlePlaceId,
+            tagsList
         } = req.body;
 
         if (!name || !city || !address) {
@@ -130,7 +154,7 @@ router.post('/', authenticate, requireRole('VENDOR', 'SUPER_ADMIN'), async (req:
         const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
         const [newVendor] = await db.insert(vendors).values({
-            ownerId: req.user!.id,
+            ownerId: req.user!.id!,
             name,
             slug,
             description,
@@ -147,6 +171,29 @@ router.post('/', authenticate, requireRole('VENDOR', 'SUPER_ADMIN'), async (req:
             googlePlaceId,
         }).returning();
 
+        // Handle tags
+        if (tagsList && Array.isArray(tagsList)) {
+            for (const tagName of tagsList) {
+                const tagSlug = tagName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+                if (!tagSlug) continue;
+
+                let [existingTag] = await db.select().from(tags).where(eq(tags.slug, tagSlug));
+                if (!existingTag) {
+                    try {
+                        [existingTag] = await db.insert(tags).values({ name: tagName, slug: tagSlug }).returning();
+                    } catch (e) {
+                        [existingTag] = await db.select().from(tags).where(eq(tags.slug, tagSlug));
+                    }
+                }
+                
+                if (existingTag) {
+                    try {
+                        await db.insert(vendorTags).values({ vendorId: newVendor.id, tagId: existingTag.id });
+                    } catch (e) { } // Ignore conflicts
+                }
+            }
+        }
+
         res.status(201).json({ vendor: newVendor });
     } catch (error) {
         console.error('Error creating vendor:', error);
@@ -160,6 +207,7 @@ router.post('/', authenticate, requireRole('VENDOR', 'SUPER_ADMIN'), async (req:
  */
 router.put('/:id', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
+        if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
         const vendorId = req.params.id;
 
         // Check ownership
@@ -174,10 +222,37 @@ router.put('/:id', authenticate, async (req: AuthenticatedRequest, res: Response
             return;
         }
 
+        const { tagsList, ...updateData } = req.body;
+
         const [updated] = await db.update(vendors)
-            .set(req.body)
+            .set(updateData)
             .where(eq(vendors.id, vendorId))
             .returning();
+
+        // Handle tags update
+        if (tagsList && Array.isArray(tagsList)) {
+            // Clear existing tags
+            await db.delete(vendorTags).where(eq(vendorTags.vendorId, vendorId));
+            for (const tagName of tagsList) {
+                const tagSlug = tagName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+                if (!tagSlug) continue;
+
+                let [existingTag] = await db.select().from(tags).where(eq(tags.slug, tagSlug));
+                if (!existingTag) {
+                    try {
+                        [existingTag] = await db.insert(tags).values({ name: tagName, slug: tagSlug }).returning();
+                    } catch (e) {
+                        [existingTag] = await db.select().from(tags).where(eq(tags.slug, tagSlug));
+                    }
+                }
+                
+                if (existingTag) {
+                    try {
+                        await db.insert(vendorTags).values({ vendorId: updated.id, tagId: existingTag.id });
+                    } catch (e) { }
+                }
+            }
+        }
 
         res.json({ vendor: updated });
     } catch (error) {
@@ -192,6 +267,7 @@ router.put('/:id', authenticate, async (req: AuthenticatedRequest, res: Response
  */
 router.delete('/:id', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
+        if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
         const vendorId = req.params.id;
 
         const [existing] = await db.select().from(vendors).where(eq(vendors.id, vendorId)).limit(1);

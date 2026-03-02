@@ -49,15 +49,21 @@ export const VadodaraPlaces: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [hasSearched, setHasSearched] = useState(false);
+    
+    // Location tracking
+    const [locationAccess, setLocationAccess] = useState<'pending' | 'granted' | 'denied'>('pending');
+    const [userLat, setUserLat] = useState<number | undefined>();
+    const [userLng, setUserLng] = useState<number | undefined>();
+    const [pincode, setPincode] = useState('');
 
-    const handleSearch = async (query: string) => {
+    const handleSearch = async (query: string, searchPincode: string = pincode) => {
         if (!query.trim()) return;
 
         setIsLoading(true);
         setError(null);
         setHasSearched(true);
 
-        const result = await searchVadodaraPlaces(query);
+        const result = await searchVadodaraPlaces(query, userLat, userLng, searchPincode);
 
         if (result.error) {
             setError(result.error);
@@ -71,17 +77,37 @@ export const VadodaraPlaces: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        handleSearch(searchQuery);
+        handleSearch(searchQuery, pincode);
     };
 
     const handleSuggestedSearch = (query: string) => {
         setSearchQuery(query);
-        handleSearch(query);
+        handleSearch(query, pincode);
     };
 
     // Auto-search on initial load with a default query
     useEffect(() => {
-        handleSearch('popular stores');
+        // Automatically ask for location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setLocationAccess('granted');
+                    setUserLat(position.coords.latitude);
+                    setUserLng(position.coords.longitude);
+                    handleSearch('popular stores', pincode);
+                },
+                (err) => {
+                    console.warn('Geolocation not available/denied:', err.message || err);
+                    setLocationAccess('denied');
+                    handleSearch('popular stores', pincode);
+                },
+                { timeout: 5000 } // Wait at most 5 seconds for location
+            );
+        } else {
+            setLocationAccess('denied');
+            handleSearch('popular stores', pincode);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -109,7 +135,7 @@ export const VadodaraPlaces: React.FC = () => {
                             <MapPin className="w-3 h-3 mr-1 inline" />
                             Vadodara, Gujarat
                         </Badge>
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-4 text-white leading-tight">
+                        <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-4 text-white leading-tight">
                             Discover Local<br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 to-gold-600">
                                 Stores & Services
@@ -121,36 +147,54 @@ export const VadodaraPlaces: React.FC = () => {
                     </motion.div>
 
                     {/* Search Bar */}
-                    <motion.form
+                    <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3, duration: 0.6 }}
-                        className="glass p-2 rounded-2xl sm:rounded-full shadow-2xl max-w-2xl mx-auto flex gap-2 border border-white/20"
-                        onSubmit={handleSubmit}
+                        className="max-w-2xl mx-auto flex flex-col gap-3"
                     >
-                        <div className="flex-1 flex items-center bg-white/10 rounded-xl sm:rounded-full px-4 sm:px-6 h-12 sm:h-14 hover:bg-white/20 transition-colors">
-                            <Search className="text-gold-400 w-5 h-5 mr-3" />
-                            <input
-                                type="text"
-                                placeholder="Search stores, restaurants, services..."
-                                className="w-full bg-transparent outline-none text-white placeholder-gray-400 font-medium"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
-                        <Button
-                            type="submit"
-                            size="icon"
-                            className="h-12 sm:h-14 w-14 rounded-xl sm:rounded-full bg-gold-500 hover:bg-gold-600 text-luxury-black shrink-0"
-                            disabled={isLoading}
+                        {locationAccess === 'denied' && (
+                            <div className="glass p-2 rounded-xl sm:rounded-2xl shadow-lg flex gap-2 border border-white/20 bg-red-500/10">
+                                <div className="flex-1 flex items-center bg-white/10 rounded-lg sm:rounded-xl px-3 sm:px-4 h-10 hover:bg-white/20 transition-colors">
+                                    <MapPin className="text-gold-400 w-4 h-4 mr-2" />
+                                    <input
+                                        type="text"
+                                        placeholder="Enter PIN code (e.g., 390001) for accurate results nearby"
+                                        className="w-full bg-transparent outline-none text-white placeholder-gray-300 font-medium text-xs sm:text-sm"
+                                        value={pincode}
+                                        onChange={(e) => setPincode(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        <form
+                            className="glass p-2 rounded-2xl sm:rounded-full shadow-2xl flex gap-2 border border-white/20"
+                            onSubmit={handleSubmit}
                         >
-                            {isLoading ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
-                            ) : (
-                                <Search className="w-5 h-5" />
-                            )}
-                        </Button>
-                    </motion.form>
+                            <div className="flex-1 flex items-center bg-white/10 rounded-xl sm:rounded-full px-3 sm:px-6 h-12 sm:h-14 hover:bg-white/20 transition-colors">
+                                <Search className="text-gold-400 w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                                <input
+                                    type="text"
+                                    placeholder="Search stores..."
+                                    className="w-full bg-transparent outline-none text-white placeholder-gray-400 font-medium text-sm sm:text-base"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                            <Button
+                                type="submit"
+                                size="icon"
+                                className="h-12 sm:h-14 w-12 sm:w-14 rounded-xl sm:rounded-full bg-gold-500 hover:bg-gold-600 text-luxury-black shrink-0"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
+                                ) : (
+                                    <Search className="w-4 h-4 sm:w-5 sm:h-5" />
+                                )}
+                            </Button>
+                        </form>
+                    </motion.div>
 
                     {/* Suggested Searches */}
                     <motion.div
@@ -232,7 +276,7 @@ export const VadodaraPlaces: React.FC = () => {
                 {/* Results Grid */}
                 {!isLoading && !error && places.length > 0 && (
                     <motion.div
-                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
                         variants={containerVariants}
                         initial="hidden"
                         animate="visible"
@@ -241,17 +285,20 @@ export const VadodaraPlaces: React.FC = () => {
                             <motion.div
                                 key={place.id}
                                 variants={itemVariants}
-                                className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col h-full cursor-pointer"
-                                whileHover={{ y: -4 }}
+                                className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col h-full cursor-pointer hover-lift card-shine"
+                                whileHover={{ y: -8 }}
+                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
                             >
                                 {/* Image */}
                                 <div className="relative h-44 overflow-hidden">
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10" />
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
+                                    <motion.img
                                         src={place.photoUrl || DEFAULT_STORE_IMAGE}
                                         alt={place.displayName.text}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        className="w-full h-full object-cover"
+                                        whileHover={{ scale: 1.1 }}
+                                        transition={{ duration: 0.7, ease: "easeOut" }}
                                         onError={(e) => {
                                             (e.target as HTMLImageElement).src = DEFAULT_STORE_IMAGE;
                                         }}

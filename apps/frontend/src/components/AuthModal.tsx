@@ -4,6 +4,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, User, Phone, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { Button } from '@/components/ui/Button';
+import { RecaptchaVerifier, ConfirmationResult } from 'firebase/auth';
+import { auth } from '../config/firebase';
+
+declare global {
+    interface Window {
+        recaptchaVerifier: any;
+    }
+}
 
 export const AuthModal: React.FC = () => {
     const {
@@ -12,16 +20,41 @@ export const AuthModal: React.FC = () => {
         authModalMode,
         setAuthModalMode,
         login,
-        register
+        loginWithGoogle,
+        register,
+        sendPhoneOTP,
+        confirmPhoneOTP
     } = useAppContext();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
+    const [otp, setOtp] = useState('');
+    const [otpSent, setOtpSent] = useState(false);
+    const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+
+    const resetForm = () => {
+        setEmail('');
+        setPassword('');
+        setName('');
+        setPhone('');
+        setOtp('');
+        setOtpSent(false);
+        setConfirmationResult(null);
+        setError('');
+    };
+
+    const setupRecaptcha = () => {
+        if (!window.recaptchaVerifier) {
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                size: 'invisible'
+            });
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -29,13 +62,38 @@ export const AuthModal: React.FC = () => {
         setIsLoading(true);
 
         try {
-            if (authModalMode === 'signin') {
+            if (authModalMode === 'phone') {
+                if (otpSent) {
+                    if (!otp) {
+                        setError('Please enter the OTP');
+                        setIsLoading(false);
+                        return;
+                    }
+                    if (confirmationResult) {
+                        await confirmPhoneOTP(confirmationResult, otp);
+                        resetForm();
+                    }
+                } else {
+                    if (!phone) {
+                        setError('Please enter a phone number');
+                        setIsLoading(false);
+                        return;
+                    }
+                    setupRecaptcha();
+                    const appVerifier = window.recaptchaVerifier;
+                    const formattedPhone = phone.startsWith('+') ? phone : `+91${phone}`;
+                    const result = await sendPhoneOTP(formattedPhone, appVerifier);
+                    setConfirmationResult(result);
+                    setOtpSent(true);
+                }
+            } else if (authModalMode === 'signin') {
                 if (!email || !password) {
                     setError('Please fill in all fields');
                     setIsLoading(false);
                     return;
                 }
                 await login(email, password);
+                resetForm();
             } else {
                 if (!name || !email || !password) {
                     setError('Please fill in all required fields');
@@ -43,26 +101,40 @@ export const AuthModal: React.FC = () => {
                     return;
                 }
                 await register(name, email, password, phone);
+                resetForm();
             }
-            // Reset form
-            setEmail('');
-            setPassword('');
-            setName('');
-            setPhone('');
-        } catch (err) {
-            setError('An error occurred. Please try again.');
+        } catch (err: any) {
+            console.error("Auth Exception:", err);
+            // Firebase specific error mapping
+            if (err.code === 'auth/email-already-in-use') {
+                setError('Email is already registered. Please sign in.');
+            } else if (err.code === 'auth/invalid-credential') {
+                setError('Invalid credentials or OTP.');
+            } else if (err.code === 'auth/weak-password') {
+                setError('Password should be at least 6 characters.');
+            } else if (err.code === 'auth/invalid-phone-number') {
+                setError('Invalid phone number format. Include country code (e.g., +91).');
+            } else {
+                setError('An error occurred. Please try again.');
+            }
         } finally {
             setIsLoading(false);
         }
     };
 
+    const handleGoogleLogin = async () => {
+        setError('');
+        try {
+            await loginWithGoogle();
+        } catch (err: any) {
+            console.error("Google Auth Exception:", err);
+            setError('Google sign-in failed. Please try again.');
+        }
+    };
+
     const handleClose = () => {
         setShowAuthModal(false);
-        setError('');
-        setEmail('');
-        setPassword('');
-        setName('');
-        setPhone('');
+        resetForm();
     };
 
     return (
@@ -111,16 +183,25 @@ export const AuthModal: React.FC = () => {
                         {/* Tabs */}
                         <div className="flex bg-gray-100 rounded-xl p-1 mb-6">
                             <button
-                                onClick={() => setAuthModalMode('signin')}
+                                onClick={() => { setAuthModalMode('signin'); resetForm(); }}
                                 className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all ${authModalMode === 'signin'
                                         ? 'bg-white text-luxury-black shadow-sm'
                                         : 'text-gray-500 hover:text-gray-700'
                                     }`}
                             >
-                                Sign In
+                                Email Sign In
                             </button>
                             <button
-                                onClick={() => setAuthModalMode('signup')}
+                                onClick={() => { setAuthModalMode('phone'); resetForm(); }}
+                                className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all ${authModalMode === 'phone'
+                                        ? 'bg-white text-luxury-black shadow-sm'
+                                        : 'text-gray-500 hover:text-gray-700'
+                                    }`}
+                            >
+                                Phone Sign In
+                            </button>
+                            <button
+                                onClick={() => { setAuthModalMode('signup'); resetForm(); }}
                                 className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all ${authModalMode === 'signup'
                                         ? 'bg-white text-luxury-black shadow-sm'
                                         : 'text-gray-500 hover:text-gray-700'
@@ -132,82 +213,122 @@ export const AuthModal: React.FC = () => {
 
                         {/* Form */}
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            {/* Name Field (Sign Up only) */}
-                            <AnimatePresence mode="wait">
-                                {authModalMode === 'signup' && (
+                            <div id="recaptcha-container"></div>
+                            
+                            {authModalMode === 'phone' ? (
+                                <AnimatePresence mode="wait">
                                     <motion.div
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: 'auto' }}
                                         exit={{ opacity: 0, height: 0 }}
                                         transition={{ duration: 0.2 }}
+                                        className="space-y-4"
                                     >
-                                        <div className="relative">
-                                            <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                                            <input
-                                                type="text"
-                                                placeholder="Full Name"
-                                                value={name}
-                                                onChange={(e) => setName(e.target.value)}
-                                                className="w-full h-12 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-luxury-black placeholder-gray-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
-                                            />
-                                        </div>
+                                        {!otpSent ? (
+                                            <div className="relative">
+                                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                                <input
+                                                    type="tel"
+                                                    placeholder="Phone Number (e.g., +91...)"
+                                                    value={phone}
+                                                    onChange={(e) => setPhone(e.target.value)}
+                                                    className="w-full h-12 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-luxury-black placeholder-gray-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className="relative">
+                                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Enter OTP"
+                                                    value={otp}
+                                                    onChange={(e) => setOtp(e.target.value)}
+                                                    className="w-full h-12 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-luxury-black placeholder-gray-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
+                                                />
+                                            </div>
+                                        )}
                                     </motion.div>
-                                )}
-                            </AnimatePresence>
+                                </AnimatePresence>
+                            ) : (
+                                <>
+                                    {/* Name Field (Sign Up only) */}
+                                    <AnimatePresence mode="wait">
+                                        {authModalMode === 'signup' && (
+                                            <motion.div
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: 'auto' }}
+                                                exit={{ opacity: 0, height: 0 }}
+                                                transition={{ duration: 0.2 }}
+                                            >
+                                                <div className="relative">
+                                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Full Name"
+                                                        value={name}
+                                                        onChange={(e) => setName(e.target.value)}
+                                                        className="w-full h-12 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-luxury-black placeholder-gray-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
+                                                    />
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
 
-                            {/* Email Field */}
-                            <div className="relative">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                                <input
-                                    type="email"
-                                    placeholder="Email Address"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full h-12 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-luxury-black placeholder-gray-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
-                                />
-                            </div>
+                                    {/* Email Field */}
+                                    <div className="relative">
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                        <input
+                                            type="email"
+                                            placeholder="Email Address"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            className="w-full h-12 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-luxury-black placeholder-gray-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
+                                        />
+                                    </div>
 
-                            {/* Phone Field (Sign Up only) */}
-                            <AnimatePresence mode="wait">
-                                {authModalMode === 'signup' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: 'auto' }}
-                                        exit={{ opacity: 0, height: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
-                                        <div className="relative">
-                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                                            <input
-                                                type="tel"
-                                                placeholder="Phone Number (Optional)"
-                                                value={phone}
-                                                onChange={(e) => setPhone(e.target.value)}
-                                                className="w-full h-12 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-luxury-black placeholder-gray-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
-                                            />
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
+                                    {/* Phone Field (Sign Up only) */}
+                                    <AnimatePresence mode="wait">
+                                        {authModalMode === 'signup' && (
+                                            <motion.div
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: 'auto' }}
+                                                exit={{ opacity: 0, height: 0 }}
+                                                transition={{ duration: 0.2 }}
+                                            >
+                                                <div className="relative">
+                                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                                    <input
+                                                        type="tel"
+                                                        placeholder="Phone Number (Optional)"
+                                                        value={phone}
+                                                        onChange={(e) => setPhone(e.target.value)}
+                                                        className="w-full h-12 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-luxury-black placeholder-gray-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
+                                                    />
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
 
-                            {/* Password Field */}
-                            <div className="relative">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    placeholder="Password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full h-12 pl-12 pr-12 bg-gray-50 border border-gray-200 rounded-xl text-luxury-black placeholder-gray-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                >
-                                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                                </button>
-                            </div>
+                                    {/* Password Field */}
+                                    <div className="relative">
+                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                        <input
+                                            type={showPassword ? 'text' : 'password'}
+                                            placeholder="Password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="w-full h-12 pl-12 pr-12 bg-gray-50 border border-gray-200 rounded-xl text-luxury-black placeholder-gray-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                        >
+                                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                        </button>
+                                    </div>
+                                </>
+                            )}
 
                             {/* Error Message */}
                             {error && (
@@ -228,6 +349,8 @@ export const AuthModal: React.FC = () => {
                             >
                                 {isLoading ? (
                                     <Loader2 className="h-5 w-5 animate-spin" />
+                                ) : authModalMode === 'phone' ? (
+                                    otpSent ? 'Verify OTP' : 'Send OTP'
                                 ) : authModalMode === 'signin' ? (
                                     'Sign In'
                                 ) : (
@@ -248,7 +371,11 @@ export const AuthModal: React.FC = () => {
 
                         {/* Social Login */}
                         <div className="grid grid-cols-2 gap-3">
-                            <button className="flex items-center justify-center gap-2 h-11 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+                            <button 
+                                onClick={handleGoogleLogin} 
+                                type="button"
+                                className="flex items-center justify-center gap-2 h-11 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+                            >
                                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />

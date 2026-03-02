@@ -1,5 +1,5 @@
 import { Router, Response } from 'express';
-import { db, favorites, vendors, eq, and } from 'database';
+import { db, favorites, eq, and } from 'database';
 import { authenticate, AuthenticatedRequest } from '../middleware/auth';
 
 const router = Router();
@@ -10,17 +10,13 @@ const router = Router();
  */
 router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
+        if (!req.user?.id) {
+            res.status(401).json({ error: 'User profile not fully synced' });
+            return;
+        }
+
         const result = await db.query.favorites.findMany({
             where: eq(favorites.userId, req.user!.id),
-            with: {
-                vendor: {
-                    columns: {
-                        id: true, name: true, shortDescription: true, city: true,
-                        coverImageUrl: true, rating: true, reviewCount: true,
-                        isOpen: true, isPremium: true, isVerified: true,
-                    },
-                },
-            },
             orderBy: (favorites, { desc }) => [desc(favorites.createdAt)],
         });
 
@@ -37,7 +33,13 @@ router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) =
  */
 router.post('/:vendorId', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
+        if (!req.user?.id) {
+            res.status(401).json({ error: 'User profile not fully synced' });
+            return;
+        }
+
         const vendorId = req.params.vendorId;
+        const { placeData } = req.body; // Accept the GooglePlaceResponse metadata
 
         // Check if already favorited
         const [existing] = await db.select().from(favorites)
@@ -52,17 +54,11 @@ router.post('/:vendorId', authenticate, async (req: AuthenticatedRequest, res: R
             await db.delete(favorites).where(eq(favorites.id, existing.id));
             res.json({ favorited: false, message: 'Removed from favorites' });
         } else {
-            // Verify vendor exists
-            const [vendor] = await db.select().from(vendors).where(eq(vendors.id, vendorId)).limit(1);
-            if (!vendor) {
-                res.status(404).json({ error: 'Vendor not found' });
-                return;
-            }
-
-            // Add favorite
+            // Add favorite with metadata JSON
             const [fav] = await db.insert(favorites).values({
                 userId: req.user!.id,
                 vendorId,
+                placeData: placeData || null,
             }).returning();
 
             res.status(201).json({ favorited: true, favorite: fav });

@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+import { apiClient } from './apiClient';
 
 export interface GooglePlaceResponse {
     id: string;
@@ -41,11 +41,17 @@ export interface PlaceDetailsResponse {
 /**
  * Search for places (stores/services) in Vadodara
  */
-export async function searchVadodaraPlaces(query: string): Promise<PlacesSearchResponse> {
+export async function searchVadodaraPlaces(query: string, lat?: number, lng?: number, pincode?: string): Promise<PlacesSearchResponse> {
     try {
-        const response = await fetch(
-            `${API_BASE_URL}/api/places/search?query=${encodeURIComponent(query)}`
-        );
+        const params = new URLSearchParams({ query });
+        if (lat !== undefined && lng !== undefined) {
+            params.append('lat', lat.toString());
+            params.append('lng', lng.toString());
+        } else if (pincode) {
+            params.append('pincode', pincode);
+        }
+
+        const response = await apiClient(`/api/places/search?${params.toString()}`);
 
         if (!response.ok) {
             const errorData = await response.json();
@@ -64,7 +70,7 @@ export async function searchVadodaraPlaces(query: string): Promise<PlacesSearchR
  */
 export async function getPlaceDetails(placeId: string): Promise<PlaceDetailsResponse | null> {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/places/${placeId}`);
+        const response = await apiClient(`/api/places/${placeId}`);
 
         if (!response.ok) {
             const errorData = await response.json();

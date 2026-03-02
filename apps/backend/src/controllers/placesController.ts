@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { searchVadodaraPlaces, getPlaceDetails, getPhotoUrl } from '../services/placesService';
+import { searchVadodaraPlaces, getPlaceDetails, getPhotoUrl, geocodePincode } from '../services/placesService';
 
 /**
  * Search for places in Vadodara
@@ -7,12 +7,23 @@ import { searchVadodaraPlaces, getPlaceDetails, getPhotoUrl } from '../services/
  */
 export async function searchPlaces(req: Request, res: Response) {
     const query = req.query.query as string;
+    const pincode = req.query.pincode as string;
+    let lat = req.query.lat ? parseFloat(req.query.lat as string) : undefined;
+    let lng = req.query.lng ? parseFloat(req.query.lng as string) : undefined;
 
     if (!query) {
         return res.status(400).json({ error: 'Query parameter is required' });
     }
 
-    const result = await searchVadodaraPlaces(query);
+    if (pincode && (lat === undefined || lng === undefined)) {
+        const coords = await geocodePincode(pincode);
+        if (coords) {
+            lat = coords.latitude;
+            lng = coords.longitude;
+        }
+    }
+
+    const result = await searchVadodaraPlaces(query, lat, lng);
 
     if (result.error) {
         return res.status(500).json({ error: result.error });

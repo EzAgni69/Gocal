@@ -10,13 +10,9 @@ const footerLinks = {
         { label: 'Browse Vendors', href: '/' },
         { label: 'For Vendors', href: '/vendor' },
         { label: 'Pricing', href: '#' },
-        { label: 'API Access', href: '#' },
     ],
     company: [
         { label: 'About Us', href: '#' },
-        { label: 'Careers', href: '#' },
-        { label: 'Blog', href: '#' },
-        { label: 'Press Kit', href: '#' },
     ],
     support: [
         { label: 'Help Center', href: '#' },
@@ -50,20 +46,7 @@ export const Footer = () => {
                             India's premier B2B commerce platform connecting businesses with verified vendors across textiles, electronics, and more.
                         </p>
 
-                        {/* Newsletter Signup */}
-                        <div className="space-y-3">
-                            <p className="text-sm font-medium text-gray-300">Subscribe to our newsletter</p>
-                            <div className="flex gap-2">
-                                <input
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    className="flex-1 px-4 py-3 bg-white/10 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 transition-colors"
-                                />
-                                <Button size="icon" className="h-12 w-12 bg-gold-500 hover:bg-gold-600 text-luxury-black rounded-lg">
-                                    <ArrowRight className="w-5 h-5" />
-                                </Button>
-                            </div>
-                        </div>
+
                     </div>
 
                     {/* Links Sections */}
@@ -126,7 +109,7 @@ export const Footer = () => {
                             <span className="hidden md:inline">|</span>
                             <span className="hidden md:flex items-center gap-2">
                                 <MapPin className="w-4 h-4" />
-                                Mumbai, India
+                                Vadodara, India
                             </span>
                         </div>
 

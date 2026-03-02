@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Search, MapPin, Star, Phone, Globe, Lock, CheckCircle, ArrowRight, Clock } from 'lucide-react';
+import { Search, MapPin, Star, Phone, Globe, Lock, CheckCircle, ArrowRight, Clock, Heart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Vendor } from '../types';
-import { CITIES, CATEGORIES, TRANSLATIONS } from '../constants';
+import { VADODARA_PINCODES, CATEGORIES, TRANSLATIONS } from '../constants';
 import { useAppContext } from '../context/AppContext';
 import { motion, Variants } from 'framer-motion';
 import { Badge } from '@/components/ui/Badge';
@@ -18,7 +18,7 @@ const containerVariants: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
+      staggerChildren: 0.03
     }
   }
 };
@@ -36,11 +36,17 @@ const itemVariants: Variants = {
 };
 
 export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
-  const { language, requireAuth } = useAppContext();
+  const { 
+    language, 
+    requireAuth,
+    addToFavorites,
+    removeFromFavorites,
+    isFavorite
+  } = useAppContext();
   const router = useRouter();
   const t = TRANSLATIONS[language];
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
+  const [selectedPincode, setSelectedPincode] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
 
@@ -52,9 +58,9 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
 
   const filteredVendors = vendors.filter((v) => {
     const matchesSearch = v.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCity = selectedCity ? v.city === selectedCity : true;
+    const matchesPincode = selectedPincode ? v.address?.includes(selectedPincode) : true;
     const matchesCategory = selectedCategory ? v.category === selectedCategory : true;
-    return matchesSearch && matchesCity && matchesCategory;
+    return matchesSearch && matchesPincode && matchesCategory;
   });
 
   return (
@@ -114,12 +120,12 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
               <MapPin className="text-gold-400 w-5 h-5 mr-3" />
               <select
                 className="w-full bg-transparent outline-none text-white cursor-pointer appearance-none [&>option]:text-black"
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
+                value={selectedPincode}
+                onChange={(e) => setSelectedPincode(e.target.value)}
               >
-                <option value="">All Cities</option>
-                {CITIES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                <option value="">All Pincodes</option>
+                {VADODARA_PINCODES.map((p) => (
+                  <option key={p} value={p}>{p}</option>
                 ))}
               </select>
             </div>
@@ -152,7 +158,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-luxury-black mb-2">
               Featured Vendors
             </h2>
-            <p className="text-sm sm:text-base text-gray-500">Discover top-rated partners for your supply chain.</p>
+            <p className="text-sm sm:text-base text-gray-500">Discover our top-rated partners.</p>
           </div>
           <Button variant="outline" className="hidden sm:flex text-sm md:text-base">View Operations Map</Button>
         </div>
@@ -161,8 +167,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
           variants={containerVariants}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
+          animate="visible"
         >
           {filteredVendors.map((vendor) => (
             <motion.div
@@ -181,6 +186,8 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                   className="w-full h-full object-cover"
                   whileHover={{ scale: 1.1 }}
                   transition={{ duration: 0.7, ease: "easeOut" }}
+                  fetchPriority="high"
+                  decoding="sync"
                 />
 
                 <div className="absolute top-4 left-4 z-20 flex gap-2">
@@ -190,12 +197,38 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                 </div>
 
                 {vendor.isPremium && (
-                  <div className="absolute top-4 right-4 z-20">
+                  <div className="absolute top-4 right-16 z-20">
                     <Badge variant="premium" className="flex items-center gap-1">
                       <CheckCircle className="w-3 h-3" /> VERIFIED
                     </Badge>
                   </div>
                 )}
+
+                {/* Favorite Heart Icon */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!requireAuth('like this vendor')) return;
+                    
+                    if (isFavorite(vendor.id)) {
+                      removeFromFavorites(vendor.id);
+                    } else {
+                      // Adapt mock vendor to GooglePlaceResponse-like structure if strictly required
+                      // but backend stores placeData as jsonb which is flexible.
+                      addToFavorites(vendor as any); 
+                    }
+                  }}
+                  className="absolute top-4 right-4 z-20 p-2 rounded-full backdrop-blur-md bg-white/70 hover:bg-white transition-colors duration-300 shadow-sm"
+                  aria-label={isFavorite(vendor.id) ? "Remove from favorites" : "Add to favorites"}
+                >
+                  <Heart 
+                    className={`w-5 h-5 transition-colors duration-300 ${
+                      isFavorite(vendor.id) 
+                        ? "fill-red-500 text-red-500" 
+                        : "text-gray-600 hover:text-red-500"
+                    }`} 
+                  />
+                </button>
 
                 {/* Quick Stats Overlay */}
                 <motion.div
@@ -251,7 +284,10 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
 
                   {vendor.isPremium && vendor.websiteUuid ? (
                     <Button
-                      onClick={() => router.push(`/store/${vendor.websiteUuid}`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/store/${vendor.websiteUuid}`);
+                      }}
                       className="flex-1 bg-luxury-black hover:bg-gold-600 text-white border-none"
                     >
                       <Globe className="w-4 h-4 mr-2" />
@@ -277,7 +313,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
             <p className="text-gray-500 mt-2">Try adjusting your search or filters to find what you're looking for.</p>
             <Button
               variant="link"
-              onClick={() => { setSearchTerm(''); setSelectedCity(''); setSelectedCategory(''); }}
+              onClick={() => { setSearchTerm(''); setSelectedPincode(''); setSelectedCategory(''); }}
               className="mt-4 text-gold-600"
             >
               Clear all filters

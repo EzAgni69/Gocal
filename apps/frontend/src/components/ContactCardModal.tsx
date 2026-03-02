@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     X,
@@ -31,6 +31,16 @@ interface ContactCardModalProps {
 export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOpen, onClose }) => {
     const { requireAuth } = useAppContext();
 
+    useEffect(() => {
+        if (isOpen) {
+            const originalStyle = window.getComputedStyle(document.body).overflow;
+            document.body.style.overflow = 'hidden';
+            return () => {
+                document.body.style.overflow = originalStyle;
+            };
+        }
+    }, [isOpen]);
+
     if (!vendor) return null;
 
     const handleCall = () => {
@@ -46,7 +56,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
     const handleWhatsApp = () => {
         if (!requireAuth('message this vendor')) return;
         const message = encodeURIComponent(`Hi, I found your store on Vanij.co and would like to inquire about your products.`);
-        const phoneNumber = vendor.phone.replace(/\D/g, '');
+        const phoneNumber = vendor.phone.replace(/\D/g, ''); // Use dynamic phone number and strip non-digits
         window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
     };
 
@@ -136,7 +146,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                         </div>
 
                         {/* Content */}
-                        <div className="max-h-[calc(90vh-12rem)] overflow-y-auto p-6">
+                        <div className="max-h-[calc(90vh-12rem)] overflow-y-auto overscroll-contain p-6">
                             {/* Description */}
                             <p className="text-gray-600 mb-6 leading-relaxed">{vendor.description}</p>
 

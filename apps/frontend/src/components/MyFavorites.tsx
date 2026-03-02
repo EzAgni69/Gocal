@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { FavoriteButton } from './FavoriteButton';
 import Link from 'next/link';
+import { Vendor } from '../types';
 
 const DEFAULT_STORE_IMAGE = 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&q=80';
 
@@ -158,8 +159,8 @@ export const MyFavorites: React.FC = () => {
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10" />
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img
-                                        src={place.photoUrl || DEFAULT_STORE_IMAGE}
-                                        alt={place.displayName.text}
+                                        src={place.photoUrl || (place as unknown as Vendor).coverImage || DEFAULT_STORE_IMAGE}
+                                        alt={place.displayName?.text || (place as unknown as Vendor).name || 'Store Image'}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                         onError={(e) => {
                                             (e.target as HTMLImageElement).src = DEFAULT_STORE_IMAGE;
@@ -169,18 +170,18 @@ export const MyFavorites: React.FC = () => {
                                     {/* Status Badge */}
                                     <div className="absolute top-3 left-3 z-20">
                                         <Badge
-                                            variant={place.regularOpeningHours?.openNow ? 'success' : 'secondary'}
+                                            variant={place.regularOpeningHours?.openNow || (place as unknown as Vendor).isOpen ? 'success' : 'secondary'}
                                             className="shadow-lg backdrop-blur-md bg-white/90"
                                         >
-                                            {place.regularOpeningHours?.openNow ? 'Open Now' : 'Closed'}
+                                            {place.regularOpeningHours?.openNow || (place as unknown as Vendor).isOpen ? 'Open Now' : 'Closed'}
                                         </Badge>
                                     </div>
 
                                     {/* Category Badge */}
-                                    {place.primaryTypeDisplayName?.text && (
+                                    {(place.primaryTypeDisplayName?.text || (place as unknown as Vendor).category) && (
                                         <div className="absolute top-3 right-3 z-20">
                                             <Badge variant="premium" className="text-xs">
-                                                {place.primaryTypeDisplayName.text}
+                                                {place.primaryTypeDisplayName?.text || (place as unknown as Vendor).category}
                                             </Badge>
                                         </div>
                                     )}
@@ -195,50 +196,51 @@ export const MyFavorites: React.FC = () => {
                                 <div className="p-4 flex flex-col flex-grow">
                                     <div className="flex justify-between items-start mb-2">
                                         <h3 className="text-lg font-bold text-luxury-charcoal font-serif line-clamp-1 group-hover:text-gold-600 transition-colors">
-                                            {place.displayName.text}
+                                            {place.displayName?.text || (place as unknown as Vendor).name}
                                         </h3>
-                                        {place.rating && (
+                                        {(place.rating || (place as unknown as Vendor).rating) && (
                                             <div className="flex items-center bg-luxury-cream border border-gold-100 px-2 py-0.5 rounded-lg shrink-0 ml-2">
                                                 <Star className="w-3.5 h-3.5 text-gold-500 fill-current" />
-                                                <span className="ml-1 text-sm font-bold text-luxury-black">{place.rating}</span>
+                                                <span className="ml-1 text-sm font-bold text-luxury-black">{place.rating || (place as unknown as Vendor).rating}</span>
                                             </div>
                                         )}
                                     </div>
 
                                     <p className="text-sm text-gray-500 flex items-start mb-2 line-clamp-2">
                                         <MapPin className="w-3.5 h-3.5 mr-1.5 mt-0.5 text-gold-500 shrink-0" />
-                                        {place.shortFormattedAddress || place.formattedAddress}
+                                        {place.shortFormattedAddress || place.formattedAddress || (place as unknown as Vendor).address || (place as unknown as Vendor).city}
                                     </p>
 
-                                    {place.userRatingCount && (
+                                    {(place.userRatingCount || (place as unknown as Vendor).reviewCount) && (
                                         <p className="text-xs text-gray-400 mb-3">
-                                            {place.userRatingCount} reviews
+                                            {place.userRatingCount || (place as unknown as Vendor).reviewCount} reviews
                                         </p>
                                     )}
 
                                     <div className="mt-auto pt-3 border-t border-gray-100 flex gap-2">
-                                        {place.nationalPhoneNumber && (
+                                        {(place.nationalPhoneNumber || (place as unknown as Vendor).phone) && (
                                             <Button
                                                 variant="outline"
                                                 size="sm"
                                                 className="flex-1 text-xs h-9"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    window.location.href = `tel:${place.nationalPhoneNumber}`;
+                                                    window.location.href = `tel:${place.nationalPhoneNumber || (place as unknown as Vendor).phone}`;
                                                 }}
                                             >
                                                 <Phone className="w-3.5 h-3.5 mr-1" />
                                                 Call
                                             </Button>
                                         )}
-                                        {place.websiteUri && (
+                                        {(place.websiteUri || (place as unknown as Vendor).websiteUuid) && (
                                             <Button
                                                 variant="outline"
                                                 size="sm"
                                                 className="flex-1 text-xs h-9"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    window.open(place.websiteUri, '_blank');
+                                                    if(place.websiteUri) window.open(place.websiteUri, '_blank');
+                                                    else window.open(`/store/${(place as unknown as Vendor).websiteUuid}`, '_blank');
                                                 }}
                                             >
                                                 <ExternalLink className="w-3.5 h-3.5 mr-1" />
