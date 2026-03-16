@@ -29,10 +29,12 @@ export const vendors = pgTable('vendors', {
     websiteUuid: uuid('website_uuid').defaultRandom().unique(),
     isOpen: boolean('is_open').notNull().default(true),
     isPremium: boolean('is_premium').notNull().default(false),
+    planType: varchar('plan_type', { length: 50 }).notNull().default('card_website'),
     isVerified: boolean('is_verified').notNull().default(false),
     rating: decimal('rating', { precision: 2, scale: 1 }).notNull().default('0.0'),
     reviewCount: decimal('review_count', { precision: 10, scale: 0 }).notNull().default('0'),
     miniWebsiteConfig: jsonb('mini_website_config').notNull().default({}),
+    websiteUrl: text('website_url'),
     // PostGIS: stored as longitude, latitude (SRID 4326)
     // Use raw SQL for geography type since Drizzle doesn't natively support PostGIS
     longitude: decimal('longitude', { precision: 11, scale: 8 }),
@@ -40,6 +42,7 @@ export const vendors = pgTable('vendors', {
     googlePlaceId: varchar('google_place_id', { length: 255 }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
 }, (table) => [
     index('idx_vendors_city').on(table.city),
     index('idx_vendors_category').on(table.categoryId),

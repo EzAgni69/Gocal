@@ -176,7 +176,7 @@ export const AuthModal: React.FC = () => {
                             <p className="text-gray-500">
                                 {authModalMode === 'signin'
                                     ? 'Sign in to access all features'
-                                    : 'Join Vanij.co to connect with vendors'}
+                                    : 'Join Gocal.co to connect with vendors'}
                             </p>
                         </div>
 

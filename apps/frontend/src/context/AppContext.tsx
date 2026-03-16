@@ -64,8 +64,8 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const USER_STORAGE_KEY = 'vanij_user';
-const FAVORITES_STORAGE_KEY = 'vanij_favorites';
+const USER_STORAGE_KEY = 'gocal_user';
+const FAVORITES_STORAGE_KEY = 'gocal_favorites';
 
 export function AppProvider({ children }: { children: ReactNode }) {
     const [currentRole, setCurrentRole] = useState<UserRole>(UserRole.CONSUMER);
@@ -101,7 +101,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 if (wlData.wishlists.length > 0) {
                     const firstWishlist = wlData.wishlists[0];
                     setWishlistId(firstWishlist.id);
-                    setWishlist(firstWishlist.items.map((i: any) => i.productData).filter(Boolean));
+                    // Map productData and ensure vendor info is extracted if it was stored inside productData
+                    setWishlist(firstWishlist.items.map((i: any) => ({
+                        ...i.productData,
+                        vendorId: i.productData?.vendorId || i.vendorId,
+                        vendorName: i.productData?.vendorName || i.vendor?.name,
+                        vendorPhone: i.productData?.vendorPhone || i.vendor?.phone,
+                    })).filter(Boolean));
                 } else {
                     // Create a new wishlist
                     const createRes = await apiClient('/api/wishlists', { 
@@ -151,10 +157,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
                             // Redirect vendors/admins to their respective dashboards by default
                             if (!sessionStorage.getItem('has_redirected_role')) {
                                 sessionStorage.setItem('has_redirected_role', 'true');
-                                if (window.location.pathname === '/' || window.location.pathname === '/vadodara') {
+                                if ((window.location.pathname === '/' || window.location.pathname === '/vadodara') && !window.location.search) {
                                     if (data.user.role === UserRole.VENDOR) {
                                         window.location.href = '/vendor';
-                                    } else if (data.user.role === UserRole.SUPER_ADMIN) {
+                                    } else if (data.user.role === UserRole.ADMIN || data.user.role === UserRole.SUPER_ADMIN) {
                                         window.location.href = '/admin';
                                     }
                                 }
@@ -286,7 +292,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     await apiClient(`/api/wishlists/${wishlistId}/items`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                        body: JSON.stringify({ productId: product.id, productData: product, quantity: 1 })
+                        body: JSON.stringify({ 
+                            productId: product.id, 
+                            productData: product, 
+                            quantity: 1,
+                            vendorId: product.vendorId
+                        })
                     });
                 } catch (error) {
                     console.error('Failed to update backend wishlist', error);

@@ -8,15 +8,14 @@ import { Button } from '@/components/ui/Button';
 const footerLinks = {
     platform: [
         { label: 'Browse Vendors', href: '/' },
-        { label: 'For Vendors', href: '/vendor' },
-        { label: 'Pricing', href: '#' },
+        { label: 'Pricing', href: '/pricing' },
     ],
     company: [
-        { label: 'About Us', href: '#' },
+        { label: 'About Us', href: '/about' },
     ],
     support: [
-        { label: 'Help Center', href: '#' },
-        { label: 'Contact Us', href: '#' },
+        // { label: 'Help Center', href: '#' },
+        { label: 'Contact Us', href: '/contact' },
         { label: 'Privacy Policy', href: '#' },
         { label: 'Terms of Service', href: '#' },
     ],
@@ -39,7 +38,7 @@ export const Footer = () => {
                     <div className="lg:col-span-2">
                         <div className="flex items-center mb-6">
                             <span className="font-serif text-3xl font-bold tracking-tight">
-                                Vanij<span className="text-gold-500">.</span>
+                                Gocal<span className="text-gold-500">.</span>
                             </span>
                         </div>
                         <p className="text-gray-400 mb-6 max-w-sm leading-relaxed">
@@ -105,7 +104,7 @@ export const Footer = () => {
                 <div className="max-w-7xl mx-auto px-6 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <div className="flex items-center gap-6 text-sm text-gray-500">
-                            <span>© {currentYear} Vanij.co. All rights reserved.</span>
+                            <span>© {currentYear} Gocal.co. All rights reserved.</span>
                             <span className="hidden md:inline">|</span>
                             <span className="hidden md:flex items-center gap-2">
                                 <MapPin className="w-4 h-4" />

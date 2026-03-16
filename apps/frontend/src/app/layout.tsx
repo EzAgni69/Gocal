@@ -7,6 +7,7 @@ import { WishlistDrawer } from "@/components/WishlistDrawer";
 import { Footer } from "@/components/Footer";
 import { AuthModal } from "@/components/AuthModal";
 import { LoginRequiredModal } from "@/components/LoginRequiredModal";
+import PageTransition from "@/components/PageTransition";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -21,8 +22,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Vanij.co | Premium B2B Commerce",
-  description: "Experience the future of B2B commerce with Vanij.co",
+  title: "Gocal.co | Premium B2B Commerce",
+  description: "Experience the future of B2B commerce with Gocal.co",
 };
 
 export default function RootLayout({
@@ -38,7 +39,11 @@ export default function RootLayout({
         <AppProvider>
           <div className="flex flex-col min-h-screen">
             <Header />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 flex flex-col">
+              <PageTransition>
+                {children}
+              </PageTransition>
+            </main>
             <Footer />
             <WishlistDrawer />
             <AuthModal />

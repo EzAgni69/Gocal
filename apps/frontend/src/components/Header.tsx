@@ -1,5 +1,5 @@
 'use client';
-import { ShoppingBag, User, Globe, ChevronDown, LogIn, LogOut, Settings, Heart, Menu, X, ChevronRight } from 'lucide-react';
+import { ShoppingBag, User, Globe, ChevronDown, LogIn, LogOut, Settings, Heart, Menu, X, ChevronRight, Store, CreditCard, ShieldAlert } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { UserRole, Language } from '../types';
 import { useRouter, usePathname } from 'next/navigation';
@@ -47,9 +47,12 @@ export const Header = () => {
 
     const handleRoleChange = (r: UserRole) => {
         setCurrentRole(r);
-        if (r === UserRole.VENDOR) router.push('/vendor');
-        else if (r === UserRole.SUPER_ADMIN) router.push('/admin');
-        else router.push('/');
+        // Allow React state to flush before routing so ProtectedRoute doesn't bounce us
+        setTimeout(() => {
+            if (r === UserRole.VENDOR) router.push('/vendor');
+            else if (r === UserRole.ADMIN || r === UserRole.SUPER_ADMIN) router.push('/admin');
+            else router.push('/');
+        }, 50);
     };
 
     const handleSignInClick = () => {
@@ -80,13 +83,18 @@ export const Header = () => {
                 <div className="flex items-center gap-8">
                     {/* Premium Logo */}
                     <div
-                        className="flex items-center gap-1 cursor-pointer group"
+                        className="flex flex-col cursor-pointer group"
                         onClick={() => router.push('/')}
                     >
-                        <span className="font-serif text-3xl font-bold text-luxury-black tracking-tight group-hover:text-gold-600 transition-colors duration-300">
-                            Vanij
+                        <div className="flex items-center gap-1">
+                            <span className="font-serif text-3xl font-bold text-luxury-black tracking-tight group-hover:text-gold-600 transition-colors duration-300">
+                                Gocal
+                            </span>
+                            <span className="text-gold-500 text-4xl font-bold leading-none group-hover:scale-110 transition-transform duration-300">.</span>
+                        </div>
+                        <span className="text-[10px] uppercase tracking-[0.3em] text-gray-500 font-bold mt-0.5 group-hover:text-gold-500 transition-colors duration-300">
+                            Go local
                         </span>
-                        <span className="text-gold-500 text-4xl font-bold leading-none group-hover:scale-110 transition-transform duration-300">.</span>
                     </div>
 
                     {/* Navigation Links */}
@@ -102,6 +110,7 @@ export const Header = () => {
                         >
                             Explore Vadodara
                         </Button>
+
                     </div>
 
                     {/* Language Selector - Refined */}
@@ -145,25 +154,34 @@ export const Header = () => {
 
                 {/* Desktop Actions */}
                 <div className="hidden md:flex items-center gap-4">
-                    {/* Role Switcher - Elegant Pill - Only shown when authenticated and user has permission */}
+                    {/* Role Switcher - Elegant Segmented Control - Only shown when authenticated and user has permission */}
                     {isAuthenticated && user && user.role !== UserRole.CONSUMER && (
-                        <div className="flex items-center bg-gradient-to-r from-gold-100/60 to-gold-100/40 rounded-full px-1 sm:px-1.5 py-1 sm:py-1.5 border border-gold-200/50 shadow-inner mr-1">
-                            <div className="relative">
-                                <select
-                                    value={currentRole}
-                                    onChange={(e) => handleRoleChange(e.target.value as UserRole)}
-                                    className="appearance-none bg-transparent text-[10px] sm:text-xs font-semibold text-gold-700 py-1 sm:py-1.5 pl-2 sm:pl-3 pr-6 sm:pr-8 rounded-full outline-none cursor-pointer hover:text-gold-600 transition-colors"
+                        <div className="flex items-center bg-gray-100/80 backdrop-blur-md rounded-full p-1 border border-white/40 shadow-inner mr-2 relative">
+                            {[
+                                { id: UserRole.CONSUMER, label: 'Consumer' },
+                                ...((user.role === UserRole.VENDOR || user.role === UserRole.SUPER_ADMIN) ? [{ id: UserRole.VENDOR, label: 'Vendor' }] : []),
+                                ...((user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN) ? [{ id: UserRole.ADMIN, label: 'Admin' }] : []),
+                            ].map((roleOption) => (
+                                <button
+                                    key={roleOption.id}
+                                    onClick={() => handleRoleChange(roleOption.id)}
+                                    className={cn(
+                                        "relative px-4 py-1.5 text-xs font-bold rounded-full transition-colors duration-300 z-10",
+                                        currentRole === roleOption.id ? "text-luxury-black" : "text-gray-500 hover:text-gray-900"
+                                    )}
                                 >
-                                    <option value={UserRole.CONSUMER}>Consumer</option>
-                                    {(user.role === UserRole.VENDOR || user.role === UserRole.SUPER_ADMIN) && (
-                                        <option value={UserRole.VENDOR}>Vendor</option>
+                                    {currentRole === roleOption.id && (
+                                        <motion.div
+                                            layoutId="activeRolePill"
+                                            className="absolute inset-0 bg-white rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-gray-100"
+                                            initial={false}
+                                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                            style={{ zIndex: -1 }}
+                                        />
                                     )}
-                                    {user.role === UserRole.SUPER_ADMIN && (
-                                        <option value={UserRole.SUPER_ADMIN}>Admin</option>
-                                    )}
-                                </select>
-                                <User className="absolute right-1.5 sm:right-2 top-1/2 transform -translate-y-1/2 w-3 sm:w-3.5 h-3 sm:h-3.5 text-gold-500 pointer-events-none" />
-                            </div>
+                                    <span className="relative z-10">{roleOption.label}</span>
+                                </button>
+                            ))}
                         </div>
                     )}
 
@@ -251,6 +269,28 @@ export const Header = () => {
 
                                         {/* Menu Items */}
                                         <div className="py-2">
+                                            {user.role === UserRole.CONSUMER && (
+                                                <button
+                                                    onClick={() => {
+                                                        setShowUserMenu(false);
+                                                        router.push('/request-card');
+                                                    }}
+                                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                                >
+                                                    <Store className="w-4 h-4 text-gold-500" />
+                                                    Request Contact Card
+                                                </button>
+                                            )}
+                                            <button
+                                                onClick={() => {
+                                                    setShowUserMenu(false);
+                                                    router.push('/pricing');
+                                                }}
+                                                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                            >
+                                                <CreditCard className="w-4 h-4 text-gold-500" />
+                                                Pricing
+                                            </button>
                                             <button
                                                 onClick={() => {
                                                     setShowUserMenu(false);
@@ -261,6 +301,18 @@ export const Header = () => {
                                                 <Settings className="w-4 h-4 text-gray-400" />
                                                 Settings
                                             </button>
+                                            {(user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN) && (
+                                                <button
+                                                    onClick={() => {
+                                                        setShowUserMenu(false);
+                                                        handleRoleChange(user.role as UserRole);
+                                                    }}
+                                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors"
+                                                >
+                                                    <ShieldAlert className="w-4 h-4" />
+                                                    Admin Dashboard
+                                                </button>
+                                            )}
                                         </div>
 
                                         {/* Logout */}
@@ -399,6 +451,34 @@ export const Header = () => {
                                             <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gold-500" />
                                         </div>
                                     </button>
+                                    {isAuthenticated && user?.role === UserRole.CONSUMER && (
+                                        <button
+                                            onClick={() => {
+                                                router.push('/request-card');
+                                                setShowMobileMenu(false);
+                                            }}
+                                            className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white transition-colors group"
+                                        >
+                                            <span className="font-serif text-xl text-luxury-black group-hover:text-gold-600 transition-colors flex items-center gap-2">
+                                                <Store className="w-5 h-5 text-gold-500" />
+                                                Request Contact Card
+                                            </span>
+                                            <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gold-500" />
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => {
+                                            router.push('/pricing');
+                                            setShowMobileMenu(false);
+                                        }}
+                                        className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white transition-colors group"
+                                    >
+                                        <span className="font-serif text-xl text-luxury-black group-hover:text-gold-600 transition-colors flex items-center gap-2">
+                                            <CreditCard className="w-5 h-5 text-gold-500" />
+                                            Pricing
+                                        </span>
+                                        <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gold-500" />
+                                    </button>
                                 </div>
 
                                 <div className="h-px bg-gold-100/50" />
@@ -423,24 +503,44 @@ export const Header = () => {
                                      </div>
 
                                      {isAuthenticated && user && user.role !== UserRole.CONSUMER && (
-                                         <div className="flex items-center justify-between p-3 bg-white/50 rounded-xl border border-gold-100/30">
-                                            <div className="flex items-center gap-3">
-                                                <User className="w-5 h-5 text-gold-600" />
-                                                <span className="text-sm font-medium text-luxury-black">Role</span>
-                                            </div>
-                                            <select
-                                                value={currentRole}
-                                                onChange={(e) => handleRoleChange(e.target.value as UserRole)}
-                                                className="bg-transparent text-sm font-semibold text-gray-600 outline-none text-right"
-                                            >
-                                                <option value={UserRole.CONSUMER}>Consumer</option>
-                                                {(user.role === UserRole.VENDOR || user.role === UserRole.SUPER_ADMIN) && (
-                                                    <option value={UserRole.VENDOR}>Vendor</option>
-                                                )}
-                                                {user.role === UserRole.SUPER_ADMIN && (
-                                                    <option value={UserRole.SUPER_ADMIN}>Admin</option>
-                                                )}
-                                            </select>
+                                         <div className="space-y-2">
+                                             <div className="flex items-center gap-3 px-3 mb-2 mt-4 text-xs uppercase tracking-widest text-gray-400 font-semibold">
+                                                <User className="w-4 h-4 text-gold-500" />
+                                                Switch View
+                                             </div>
+                                             <div className="flex flex-col gap-2 px-1">
+                                                 <button
+                                                    onClick={() => { handleRoleChange(UserRole.CONSUMER); setShowMobileMenu(false); }}
+                                                    className={cn(
+                                                        "w-full flex items-center justify-center p-3 rounded-xl transition-all text-sm font-bold",
+                                                        currentRole === UserRole.CONSUMER ? "bg-luxury-black text-white shadow-md" : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                                                    )}
+                                                 >
+                                                    Consumer Mode
+                                                 </button>
+                                                 {(user.role === UserRole.VENDOR || user.role === UserRole.SUPER_ADMIN) && (
+                                                    <button
+                                                        onClick={() => { handleRoleChange(UserRole.VENDOR); setShowMobileMenu(false); }}
+                                                        className={cn(
+                                                            "w-full flex items-center justify-center p-3 rounded-xl transition-all text-sm font-bold",
+                                                            currentRole === UserRole.VENDOR ? "bg-gold-500 text-white shadow-md" : "bg-gold-50 text-gold-700 hover:bg-gold-100"
+                                                        )}
+                                                    >
+                                                        Vendor Dashboard
+                                                    </button>
+                                                 )}
+                                                 {(user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN) && (
+                                                     <button
+                                                        onClick={() => { handleRoleChange(user.role as UserRole); setShowMobileMenu(false); }}
+                                                        className={cn(
+                                                            "w-full flex items-center justify-center p-3 rounded-xl transition-all text-sm font-bold",
+                                                            (currentRole === UserRole.ADMIN || currentRole === UserRole.SUPER_ADMIN) ? "bg-blue-600 text-white shadow-md" : "bg-blue-50 text-blue-700 hover:bg-blue-100"
+                                                        )}
+                                                     >
+                                                        Admin Dashboard
+                                                     </button>
+                                                 )}
+                                             </div>
                                          </div>
                                      )}
                                 </div>

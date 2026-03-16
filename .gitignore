@@ -14,3 +14,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 .turbo/
+
+# Debug and Temporary Files
+backend-debug.txt
+backend-error.json
+capture-backend.js
+debug_ps.sh
+run_output.txt

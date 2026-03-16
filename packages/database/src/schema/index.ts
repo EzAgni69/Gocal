@@ -13,4 +13,5 @@ export * from './reports';
 export * from './ads';
 export * from './tags';
 export * from './homeCards';
+export * from './contactCardRequests';
 export * from './relations';

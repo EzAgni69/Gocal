@@ -12,6 +12,7 @@ import { reports } from './reports';
 import { ads } from './ads';
 import { tags, vendorTags } from './tags';
 import { homeCards } from './homeCards';
+import { contactCardRequests } from './contactCardRequests';
 
 // ── User Relations ──────────────────────────────────────────────
 export const usersRelations = relations(users, ({ many }) => ({
@@ -20,6 +21,7 @@ export const usersRelations = relations(users, ({ many }) => ({
     wishlists: many(wishlists),
     reviews: many(reviews),
     reports: many(reports),
+    contactCardRequests: many(contactCardRequests),
 }));
 
 // ── Category Relations ──────────────────────────────────────────
@@ -101,4 +103,9 @@ export const vendorTagsRelations = relations(vendorTags, ({ one }) => ({
 // ── Home Card Relations ─────────────────────────────────────────
 export const homeCardsRelations = relations(homeCards, ({ one }) => ({
     vendor: one(vendors, { fields: [homeCards.vendorId], references: [vendors.id] }),
+}));
+
+// ── Contact Card Request Relations ──────────────────────────────
+export const contactCardRequestsRelations = relations(contactCardRequests, ({ one }) => ({
+    requester: one(users, { fields: [contactCardRequests.requesterId], references: [users.id] }),
 }));

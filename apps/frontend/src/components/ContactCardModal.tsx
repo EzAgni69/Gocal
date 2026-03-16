@@ -15,12 +15,16 @@ import {
     Copy,
     ExternalLink,
     Edit3,
-    Image
+    Image,
+    Share2,
+    Store,
+    Heart
 } from 'lucide-react';
 import { Vendor } from '../types';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { useAppContext } from '../context/AppContext';
+import { TRANSLATIONS } from '../constants';
 
 interface ContactCardModalProps {
     vendor: Vendor | null;
@@ -29,7 +33,8 @@ interface ContactCardModalProps {
 }
 
 export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOpen, onClose }) => {
-    const { requireAuth } = useAppContext();
+    const { language, requireAuth, wishlist, addToWishlist, removeFromWishlist } = useAppContext();
+    const t = TRANSLATIONS[language];
 
     useEffect(() => {
         if (isOpen) {
@@ -55,7 +60,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
 
     const handleWhatsApp = () => {
         if (!requireAuth('message this vendor')) return;
-        const message = encodeURIComponent(`Hi, I found your store on Vanij.co and would like to inquire about your products.`);
+        const message = encodeURIComponent(`Hi, I found your store on Gocal.co and would like to inquire about your products.`);
         const phoneNumber = vendor.phone.replace(/\D/g, ''); // Use dynamic phone number and strip non-digits
         window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
     };
@@ -64,6 +69,24 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
         if (!requireAuth('get directions')) return;
         const address = encodeURIComponent(vendor.address);
         window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank');
+    };
+
+    const handleShare = async () => {
+        const shareData = {
+            title: vendor.name,
+            url: `${window.location.origin}/?vendor=${vendor.id}`,
+        };
+
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                console.error('Error sharing:', err);
+            }
+        } else {
+            // Fallback for browsers that do not support Web Share API
+            copyToClipboard(shareData.url, 'Link');
+        }
     };
 
     const copyToClipboard = (text: string, label: string) => {
@@ -109,6 +132,14 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                 className="h-full w-full object-cover"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
+                            {/* Share Button */}
+                            <button
+                                onClick={handleShare}
+                                className="absolute right-16 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-colors"
+                            >
+                                <Share2 className="h-4 w-4" />
+                            </button>
 
                             {/* Close Button */}
                             <button
@@ -250,21 +281,82 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                 </div>
                             </div>
 
+                            {/* Featured Products Section */}
+                            {vendor.products && vendor.products.length > 0 && (
+                                <div className="mb-6">
+                                    <h3 className="font-serif text-lg font-bold text-luxury-black mb-4 flex items-center justify-between">
+                                        <span>Featured Products</span>
+                                        <Badge variant="secondary" className="text-[10px]">
+                                            {vendor.products.length} Items
+                                        </Badge>
+                                    </h3>
+                                    <div className="space-y-4">
+                                        {vendor.products.map((product) => (
+                                            <div key={product.id} className="flex gap-4 p-3 rounded-2xl bg-gray-50 border border-gray-100 group transition-all hover:bg-white hover:shadow-md hover:border-gold-200">
+                                                <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border border-gray-100">
+                                                    <img
+                                                        src={product.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80'}
+                                                        alt={product.name}
+                                                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                                    />
+                                                </div>
+                                                <div className="flex-1 flex flex-col min-w-0">
+                                                    <div className="flex justify-between items-start mb-1">
+                                                        <h4 className="font-bold text-luxury-black text-sm truncate pr-2">{product.name}</h4>
+                                                        <span className="font-bold text-gold-600 text-sm whitespace-nowrap">₹{product.price}</span>
+                                                    </div>
+                                                    <p className="text-[11px] text-gray-500 line-clamp-2 mb-2 leading-relaxed">
+                                                        {product.description}
+                                                    </p>
+                                                    <div className="mt-auto flex justify-between items-center">
+                                                        <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">{product.category}</span>
+                                                        <button 
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                const isInWishlist = wishlist.some((p: any) => p.id === product.id);
+                                                                if (isInWishlist) {
+                                                                    removeFromWishlist(product.id);
+                                                                } else {
+                                                                    addToWishlist({
+                                                                        ...product,
+                                                                        vendorId: vendor.id,
+                                                                        vendorName: vendor.name,
+                                                                        vendorPhone: vendor.phone
+                                                                    });
+                                                                }
+                                                            }}
+                                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all ${
+                                                                wishlist.some(p => p.id === product.id)
+                                                                    ? 'bg-red-50 text-red-500 border border-red-100'
+                                                                    : 'bg-white text-luxury-black border border-gray-200 hover:border-gold-300 hover:bg-gold-50'
+                                                            }`}
+                                                        >
+                                                            <Heart className={`h-3 w-3 ${wishlist.some(p => p.id === product.id) ? 'fill-current' : ''}`} />
+                                                            {wishlist.some(p => p.id === product.id) ? 'In Wishlist' : 'Add to Wishlist'}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Gallery Section */}
-                            {vendor.gallery && vendor.gallery.length > 0 && (
+                            {vendor.galleryImages && vendor.galleryImages.length > 0 && (
                                 <div className="mb-6">
                                     <h3 className="font-serif text-lg font-bold text-luxury-black mb-3 flex items-center gap-2">
                                         <Image className="h-5 w-5 text-gold-600" />
                                         Gallery
                                     </h3>
                                     <div className="grid grid-cols-3 gap-2">
-                                        {vendor.gallery.map((image, index) => (
+                                        {vendor.galleryImages.map((img, index) => (
                                             <div
                                                 key={index}
                                                 className="aspect-square rounded-xl overflow-hidden border border-gold-100 hover:border-gold-300 transition-all cursor-pointer group"
                                             >
                                                 <img
-                                                    src={image}
+                                                    src={img.imageUrl}
                                                     alt={`${vendor.name} gallery ${index + 1}`}
                                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                                 />
@@ -284,17 +376,42 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                 Write a Review
                             </Button>
 
-                            {/* Visit Website Button */}
-                            {vendor.isPremium && vendor.websiteUuid && (
-                                <Button
-                                    className="w-full bg-luxury-black hover:bg-gold-600 text-white py-4"
-                                    onClick={() => window.location.href = `/store/${vendor.websiteUuid}`}
-                                >
-                                    <Globe className="mr-2 h-4 w-4" />
-                                    Visit Full Website
-                                    <ExternalLink className="ml-2 h-4 w-4" />
-                                </Button>
-                            )}
+                            {/* Website Links */}
+                            <div className="flex flex-col gap-3">
+                                {vendor.planType === 'card_website' && vendor.websiteUrl && (
+                                    <Button
+                                        className="w-full bg-luxury-black hover:bg-gold-600 text-white py-4"
+                                        onClick={() => window.open(vendor.websiteUrl, '_blank')}
+                                    >
+                                        <Globe className="mr-2 h-4 w-4" />
+                                        {t.visitWebsite}
+                                        <ExternalLink className="ml-2 h-4 w-4" />
+                                    </Button>
+                                )}
+
+                                {vendor.planType === 'card_website' && vendor.websiteUuid && (
+                                    <Button
+                                        variant={vendor.websiteUrl ? "outline" : "primary"}
+                                        className={`w-full py-4 ${!vendor.websiteUrl ? 'bg-luxury-black hover:bg-gold-600 text-white' : 'border-gold-200 hover:border-gold-400 hover:bg-gold-50 text-luxury-black'}`}
+                                        onClick={() => window.location.href = `/store/${vendor.websiteUuid}`}
+                                    >
+                                        <Store className="mr-2 h-4 w-4" />
+                                        {t.visitWebsite}
+                                        <ExternalLink className="ml-2 h-4 w-4" />
+                                    </Button>
+                                )}
+
+                                {(vendor.planType !== 'card_website' || (!vendor.websiteUrl && !vendor.websiteUuid)) && (
+                                    <Button
+                                        disabled
+                                        variant="ghost"
+                                        className="w-full bg-gray-50 border-gray-200 cursor-not-allowed text-gray-400 py-4"
+                                    >
+                                        <Store className="mr-2 h-4 w-4" />
+                                        {t.listingOnly}
+                                    </Button>
+                                )}
+                            </div>
                         </div>
 
                         {/* Bottom Safe Area for Mobile */}

@@ -3,8 +3,8 @@ import postgres from 'postgres';
 import * as schema from './schema';
 
 // Use a singleton pattern to prevent multiple connection pools being created
-// especially important during Hot Module Replacement (HMR) in development
-const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5434/vanij_db';
+// msespecially important during Hot Module Replacement (HMR) in development
+const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5434/gocal_db';
 
 /**
  * Stable Database Client Singleton

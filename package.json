@@ -1,5 +1,5 @@
 {
-    "name": "vanij-monorepo",
+    "name": "gocal-monorepo",
     "private": true,
     "packageManager": "npm@11.6.0",
     "scripts": {

@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
-import { Heart, MapPin, Star, Phone, ExternalLink, Store } from 'lucide-react';
-import { motion, Variants } from 'framer-motion';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Heart, MapPin, Star, Phone, ExternalLink, Store, Filter } from 'lucide-react';
+import { motion, Variants, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '../context/AppContext';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -36,6 +36,24 @@ const itemVariants: Variants = {
 
 export const MyFavorites: React.FC = () => {
     const { favorites, isAuthenticated } = useAppContext();
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+    const categories = useMemo(() => {
+        const cats = favorites.map(place => place.primaryTypeDisplayName?.text || (place as unknown as Vendor).category).filter(Boolean) as string[];
+        return Array.from(new Set(cats)).sort();
+    }, [favorites]);
+
+    const filteredFavorites = useMemo(() => {
+        if (!selectedCategory) return favorites;
+        return favorites.filter(place => (place.primaryTypeDisplayName?.text || (place as unknown as Vendor).category) === selectedCategory);
+    }, [favorites, selectedCategory]);
+
+    // Reset category if it doesn't exist anymore
+    useEffect(() => {
+        if (selectedCategory && !categories.includes(selectedCategory)) {
+            setSelectedCategory(null);
+        }
+    }, [categories, selectedCategory]);
 
     return (
         <div className="min-h-screen bg-luxury-cream">
@@ -84,7 +102,7 @@ export const MyFavorites: React.FC = () => {
                             Saved Places
                         </h2>
                         <p className="text-sm text-gray-500">
-                            {favorites.length} {favorites.length === 1 ? 'place' : 'places'} saved
+                            {filteredFavorites.length} {filteredFavorites.length === 1 ? 'place' : 'places'} saved
                         </p>
                     </div>
                     <Link href="/vadodara">
@@ -94,6 +112,46 @@ export const MyFavorites: React.FC = () => {
                         </Button>
                     </Link>
                 </div>
+
+                {/* Category Filters */}
+                {isAuthenticated && categories.length > 0 && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="mb-8 w-full overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar"
+                    >
+                        <div className="flex gap-3 min-w-max items-center">
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => setSelectedCategory(null)}
+                                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 border backdrop-blur-sm ${
+                                    selectedCategory === null
+                                    ? 'bg-luxury-black text-white border-luxury-black shadow-md'
+                                    : 'bg-white shadow-sm text-gray-600 border-gray-200 hover:border-gold-300 hover:text-luxury-black hover:bg-gold-50/50'
+                                }`}
+                            >
+                                All Collections
+                            </motion.button>
+                            {categories.map((category) => (
+                                <motion.button
+                                    key={category}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => setSelectedCategory(category)}
+                                    className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 border backdrop-blur-sm ${
+                                        selectedCategory === category
+                                        ? 'bg-luxury-black text-white border-luxury-black shadow-md'
+                                        : 'bg-white shadow-sm text-gray-600 border-gray-200 hover:border-gold-300 hover:text-luxury-black hover:bg-gold-50/50'
+                                    }`}
+                                >
+                                    {category}
+                                </motion.button>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
 
                 {/* Not Authenticated State */}
                 {!isAuthenticated && (
@@ -139,21 +197,50 @@ export const MyFavorites: React.FC = () => {
                     </motion.div>
                 )}
 
+                {/* Empty Filter State */}
+                {isAuthenticated && favorites.length > 0 && filteredFavorites.length === 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-center py-20"
+                    >
+                        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full mb-6">
+                            <Filter className="w-10 h-10 text-gray-400" />
+                        </div>
+                        <h3 className="text-2xl font-serif font-medium text-gray-900 mb-3">No places in this collection</h3>
+                        <p className="text-gray-500 mb-6 max-w-md mx-auto">
+                            You haven't saved any places matching this category yet.
+                        </p>
+                        <Button 
+                            onClick={() => setSelectedCategory(null)}
+                            className="bg-gold-500 hover:bg-gold-600 text-luxury-black"
+                        >
+                            View All Collections
+                        </Button>
+                    </motion.div>
+                )}
+
                 {/* Favorites Grid */}
-                {isAuthenticated && favorites.length > 0 && (
+                {isAuthenticated && filteredFavorites.length > 0 && (
                     <motion.div
                         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
                         variants={containerVariants}
                         initial="hidden"
                         animate="visible"
                     >
-                        {favorites.map((place) => (
-                            <motion.div
-                                key={place.id}
-                                variants={itemVariants}
-                                className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col h-full"
-                                whileHover={{ y: -4 }}
-                            >
+                        <AnimatePresence mode="popLayout">
+                            {filteredFavorites.map((place) => (
+                                <motion.div
+                                    layout
+                                    key={place.id}
+                                    variants={itemVariants}
+                                    initial="hidden"
+                                    animate="visible"
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    transition={{ duration: 0.3, type: "spring", bounce: 0.4 }}
+                                    className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col h-full"
+                                    whileHover={{ y: -4 }}
+                                >
                                 {/* Image */}
                                 <div className="relative h-44 overflow-hidden">
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10" />
@@ -251,6 +338,7 @@ export const MyFavorites: React.FC = () => {
                                 </div>
                             </motion.div>
                         ))}
+                        </AnimatePresence>
                     </motion.div>
                 )}
             </div>

@@ -31,3 +31,17 @@ export const languageEnum = pgEnum('language', [
     'hi',
     'gu',
 ]);
+
+export const cardRequestStatusEnum = pgEnum('card_request_status', [
+    'PENDING',
+    'APPROVED',
+    'REJECTED',
+]);
+
+export const cardRequestRejectionReasonEnum = pgEnum('card_request_rejection_reason', [
+    'INCOMPLETE_INFO',
+    'DUPLICATE',
+    'INAPPROPRIATE',
+    'INVALID_BUSINESS',
+    'OTHER',
+]);

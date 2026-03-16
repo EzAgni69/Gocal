@@ -21,6 +21,10 @@ export interface GooglePlaceResponse {
     primaryTypeDisplayName?: {
         text: string;
     };
+    editorialSummary?: {
+        text: string;
+        languageCode: string;
+    };
     photoUrl?: string | null;
     location?: {
         latitude: number;

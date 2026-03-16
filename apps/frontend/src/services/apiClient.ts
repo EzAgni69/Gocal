@@ -43,6 +43,14 @@ export async function apiClient(endpoint: string, options: RequestOptions = {}):
     const isAbsoluteUrl = endpoint.startsWith('http://') || endpoint.startsWith('https://');
     const url = isAbsoluteUrl ? endpoint : `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
 
-    const response = await fetch(url, config);
-    return response;
+    console.log(`[apiClient] Request: ${options.method || 'GET'} ${url}`, options);
+
+    try {
+        const response = await fetch(url, config);
+        console.log(`[apiClient] Response: ${response.status} ${url}`);
+        return response;
+    } catch (error) {
+        console.error(`[apiClient] Fetch error for ${url}:`, error);
+        throw error;
+    }
 }

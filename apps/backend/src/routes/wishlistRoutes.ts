@@ -153,7 +153,7 @@ router.get('/:id/whatsapp', authenticate, async (req: AuthenticatedRequest, res:
 
         // Generate WhatsApp messages per vendor
         const messages = Object.entries(vendorGroups).map(([vendorId, group]) => {
-            const message = `Hi ${group.vendorName}! 🛍️\n\nI'm interested in the following products:\n\n${group.items.join('\n')}\n\nPlease share availability and details.\n\n— Sent via vanij.co`;
+            const message = `Hi ${group.vendorName}! 🛍️\n\nI'm interested in the following products:\n\n${group.items.join('\n')}\n\nPlease share availability and details.\n\n— Sent via gocal.co`;
             const encodedMessage = encodeURIComponent(message);
             const phone = group.phone?.replace(/[^0-9]/g, '') || '';
 

@@ -1,15 +1,37 @@
-const fetch = require('node:fetch');
+const http = require('http');
+const fs = require('fs');
 
-async function test() {
-  const url = 'http://localhost:3001/api/places/search?query=pharmacies&pincode=110001'\;
-  console.log('Sending request to', url);
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    console.log(`Received ${data.places?.length} places. First place:`, data.places?.[0]?.displayName?.text);
-  } catch (err) {
-    console.error(err);
+const data = JSON.stringify({
+  planType: 'card_only',
+  fullName: 'Test User',
+  phone: '1234567890',
+  businessName: 'Test Business',
+  category: 'Other',
+  city: 'Test City'
+});
+
+const options = {
+  hostname: 'localhost',
+  port: 3001,
+  path: '/api/card-requests',
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Content-Length': data.length
   }
-}
+};
 
-test();
+const req = http.request(options, res => {
+  let body = '';
+  res.on('data', d => { body += d; });
+  res.on('end', () => {
+    fs.writeFileSync('/Users/agni/Developer/Vanij/api-resp.txt', `STATUS: ${res.statusCode}\nBODY: ${body}`);
+  });
+});
+
+req.on('error', error => {
+    fs.writeFileSync('/Users/agni/Developer/Vanij/api-resp.txt', `ERROR: ${error.message}`);
+});
+
+req.write(data);
+req.end();

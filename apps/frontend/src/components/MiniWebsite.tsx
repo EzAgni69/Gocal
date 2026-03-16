@@ -28,14 +28,19 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
 
   const handleWhatsApp = () => {
     if (!requireAuth('message this vendor')) return;
-    const message = encodeURIComponent(`Hi, I found your store on Vanij.co and would like to inquire about your products.`);
+    const message = encodeURIComponent(`Hi, I found your store on Gocal.co and would like to inquire about your products.`);
     const phoneNumber = vendor.phone.replace(/\D/g, '');
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
   };
 
   const handleAddToWishlist = (product: Product) => {
     if (!requireAuth('add items to wishlist')) return;
-    addToWishlist(product);
+    addToWishlist({
+      ...product,
+      vendorId: vendor.id,
+      vendorName: vendor.name,
+      vendorPhone: vendor.phone
+    });
   };
 
   const handleWriteReview = () => {
@@ -74,8 +79,8 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
           <div className="hidden lg:flex items-center gap-10">
             {[
               { id: 'home', label: 'Overview' },
-              { id: 'products', label: 'Collection' },
-              { id: 'offers', label: 'Privileges' },
+              { id: 'products', label: 'Products' },
+              { id: 'offers', label: 'Offers' },
               { id: 'gallery', label: 'Gallery' },
               { id: 'reviews', label: 'Testimonials' },
             ].map((tab) => (
@@ -109,7 +114,7 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
         <div className="lg:hidden flex justify-between gap-1 px-2 py-3 overflow-x-auto border-t border-gray-100 bg-white/95 backdrop-blur-md">
           {[
             { id: 'home', label: 'Home', icon: MapPin },
-            { id: 'products', label: 'Collection', icon: ShoppingBag },
+            { id: 'products', label: 'Products', icon: ShoppingBag },
             { id: 'offers', label: 'Offers', icon: Tag },
             { id: 'gallery', label: 'Gallery', icon: ImageIcon },
             { id: 'reviews', label: 'Reviews', icon: Star },
@@ -178,7 +183,7 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                       onClick={() => setActiveTab('products')}
                       className="mt-12 px-10 py-4 bg-white text-black text-xs uppercase tracking-[0.2em] font-bold hover:bg-gray-100 transition-colors shadow-[0_0_40px_rgba(255,255,255,0.3)]"
                     >
-                      Discover Collection
+                      Discover Products
                     </button>
                   </motion.div>
                 </div>
@@ -249,7 +254,7 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
             >
               <div className="text-center mb-20">
                 <p className="text-xs tracking-[0.3em] uppercase text-gray-400 mb-4 font-semibold">Exquisite Pieces</p>
-                <h3 className="font-serif text-4xl md:text-5xl text-black mb-8">The Collection</h3>
+                <h3 className="font-serif text-4xl md:text-5xl text-black mb-8">The Products</h3>
                 <div className="w-16 h-px bg-black mx-auto mt-6"></div>
               </div>
               
@@ -283,7 +288,7 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
               </div>
               {!vendor.products?.length && (
                 <div className="text-center py-32 border border-gray-100 bg-white shadow-sm">
-                  <p className="uppercase tracking-[0.2em] text-gray-400 font-semibold mb-2">Collection Empty</p>
+                  <p className="uppercase tracking-[0.2em] text-gray-400 font-semibold mb-2">Products Empty</p>
                   <p className="font-serif text-2xl text-black">No pieces available currently.</p>
                 </div>
               )}
@@ -303,7 +308,7 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
             >
               <div className="text-center mb-20">
                 <p className="text-xs tracking-[0.3em] uppercase text-gray-400 mb-4 font-semibold">Exclusive Rewards</p>
-                <h3 className="font-serif text-4xl md:text-5xl text-black mb-8">Privileges</h3>
+                <h3 className="font-serif text-4xl md:text-5xl text-black mb-8">Offers</h3>
                 <div className="w-16 h-px bg-black mx-auto mt-6"></div>
               </div>
               
@@ -329,7 +334,7 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
               </div>
               {!vendor.offers?.length && (
                 <div className="text-center py-32 border border-gray-100 bg-white">
-                  <p className="font-serif text-2xl text-black">No exclusive privileges active.</p>
+                  <p className="font-serif text-2xl text-black">No exclusive offers active.</p>
                 </div>
               )}
             </motion.div>
@@ -353,14 +358,19 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
               </div>
 
               <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
-                {vendor.gallery?.map((img, idx) => (
+                {vendor.galleryImages?.map((img, idx) => (
                   <div key={idx} className="break-inside-avoid relative group overflow-hidden bg-gray-100">
-                    <img src={img} alt="Gallery" className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+                    <img src={img.imageUrl} alt={img.caption || "Gallery"} className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+                    {img.caption && (
+                      <div className="absolute bottom-0 left-0 right-0 p-4 bg-black/60 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                        {img.caption}
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500"></div>
                   </div>
                 ))}
               </div>
-              {!vendor.gallery?.length && (
+              {!vendor.galleryImages?.length && (
                 <div className="text-center py-32 border border-gray-100 bg-white">
                   <p className="font-serif text-2xl text-black">The gallery is currently empty.</p>
                 </div>

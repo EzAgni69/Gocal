@@ -8,7 +8,7 @@ export default defineConfig({
     out: './drizzle',
     dialect: 'postgresql',
     dbCredentials: {
-        url: process.env.DATABASE_URL || 'postgresql://localhost:5432/vanij_db',
+        url: process.env.DATABASE_URL || 'postgresql://localhost:5432/gocal_db',
     },
     verbose: true,
     strict: true,

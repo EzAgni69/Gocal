@@ -98,11 +98,11 @@ export const MOCK_VENDORS: Vendor[] = [
       { id: 'p2', name: 'Diamond Solitaire Ring', price: 45000, image: 'https://picsum.photos/400/400?random=11', description: '18k White Gold', category: 'Rings' },
       { id: 'p3', name: 'Antique Gold Bangles', price: 85000, image: 'https://picsum.photos/400/400?random=12', description: 'Temple jewelry design', category: 'Bangles' },
     ],
-    gallery: [
-      'https://picsum.photos/600/400?random=20',
-      'https://picsum.photos/600/400?random=21',
-      'https://picsum.photos/600/400?random=22',
-      'https://picsum.photos/600/400?random=23',
+    galleryImages: [
+      { id: 'g1', vendorId: 'v1', imageUrl: 'https://picsum.photos/600/400?random=20', sortOrder: 0 },
+      { id: 'g2', vendorId: 'v1', imageUrl: 'https://picsum.photos/600/400?random=21', sortOrder: 1 },
+      { id: 'g3', vendorId: 'v1', imageUrl: 'https://picsum.photos/600/400?random=22', sortOrder: 2 },
+      { id: 'g4', vendorId: 'v1', imageUrl: 'https://picsum.photos/600/400?random=23', sortOrder: 3 },
     ],
     offers: [
       { title: 'Diwali Dhamaka', code: 'DIWALI20', discount: '20% Off Making Charges' }
@@ -123,11 +123,12 @@ export const MOCK_VENDORS: Vendor[] = [
     rating: 4.2,
     reviewCount: 45,
     isPremium: false, // Standard vendor
+    planType: 'card_only',
     verified: true,
-    gallery: [
-      'https://picsum.photos/600/400?random=30',
-      'https://picsum.photos/600/400?random=31',
-      'https://picsum.photos/600/400?random=32',
+    galleryImages: [
+      { id: 'g5', vendorId: 'v2', imageUrl: 'https://picsum.photos/600/400?random=30', sortOrder: 0 },
+      { id: 'g6', vendorId: 'v2', imageUrl: 'https://picsum.photos/600/400?random=31', sortOrder: 1 },
+      { id: 'g7', vendorId: 'v2', imageUrl: 'https://picsum.photos/600/400?random=32', sortOrder: 2 },
     ],
   },
   {
@@ -151,9 +152,9 @@ export const MOCK_VENDORS: Vendor[] = [
       { id: 'p4', name: 'Persian Rug', price: 25000, image: 'https://picsum.photos/400/400?random=13', description: 'Hand-knotted wool', category: 'Rugs' },
       { id: 'p5', name: 'Crystal Chandelier', price: 12000, image: 'https://picsum.photos/400/400?random=14', description: 'Bohemian crystal', category: 'Lighting' },
     ],
-    gallery: [
-      'https://picsum.photos/600/400?random=24',
-      'https://picsum.photos/600/400?random=25',
+    galleryImages: [
+      { id: 'g8', vendorId: 'v3', imageUrl: 'https://picsum.photos/600/400?random=24', sortOrder: 0 },
+      { id: 'g9', vendorId: 'v3', imageUrl: 'https://picsum.photos/600/400?random=25', sortOrder: 1 },
     ],
     offers: []
   },
@@ -177,12 +178,12 @@ export const MOCK_VENDORS: Vendor[] = [
       { id: 'p6', name: 'Alphonso Mangoes', price: 1200, unit: 'dozen', quantity: 50, category: 'Fruits', inStock: true },
       { id: 'p7', name: 'Organic Spinach', price: 40, unit: 'kg', quantity: 20, category: 'Vegetables', inStock: true },
     ],
-    gallery: [
-      'https://picsum.photos/600/400?random=33',
-      'https://picsum.photos/600/400?random=34',
-      'https://picsum.photos/600/400?random=35',
-      'https://picsum.photos/600/400?random=36',
-      'https://picsum.photos/600/400?random=37',
+    galleryImages: [
+      { id: 'g10', vendorId: 'v4', imageUrl: 'https://picsum.photos/600/400?random=33', sortOrder: 0 },
+      { id: 'g11', vendorId: 'v4', imageUrl: 'https://picsum.photos/600/400?random=34', sortOrder: 1 },
+      { id: 'g12', vendorId: 'v4', imageUrl: 'https://picsum.photos/600/400?random=35', sortOrder: 2 },
+      { id: 'g13', vendorId: 'v4', imageUrl: 'https://picsum.photos/600/400?random=36', sortOrder: 3 },
+      { id: 'g14', vendorId: 'v4', imageUrl: 'https://picsum.photos/600/400?random=37', sortOrder: 4 },
     ]
   },
   {
@@ -207,8 +208,8 @@ export const MOCK_VENDORS: Vendor[] = [
       { id: 'p-e2', name: 'Electrical Wiring', price: 500, image: 'https://plus.unsplash.com/premium_photo-1682144706912-88d447f5517f?q=80&w=2070&auto=format&fit=crop', description: 'Fault finding and complete house wiring solutions', category: 'Wiring' },
       { id: 'p-e3', name: 'Switchboard Fixing', price: 200, image: 'https://images.unsplash.com/photo-1596765796791-a1e6878b6672?q=80&w=2070&auto=format&fit=crop', description: 'Repairing or replacing electrical switches and sockets', category: 'Repairs' },
     ],
-    gallery: [
-      'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?q=80&w=2069&auto=format&fit=crop'
+    galleryImages: [
+      { id: 'g15', vendorId: 'v-elec-1', imageUrl: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?q=80&w=2069&auto=format&fit=crop', sortOrder: 0 }
     ],
   },
   {
@@ -233,8 +234,8 @@ export const MOCK_VENDORS: Vendor[] = [
       { id: 'p-pl2', name: 'Tap/Faucet Change', price: 150, image: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=2070&auto=format&fit=crop', description: 'Installation of new sanitary ware and taps', category: 'Installation' },
       { id: 'p-pl3', name: 'Geyser Installation', price: 600, image: 'https://plus.unsplash.com/premium_photo-1681400685040-5e60d5b76615?q=80&w=2080&auto=format&fit=crop', description: 'Safe mounting and connection of water heaters', category: 'Appliances' },
     ],
-    gallery: [
-      'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=2070&auto=format&fit=crop'
+    galleryImages: [
+      { id: 'g16', vendorId: 'v-plumb-1', imageUrl: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=2070&auto=format&fit=crop', sortOrder: 0 }
     ],
   },
   {
@@ -252,7 +253,8 @@ export const MOCK_VENDORS: Vendor[] = [
     rating: 4.9,
     reviewCount: 156,
     isPremium: true,
-    websiteUuid: 'uuid-marble-arts',
+    planType: 'card_website',
+    websiteUuid: 'demo-uuid-v3',
     verified: true,
     products: [
       { id: 'p-m1', name: 'Marble Elephant Set', price: 4500, image: 'https://images.unsplash.com/photo-1541414777501-792773347f3e?q=80&w=2064&auto=format&fit=crop', description: 'Hand-carved marble elephants (Set of 2)', category: 'Statues' },
@@ -260,10 +262,10 @@ export const MOCK_VENDORS: Vendor[] = [
       { id: 'p-m3', name: 'Marble Inlay Table Top', price: 28000, image: 'https://images.unsplash.com/photo-1605335198031-6e866e4a2e58?q=80&w=2050&auto=format&fit=crop', description: 'Pietra Dura floral inlay work', category: 'Furniture' },
       { id: 'p-m4', name: 'Buddha Head Bust', price: 8500, image: 'https://images.unsplash.com/photo-1534066060851-d96a77fbedca?q=80&w=2112&auto=format&fit=crop', description: 'Serene meditating Buddha statue', category: 'Statues' },
     ],
-    gallery: [
-      'https://images.unsplash.com/photo-1586716402243-7b4d13e2f9d3?q=80&w=2071&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1574577189600-41ab64d0bb02?q=80&w=2074&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1632882830869-7da7a1bc7e20?q=80&w=2070&auto=format&fit=crop'
+    galleryImages: [
+      { id: 'g17', vendorId: 'v-marble-1', imageUrl: 'https://images.unsplash.com/photo-1586716402243-7b4d13e2f9d3?q=80&w=2071&auto=format&fit=crop', sortOrder: 0 },
+      { id: 'g18', vendorId: 'v-marble-1', imageUrl: 'https://images.unsplash.com/photo-1574577189600-41ab64d0bb02?q=80&w=2074&auto=format&fit=crop', sortOrder: 1 },
+      { id: 'g19', vendorId: 'v-marble-1', imageUrl: 'https://images.unsplash.com/photo-1632882830869-7da7a1bc7e20?q=80&w=2070&auto=format&fit=crop', sortOrder: 2 }
     ],
   }
 ];
@@ -286,8 +288,8 @@ export const MOCK_ANALYTICS: AnalyticsData[] = [
 export const TRANSLATIONS = {
   en: {
     searchPlaceholder: "Search for jewelry, decor...",
-    explore: "Explore Premium Collections",
-    visitWebsite: "Visit Website",
+    // explore: "Explore Premium Collections",
+    visitWebsite: "Website",
     callNow: "Call Now",
     open: "Open Now",
     closed: "Closed",
@@ -298,11 +300,12 @@ export const TRANSLATIONS = {
     wishlist: "Wishlist",
     addToWishlist: "Add to Wishlist",
     sendInquiry: "Send Inquiry",
+    listingOnly: "Listing Only",
   },
   hi: {
     searchPlaceholder: "आभूषण, सजावट खोजें...",
-    explore: "प्रीमियम संग्रह खोजें",
-    visitWebsite: "वेबसाइट पर जाएं",
+    // explore: "प्रीमियम संग्रह खोजें",
+    visitWebsite: "वेबसाइट",
     callNow: "अभी कॉल करें",
     open: "खुला है",
     closed: "बंद है",
@@ -313,11 +316,12 @@ export const TRANSLATIONS = {
     wishlist: "इच्छा सूची",
     addToWishlist: "इच्छा सूची में डालें",
     sendInquiry: "पूछताछ भेजें",
+    listingOnly: "केवल लिस्टिंग",
   },
   gu: {
     searchPlaceholder: "જ્વેલરી, ડેકોર શોધો...",
-    explore: "પ્રીમિયમ કલેક્શન જુઓ",
-    visitWebsite: "વેબસાઇટની મુલાકાત લો",
+    // explore: "પ્રીમિયમ કલેક્શન જુઓ",
+    visitWebsite: "વેબસાઇટ",
     callNow: "હમણાં કોલ કરો",
     open: "ખુલ્લું છે",
     closed: "બંધ છે",
@@ -328,5 +332,6 @@ export const TRANSLATIONS = {
     wishlist: "વિશલિસ્ટ",
     addToWishlist: "વિશલિસ્ટમાં ઉમેરો",
     sendInquiry: "પૂછપરછ મોકલો",
+    listingOnly: "માત્ર લિસ્ટિંગ",
   }
 };

@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0B1221;
-  --foreground: #F0F4F8;
+  --background: #F0F4F8; /* Luxury Cream */
+  --foreground: #02040a; /* Luxury Black */
 
   /* Brand Colors */
   --color-luxury-black: #02040a;

@@ -1,6 +1,8 @@
 import { Router, Response } from 'express';
 import { db } from 'database';
 import { users } from 'database/src/schema/users';
+import { vendors } from 'database/src/schema/vendors';
+import { ilike, or, and, eq, count, desc, sql } from 'drizzle-orm';
 import { authenticate, requireRole, AuthenticatedRequest } from '../middleware/auth';
 import { authAdmin } from '../config/firebase';
 
@@ -64,6 +66,144 @@ router.post('/', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), async (req: 
         }
 
         res.status(500).json({ error: 'Failed to create user' });
+    }
+});
+
+/**
+ * GET /api/users
+ * Super Admin route to get all users with filtering and pagination
+ */
+router.get('/', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 20;
+        const search = req.query.search as string || '';
+        const role = req.query.role as string || '';
+        const isActiveStr = req.query.isActive as string || '';
+        const offset = (page - 1) * limit;
+
+        const baseQuery = db.select({
+            id: users.id,
+            email: users.email,
+            name: users.name,
+            phone: users.phone,
+            role: users.role,
+            isActive: users.isActive,
+            createdAt: users.createdAt,
+            vendorName: sql<string>`string_agg(${vendors.name}, ', ')`.as('vendor_name')
+        })
+        .from(users)
+        .leftJoin(vendors, eq(users.id, vendors.ownerId))
+        .groupBy(users.id);
+
+        let conditions: any[] = [];
+        
+        if (search) {
+            const searchPattern = `%${search}%`;
+            conditions.push(or(
+                ilike(users.name, searchPattern),
+                ilike(users.email, searchPattern),
+                ilike(users.phone, searchPattern),
+                ilike(vendors.name, searchPattern)
+            ));
+        }
+
+        if (role) {
+            conditions.push(eq(users.role, role as any));
+        }
+
+        if (isActiveStr !== '') {
+            conditions.push(eq(users.isActive, isActiveStr === 'true'));
+        }
+
+        if (conditions.length > 0) {
+            baseQuery.where(and(...conditions));
+        }
+
+        const userList = await baseQuery
+            .orderBy(desc(users.createdAt))
+            .limit(limit)
+            .offset(offset);
+
+        // Get total count using distinct to prevent duplicates in count
+        const countQuery = db.select({ count: sql<number>`count(distinct ${users.id})` })
+            .from(users)
+            .leftJoin(vendors, eq(users.id, vendors.ownerId));
+            
+        if (conditions.length > 0) {
+            countQuery.where(and(...conditions));
+        }
+        
+        const totalResult = await countQuery;
+        const total = Number(totalResult[0].count);
+
+        res.json({
+            users: userList,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
+});
+
+/**
+ * PUT /api/users/:id/role
+ * Super Admin route to update a user's role
+ */
+router.put('/:id/role', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        const userId = req.params.id;
+        const { role } = req.body;
+
+        if (!role) {
+            res.status(400).json({ error: 'Role is required' });
+            return;
+        }
+
+        // Validate role against enum
+        const validRoles = ['CONSUMER', 'VENDOR', 'ADMIN', 'SUPER_ADMIN'];
+        if (!validRoles.includes(role)) {
+            res.status(400).json({ error: 'Invalid role' });
+            return;
+        }
+
+        // 1. Get user to find Firebase UID
+        const existingUsers = await db.select().from(users).where(eq(users.id, userId));
+        if (existingUsers.length === 0) {
+            res.status(404).json({ error: 'User not found' });
+            return;
+        }
+        
+        const user = existingUsers[0];
+
+        // 2. Update Firebase Custom Claims
+        if (user.firebaseUid) {
+            await authAdmin.setCustomUserClaims(user.firebaseUid, { role });
+        }
+
+        // 3. Update Postgres
+        const updatedUsers = await db.update(users)
+            .set({ role: role as any })
+            .where(eq(users.id, userId))
+            .returning();
+
+        res.json({
+            message: 'User role updated successfully',
+            user: {
+                id: updatedUsers[0].id,
+                email: updatedUsers[0].email,
+                role: updatedUsers[0].role
+            }
+        });
+    } catch (error) {
+        console.error('Error updating user role:', error);
+        res.status(500).json({ error: 'Failed to update user role' });
     }
 });
 

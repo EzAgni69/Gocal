@@ -1,4 +1,4 @@
-// Database package - vanij.co
+// Database package - gocal.co
 export { db, migrationClient } from './db';
 export type { Database } from './db';
 export * from './schema';

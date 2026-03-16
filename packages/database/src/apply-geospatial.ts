@@ -5,7 +5,7 @@ import * as schema from './schema';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5434/vanij_db';
+const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5434/gocal_db';
 
 const migrationClient = postgres(connectionString, { max: 1 });
 const db = drizzle(migrationClient, { schema });
