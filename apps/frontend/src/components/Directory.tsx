@@ -8,6 +8,9 @@ import { motion, Variants } from 'framer-motion';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ContactCardModal } from './ContactCardModal';
+import { useTranslation } from '../providers/TranslationProvider';
+import { formatOpeningHours } from '../utils/openingHours';
+
 
 interface DirectoryProps {
   vendors: Vendor[];
@@ -43,8 +46,8 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
     removeFromFavorites,
     isFavorite
   } = useAppContext();
+  const { t } = useTranslation();
   const router = useRouter();
-  const t = TRANSLATIONS[language];
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPincode, setSelectedPincode] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -68,12 +71,23 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
     window.location.href = `tel:${vendor.phone}`;
   };
 
-  const filteredVendors = vendors.filter((v) => {
-    const matchesSearch = v.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesPincode = selectedPincode ? v.address?.includes(selectedPincode) : true;
-    const matchesCategory = selectedCategory ? v.category === selectedCategory : true;
-    return matchesSearch && matchesPincode && matchesCategory;
-  });
+  const filteredVendors = vendors
+    .filter((v) => {
+      const term = searchTerm.toLowerCase();
+      const matchesSearch = !term ||
+        v.name.toLowerCase().includes(term) ||
+        v.city.toLowerCase().includes(term) ||
+        v.phone.toLowerCase().includes(term);
+      const matchesPincode = selectedPincode ? v.address?.includes(selectedPincode) : true;
+      const matchesCategory = selectedCategory ? v.category === selectedCategory : true;
+      return matchesSearch && matchesPincode && matchesCategory;
+    })
+    .sort((a, b) => {
+      if (!a.createdAt && !b.createdAt) return 0;
+      if (!a.createdAt) return 1;
+      if (!b.createdAt) return -1;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
 
   return (
     <div className="min-h-screen bg-luxury-cream">
@@ -115,7 +129,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
               <Search className="text-gold-400 w-5 h-5 mr-3" />
               <input
                 type="text"
-                placeholder={t.searchPlaceholder}
+                placeholder={t('searchPlaceholder')}
                 className="w-full bg-transparent outline-none text-white placeholder-gray-400 font-medium"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -129,7 +143,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                 value={selectedPincode}
                 onChange={(e) => setSelectedPincode(e.target.value)}
               >
-                <option value="">All Pincodes</option>
+                <option value="">{t('All Pincodes')}</option>
                 {VADODARA_PINCODES.map((p) => (
                   <option key={p} value={p}>{p}</option>
                 ))}
@@ -143,7 +157,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
               >
-                <option value="">All Categories</option>
+                <option value="">{t('All Categories')}</option>
                 {CATEGORIES.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
@@ -162,9 +176,9 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8 sm:mb-12">
           <div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-luxury-black mb-2">
-              Featured Vendors
+              {t('Featured Vendors')}
             </h2>
-            <p className="text-sm sm:text-base text-gray-500">Discover our top-rated partners.</p>
+            <p className="text-sm sm:text-base text-gray-500">{t('Discover our top-rated partners.')}</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1 bg-white border border-gray-200 p-1 rounded-lg shadow-sm">
@@ -183,7 +197,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                     <List className="w-5 h-5" />
                 </button>
             </div>
-            <Button variant="outline" className="hidden sm:flex text-sm md:text-base">View Operations Map</Button>
+{/* <Button variant="outline" className="hidden sm:flex text-sm md:text-base">View Operations Map</Button> */}
           </div>
         </div>
 
@@ -218,7 +232,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
 
                 <div className="absolute top-4 left-4 z-20 flex gap-2">
                   <Badge variant={vendor.isOpen ? "success" : "secondary"} className="shadow-lg backdrop-blur-md bg-white/90">
-                    {vendor.isOpen ? t.open : t.closed}
+                    {vendor.isOpen ? t('Open') : t('Closed')}
                   </Badge>
                 </div>
 
@@ -275,12 +289,12 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
               <div className="p-4 sm:p-6 flex flex-col flex-grow relative">
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-luxury-charcoal font-serif group-hover:text-gold-600 transition-colors">{vendor.name}</h3>
+                    <h3 className="text-xl sm:text-2xl font-bold text-luxury-charcoal font-serif group-hover:text-gold-600 transition-colors">{t(vendor.name)}</h3>
                     <p className="text-sm text-gray-500 flex items-center mt-1">
-                      <MapPin className="w-3 h-3 mr-1 text-gold-500" /> {vendor.city}
+                      <MapPin className="w-3 h-3 mr-1 text-gold-500" /> {t(vendor.city)}
                     </p>
                     <p className="text-xs text-gray-400 flex items-center mt-1">
-                      <Clock className="w-3 h-3 mr-1 text-gold-500" /> 10:00 AM - 9:00 PM
+                      <Clock className="w-3 h-3 mr-1 text-gold-500" /> {formatOpeningHours(vendor.openingHours)}
                     </p>
                   </div>
                   <div className="flex flex-col items-end">
@@ -295,10 +309,10 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                 <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-200 to-transparent my-4" />
 
                 <p className="text-gray-600 text-sm line-clamp-2 mb-4">
-                  {vendor.shortDescription}
+                  {t(vendor.shortDescription)}
                 </p>
 
-                {/* Product Highlights */}
+                {/* Product Highlights 
                 {vendor.products && vendor.products.length > 0 && (
                   <div className="mb-4">
                     <p className="text-[10px] tracking-[0.2em] font-bold text-gray-400 uppercase mb-2">Product Highlights</p>
@@ -325,6 +339,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                     </div>
                   </div>
                 )}
+                */}
 
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-auto">
                   <Button
@@ -333,7 +348,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                     onClick={(e) => handleCallNow(e, vendor)}
                   >
                     <Phone className="w-4 h-4 mr-2" />
-                    {t.callNow}
+                    {t('Call Now')}
                   </Button>
 
                   {vendor.planType === 'card_website' && vendor.websiteUrl && (
@@ -345,7 +360,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                       className="flex-1 bg-luxury-black hover:bg-gold-600 text-white border-none"
                     >
                       <Globe className="w-4 h-4 mr-2" />
-                      {t.visitWebsite}
+                      {t('Visit Website')}
                     </Button>
                   )}
                   
@@ -359,13 +374,13 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                       className={`flex-1 ${!vendor.websiteUrl ? 'bg-luxury-black hover:bg-gold-600 text-white border-none' : 'border-gray-200 hover:border-gold-300 hover:bg-gold-50'}`}
                     >
                       <Store className="w-4 h-4 mr-2" />
-                      {t.visitWebsite}
+                      {t('Visit Website')}
                     </Button>
                   )}
 
                   {(vendor.planType !== 'card_website' || (!vendor.websiteUrl && !vendor.websiteUuid)) && (
                     <Button disabled variant="ghost" className="flex-1 cursor-not-allowed bg-gray-50 border-gray-200 text-gray-400">
-                      {t.listingOnly}
+                      {t('Listing Only')}
                     </Button>
                   )}
                 </div>
@@ -380,10 +395,10 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
             >
               <div className="flex flex-col w-full sm:w-auto flex-1 pr-4 mb-4 sm:mb-0">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1">
-                  <h3 className="text-lg font-bold text-luxury-charcoal font-serif group-hover:text-gold-600 transition-colors line-clamp-1">{vendor.name}</h3>
+                  <h3 className="text-lg font-bold text-luxury-charcoal font-serif group-hover:text-gold-600 transition-colors line-clamp-1">{t(vendor.name)}</h3>
                   <div className="flex gap-2 items-center shrink-0">
                     <Badge variant={vendor.isOpen ? "success" : "secondary"} className="text-[10px] px-2 py-0.5">
-                      {vendor.isOpen ? t.open : t.closed}
+                      {vendor.isOpen ? t('Open') : t('Closed')}
                     </Badge>
                     {vendor.isPremium && (
                       <Badge variant="premium" className="text-[10px] px-2 py-0.5 flex items-center gap-1">
@@ -395,10 +410,10 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
 
                 <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-sm text-gray-500 mt-1">
                   <span className="flex items-center line-clamp-1">
-                    <MapPin className="w-3.5 h-3.5 mr-1.5 text-gold-500 shrink-0" /> {vendor.city}
+                    <MapPin className="w-3.5 h-3.5 mr-1.5 text-gold-500 shrink-0" /> {t(vendor.city)}
                   </span>
                   <span className="flex items-center line-clamp-1">
-                    <Clock className="w-3.5 h-3.5 mr-1.5 text-gold-500 shrink-0" /> 10:00 AM - 9:00 PM
+                    <Clock className="w-3.5 h-3.5 mr-1.5 text-gold-500 shrink-0" /> {formatOpeningHours(vendor.openingHours)}
                   </span>
                   {vendor.rating > 0 && (
                     <span className="flex items-center font-medium text-luxury-black shrink-0">
@@ -422,7 +437,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                   onClick={(e) => handleCallNow(e, vendor)}
                 >
                   <Phone className="w-3.5 h-3.5 sm:mr-2" />
-                  <span className="hidden sm:inline">{t.callNow}</span>
+                  <span className="hidden sm:inline">{t('Call Now')}</span>
                 </Button>
 
                 {vendor.planType === 'card_website' && vendor.websiteUrl && (
@@ -435,7 +450,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                     className="h-9 bg-luxury-black hover:bg-gold-600 text-white border-none"
                   >
                     <Globe className="w-3.5 h-3.5 sm:mr-2" />
-                    <span className="hidden sm:inline">{t.visitWebsite}</span>
+                    <span className="hidden sm:inline">{t('Visit Website')}</span>
                   </Button>
                 )}
 
@@ -450,7 +465,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                     className={`h-9 ${!vendor.websiteUrl ? 'bg-luxury-black hover:bg-gold-600 text-white border-none' : 'border-gray-200 hover:border-gold-300 hover:bg-gold-50'}`}
                   >
                     <Store className="w-3.5 h-3.5 sm:mr-2" />
-                    <span className="hidden sm:inline">{t.visitWebsite}</span>
+                    <span className="hidden sm:inline">{t('Visit Website')}</span>
                   </Button>
                 )}
 
@@ -461,7 +476,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                     size="sm"
                     className="h-9 cursor-not-allowed bg-gray-50 border-gray-200 text-gray-400"
                   >
-                    {t.listingOnly}
+                    {t('Listing Only')}
                   </Button>
                 )}
                 <div className="flex items-center justify-center p-2 rounded-md hover:bg-gray-100 transition-colors ml-1">

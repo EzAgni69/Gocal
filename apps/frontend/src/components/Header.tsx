@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
+import { useTranslation } from '../providers/TranslationProvider';
+import { LanguageSelector } from './LanguageSelector';
 
 export const Header = () => {
     const {
@@ -19,6 +21,7 @@ export const Header = () => {
         user, isAuthenticated, logout,
         setShowAuthModal, setAuthModalMode
     } = useAppContext();
+    const { t } = useTranslation();
     const router = useRouter();
     const pathname = usePathname();
     const [scrolled, setScrolled] = useState(false);
@@ -93,7 +96,7 @@ export const Header = () => {
                             <span className="text-gold-500 text-4xl font-bold leading-none group-hover:scale-110 transition-transform duration-300">.</span>
                         </div>
                         <span className="text-[10px] uppercase tracking-[0.3em] text-gray-500 font-bold mt-0.5 group-hover:text-gold-500 transition-colors duration-300">
-                            Go local
+                            {t('Go local')}
                         </span>
                     </div>
 
@@ -108,27 +111,14 @@ export const Header = () => {
                                 pathname === '/vadodara' && "text-gold-600 bg-gold-100/30"
                             )}
                         >
-                            Explore Vadodara
+                            {t('Explore Vadodara')}
                         </Button>
 
                     </div>
 
-                    {/* Language Selector - Refined */}
-                    <div className="hidden md:flex items-center gap-2 group relative">
-                        <Button variant="ghost" size="sm" className="text-gray-500 font-medium hover:text-gold-600 hover:bg-gold-100/30 transition-all duration-300">
-                            <Globe className="w-4 h-4 mr-2" />
-                            {language === 'en' ? 'English' : language === 'hi' ? 'Hindi' : 'Gujarati'}
-                            <ChevronDown className="w-3 h-3 ml-1 opacity-50 group-hover:opacity-100" />
-                        </Button>
-                        <select
-                            value={language}
-                            onChange={(e) => setLanguage(e.target.value as Language)}
-                            className="absolute inset-0 opacity-0 cursor-pointer"
-                        >
-                            <option value="en">English</option>
-                            <option value="hi">Hindi</option>
-                            <option value="gu">Gujarati</option>
-                        </select>
+                    {/* Language Selector - Premium */}
+                    <div className="hidden md:flex">
+                        <LanguageSelector />
                     </div>
 
                 </div>
@@ -154,12 +144,12 @@ export const Header = () => {
 
                 {/* Desktop Actions */}
                 <div className="hidden md:flex items-center gap-4">
-                    {/* Role Switcher - Elegant Segmented Control - Only shown when authenticated and user has permission */}
-                    {isAuthenticated && user && user.role !== UserRole.CONSUMER && (
+                    {/* Role Switcher - Restricted to Admins/SuperAdmins (Commented out for Vendors) */}
+                    {isAuthenticated && user && (user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN) && (
                         <div className="flex items-center bg-gray-100/80 backdrop-blur-md rounded-full p-1 border border-white/40 shadow-inner mr-2 relative">
                             {[
                                 { id: UserRole.CONSUMER, label: 'Consumer' },
-                                ...((user.role === UserRole.VENDOR || user.role === UserRole.SUPER_ADMIN) ? [{ id: UserRole.VENDOR, label: 'Vendor' }] : []),
+                                ...((user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN) ? [{ id: UserRole.VENDOR, label: 'Vendor' }] : []),
                                 ...((user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN) ? [{ id: UserRole.ADMIN, label: 'Admin' }] : []),
                             ].map((roleOption) => (
                                 <button
@@ -269,7 +259,7 @@ export const Header = () => {
 
                                         {/* Menu Items */}
                                         <div className="py-2">
-                                            {user.role === UserRole.CONSUMER && (
+                                            {(user.role === UserRole.CONSUMER || user.role === UserRole.VENDOR) && (
                                                 <button
                                                     onClick={() => {
                                                         setShowUserMenu(false);
@@ -451,7 +441,7 @@ export const Header = () => {
                                             <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gold-500" />
                                         </div>
                                     </button>
-                                    {isAuthenticated && user?.role === UserRole.CONSUMER && (
+                                    {isAuthenticated && (user?.role === UserRole.CONSUMER || user?.role === UserRole.VENDOR) && (
                                         <button
                                             onClick={() => {
                                                 router.push('/request-card');
@@ -502,8 +492,9 @@ export const Header = () => {
                                         </select>
                                      </div>
 
-                                     {isAuthenticated && user && user.role !== UserRole.CONSUMER && (
-                                         <div className="space-y-2">
+                                      {/* Switch View - Restricted to Admins/SuperAdmins (Commented out for Vendors) */}
+                                      {isAuthenticated && user && (user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN) && (
+                                          <div className="space-y-2">
                                              <div className="flex items-center gap-3 px-3 mb-2 mt-4 text-xs uppercase tracking-widest text-gray-400 font-semibold">
                                                 <User className="w-4 h-4 text-gold-500" />
                                                 Switch View
@@ -518,7 +509,7 @@ export const Header = () => {
                                                  >
                                                     Consumer Mode
                                                  </button>
-                                                 {(user.role === UserRole.VENDOR || user.role === UserRole.SUPER_ADMIN) && (
+                                                 {(user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN) && (
                                                     <button
                                                         onClick={() => { handleRoleChange(UserRole.VENDOR); setShowMobileMenu(false); }}
                                                         className={cn(

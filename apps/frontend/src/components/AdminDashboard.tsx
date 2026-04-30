@@ -3,7 +3,7 @@ import { ShieldAlert, Check, Trash2, X, Store, Eye, Clock, CheckCircle2, XCircle
 import { Report, ContactCardRequest, CardRequestRejectionReason, Vendor } from '../types';
 import { apiClient } from '@/services/apiClient';
 import { User, fetchUsers, updateUserRole } from '../services/userServices';
-import { fetchVendors, removeVendor, restoreVendor } from '../services/vendorService';
+import { fetchVendors, removeVendor, restoreVendor, deleteAdminVendor } from '../services/vendorService';
 import debounce from "lodash.debounce";
 import { useCallback } from 'react';
 
@@ -245,7 +245,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports }) => {
     
     setActionLoading(true);
     try {
-      await removeVendor(vendorToRemove.id);
+      const result = await deleteAdminVendor(vendorToRemove.id);
       
       const removedVendorInfo = { id: vendorToRemove.id, name: vendorToRemove.name };
       
@@ -274,7 +274,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports }) => {
       }, 5000);
       
       setVendorToRemove(null);
-      setUserActionSuccess(`Successfully removed ${removedVendorInfo.name}.`);
+
+      if (result.roleDowngraded) {
+        setUserActionSuccess(`Successfully removed ${removedVendorInfo.name}. The owner's role has been downgraded to Consumer.`);
+      } else {
+        setUserActionSuccess(`Successfully removed ${removedVendorInfo.name}.`);
+      }
       
       setTimeout(() => {
         setUserActionSuccess(null);
@@ -964,7 +969,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports }) => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-emerald-600 transition-colors" />
               <input
                 type="text"
-                placeholder="Search business, city, or category..."
+                placeholder="Search by name, city, or contact..."
                 value={vendorSearchQuery}
                 onChange={handleVendorSearchChange}
                 className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-medium"
@@ -1054,7 +1059,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports }) => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold ${
                             vendor.verified ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
                           }`}>
@@ -1063,6 +1068,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports }) => {
                           {vendor.isPremium && (
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-gold-100 text-gold-700">
                               Premium
+                            </span>
+                          )}
+                          {vendor.planType === 'card_website' && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
+                              <Globe className="w-2.5 h-2.5" /> Mini Website
                             </span>
                           )}
                         </div>

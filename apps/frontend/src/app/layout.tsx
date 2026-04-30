@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { AuthModal } from "@/components/AuthModal";
 import { LoginRequiredModal } from "@/components/LoginRequiredModal";
 import PageTransition from "@/components/PageTransition";
+import { TranslationProvider } from "@/providers/TranslationProvider";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -37,18 +38,20 @@ export default function RootLayout({
         className={`${outfit.variable} ${playfair.variable} antialiased bg-luxury-cream text-luxury-black font-sans`}
       >
         <AppProvider>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-1 flex flex-col">
-              <PageTransition>
-                {children}
-              </PageTransition>
-            </main>
-            <Footer />
-            <WishlistDrawer />
-            <AuthModal />
-            <LoginRequiredModal />
-          </div>
+          <TranslationProvider>
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-1 flex flex-col">
+                <PageTransition>
+                  {children}
+                </PageTransition>
+              </main>
+              <Footer />
+              <WishlistDrawer />
+              <AuthModal />
+              <LoginRequiredModal />
+            </div>
+          </TranslationProvider>
         </AppProvider>
       </body>
     </html>

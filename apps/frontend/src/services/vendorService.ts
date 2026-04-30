@@ -1,38 +1,50 @@
 import { apiClient } from './apiClient';
-import { Vendor } from '../types';
+import { Vendor, BackendVendor, Product, GalleryImage } from '../types';
+import { getOpeningHoursStatus } from '../utils/openingHours';
 
 /**
  * Utility to map backend vendor to frontend Vendor type
  */
-function mapVendor(v: any): Vendor {
+function mapVendor(v: BackendVendor): Vendor {
+    // Derive isOpen dynamically from opening_hours if available,
+    // otherwise fall back to the stored boolean from the backend.
+    const isOpen = v.openingHours
+        ? getOpeningHoursStatus(v.openingHours).isOpen
+        : (v.isOpen ?? false);
+
     return {
         id: v.id,
         name: v.name,
         shortDescription: v.shortDescription || '',
         description: v.description || '',
-        city: v.city,
+        city: v.city || '',
         category: typeof v.category === 'string' ? v.category : v.category?.name || 'Local Store',
-        address: v.address,
-        phone: v.phone,
-        email: v.email,
+        address: v.address || '',
+        phone: v.phone || '',
+        email: v.email || '',
         coverImage: v.coverImageUrl || 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&q=80',
-        isOpen: v.isOpen,
-        rating: parseFloat(v.rating) || 0,
-        reviewCount: parseInt(v.reviewCount) || 0,
-        isPremium: v.isPremium,
+        isOpen,
+        rating: typeof v.rating === 'string' ? parseFloat(v.rating) || 0 : (typeof v.rating === 'number' ? v.rating : 0),
+        reviewCount: typeof v.reviewCount === 'string' ? parseInt(v.reviewCount) || 0 : (typeof v.reviewCount === 'number' ? v.reviewCount : 0),
+        isPremium: v.isPremium ?? false,
         planType: v.planType,
         websiteUuid: v.websiteUuid,
-        verified: v.isVerified,
-        products: v.products?.map((p: any) => ({
+        openingHours: v.openingHours,
+        verified: v.isVerified ?? false,
+        products: v.products?.map((p: Partial<Product> & { imageUrl?: string; price?: string | number }) => ({
             ...p,
-            price: parseFloat(p.price) || 0,
+            id: p.id || '',
+            name: p.name || '',
+            category: p.category || '',
+            price: typeof p.price === 'string' ? parseFloat(p.price) || 0 : (p.price || 0),
             image: p.imageUrl // Map backend imageUrl to frontend image
-        })),
+        })) as Product[],
         galleryImages: v.galleryImages,
         reviews: v.reviews,
         offers: v.offers,
         miniWebsiteConfig: v.miniWebsiteConfig,
         websiteUrl: v.websiteUrl,
+        createdAt: v.createdAt,
     };
 }
 
@@ -80,7 +92,7 @@ export async function fetchVendors(page = 1, limit = 20, search = ''): Promise<{
  */
 export async function updateVendor(vendorId: string, updateData: Partial<Vendor>): Promise<Vendor> {
     // Map frontend fields back to backend names if necessary
-    const backendData: any = { ...updateData };
+    const backendData: Record<string, unknown> = { ...updateData };
     if (updateData.coverImage) {
         backendData.coverImageUrl = updateData.coverImage;
         delete backendData.coverImage;
@@ -104,7 +116,7 @@ export async function updateVendor(vendorId: string, updateData: Partial<Vendor>
 /**
  * Adds an image to the vendor's gallery
  */
-export async function addGalleryImage(vendorId: string, imageUrl: string, caption?: string, sortOrder?: number): Promise<any> {
+export async function addGalleryImage(vendorId: string, imageUrl: string, caption?: string, sortOrder?: number): Promise<{ message?: string; id?: string; image: GalleryImage }> {
     const response = await apiClient(`/api/vendors/${vendorId}/gallery`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -122,7 +134,7 @@ export async function addGalleryImage(vendorId: string, imageUrl: string, captio
 /**
  * Updates a gallery image's details
  */
-export async function updateGalleryImage(vendorId: string, imageId: string, caption?: string, sortOrder?: number): Promise<any> {
+export async function updateGalleryImage(vendorId: string, imageId: string, caption?: string, sortOrder?: number): Promise<{ message?: string; id?: string }> {
     const response = await apiClient(`/api/vendors/${vendorId}/gallery/${imageId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -163,6 +175,23 @@ export async function removeVendor(vendorId: string): Promise<void> {
         const err = await response.json();
         throw new Error(err.error || 'Failed to remove vendor');
     }
+}
+
+/**
+ * Admin-only: soft-deletes a vendor card and conditionally downgrades the owner's role.
+ * Returns roleDowngraded flag and newRole if a downgrade occurred.
+ */
+export async function deleteAdminVendor(vendorId: string): Promise<{ vendor: any; roleDowngraded: boolean; newRole?: string }> {
+    const response = await apiClient(`/api/admin/vendors/${vendorId}`, {
+        method: 'DELETE',
+    });
+
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Failed to delete vendor');
+    }
+
+    return response.json();
 }
 
 /**

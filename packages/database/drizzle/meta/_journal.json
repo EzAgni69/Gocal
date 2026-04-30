@@ -22,6 +22,27 @@
       "when": 1772431581506,
       "tag": "0002_romantic_sasquatch",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1773737605777,
+      "tag": "0003_futuristic_pandemic",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1773751939158,
+      "tag": "0004_classy_inertia",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1773831163680,
+      "tag": "0005_shallow_warhawk",
+      "breakpoints": true
     }
   ]
 }

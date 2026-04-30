@@ -11,6 +11,7 @@ import { FavoriteButton } from './FavoriteButton';
 
 import { ContactCardModal } from './ContactCardModal';
 import { Vendor } from '../types';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useAppContext } from '../context/AppContext';
 import { TRANSLATIONS } from '../constants';
 
@@ -329,6 +330,7 @@ export const VadodaraPlaces: React.FC = () => {
                     </div>
 
                     {/* Results Container */}
+                    <ErrorBoundary>
                     <div className="flex-1 w-full relative min-h-[400px]">
                         {/* Error State */}
                         {error && (
@@ -635,6 +637,7 @@ export const VadodaraPlaces: React.FC = () => {
                             </AnimatePresence>
                         )}
                     </div>
+                    </ErrorBoundary>
                 </div>
 
             </div>

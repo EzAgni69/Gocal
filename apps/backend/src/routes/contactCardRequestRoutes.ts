@@ -1,6 +1,58 @@
 import { Router, Response } from 'express';
-import { db, contactCardRequests, users, vendors, categories, homeCards, eq, and } from 'database';
+import { db, contactCardRequests, users, vendors, categories, homeCards, products, galleryImages, eq, and } from 'database';
 import { authenticate, requireRole, AuthenticatedRequest } from '../middleware/auth';
+import { logger } from '../config/logger';
+import { z } from 'zod';
+import { validate } from '../middleware/validation';
+
+// ---------------------------------------------------------------------------
+// Zod validation schema for POST /api/card-requests
+// ---------------------------------------------------------------------------
+const draftProductSchema = z.object({
+    name: z.string().min(1, 'Product name is required').max(255),
+    price: z.number().min(0, 'Price must be 0 or greater'),
+    quantity: z.number().min(0).optional(),
+    unit: z.string().max(20).optional(),
+    category: z.string().max(100).optional(),
+    imageUrl: z.string().url('Invalid image URL').optional().or(z.literal('')),
+    description: z.string().max(500).optional(),
+});
+
+const openingHoursEntrySchema = z.object({
+    open: z.string().regex(/^\d{2}:\d{2}$/, 'Time format must be HH:MM'),
+    close: z.string().regex(/^\d{2}:\d{2}$/, 'Time format must be HH:MM'),
+    closed: z.boolean().optional(),
+});
+
+const cardRequestSchema = z.object({
+    body: z.object({
+        planType: z.enum(['card_only', 'card_website']),
+        fullName: z.string().min(2, 'Full name is required').max(255),
+        phone: z
+            .string()
+            .regex(/^\+?[\d\s\-()]{7,20}$/, 'Phone number format is invalid. Must be 7–20 digits.'),
+        email: z.string().email('Invalid email address').optional().or(z.literal('').transform(() => undefined)),
+        businessName: z.string().min(1, 'Business name is required').max(255),
+        category: z.string().min(1, 'Category is required').max(100),
+        city: z.string().min(1, 'City is required').max(100),
+        address: z.string().max(500).optional(),
+        shortDescription: z.string().max(200).optional(),
+        fullDescription: z.string().max(2000).optional(),
+        subscriptionPlan: z.enum(['1_year', '2_year', '3_year']).optional(),
+        // New fields
+        openingHours: z.record(z.string(), openingHoursEntrySchema).optional(),
+        pincode: z.string().max(10).optional(),
+        googleDirectionLink: z.string().url('Invalid URL').optional().or(z.literal('').transform(() => undefined)),
+        logoUrl: z.string().url('Invalid logo URL').optional().or(z.literal('').transform(() => undefined)),
+        mainPhotoUrl: z.string().url('Invalid photo URL').optional().or(z.literal('').transform(() => undefined)),
+        mainPhotoDescription: z.string().max(500).optional(),
+        galleryUrls: z.array(z.string().url('Invalid gallery URL')).max(6, 'Maximum 6 gallery images').optional(),
+        draftProducts: z
+            .array(draftProductSchema)
+            .max(20, 'You can add at most 20 products')
+            .optional(),
+    }),
+});
 
 const router = Router();
 
@@ -8,68 +60,32 @@ const router = Router();
  * POST /api/card-requests
  * Submit a new contact card request (authenticated users only)
  */
-router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) => {
-    const fs = require('fs');
-    const log = (msg: string) => {
-        const timestampedMsg = new Date().toISOString() + ' ' + msg;
-        console.log('[DEBUG LOG]', timestampedMsg);
-        try { fs.appendFileSync('/Users/agni/Developer/Vanij/backend-debug.txt', timestampedMsg + '\n'); } catch(e){
-            console.error('Failed to write to debug file:', e);
-        }
-    };
-    log('POST /api/card-requests received');
+router.post('/', authenticate, validate(cardRequestSchema), async (req: AuthenticatedRequest, res: Response) => {
+    logger.info('POST /api/card-requests received');
 
     try {
-        log('Authenticated User: ' + (req.user ? JSON.stringify(req.user) : 'UNDEFINED'));
+        logger.debug(`Authenticated User: ${req.user ? JSON.stringify(req.user) : 'UNDEFINED'}`);
         
-        let userId = req.user?.id;
+        const userId = req.user?.id;
         if (!userId) {
-            log('No database user ID found in request, attempting to find first user for debugging');
-            try {
-                const dbUsers = await db.select({ id: users.id }).from(users).limit(1);
-                if (dbUsers.length > 0) {
-                    userId = dbUsers[0].id;
-                    log('Mocked userId: ' + userId);
-                } else {
-                    log('CRITICAL: No users found in database even for mocking');
-                }
-            } catch (dbErr) {
-                log('DB Error during user mock: ' + (dbErr as Error).message);
-            }
+            logger.error('No database user ID found in request');
+            res.status(401).json({ error: 'User profile not fully synced' });
+            return;
         }
 
         const {
             planType, fullName, phone, email,
             businessName, category, city, address,
-            shortDescription, fullDescription, subscriptionPlan
+            shortDescription, fullDescription, subscriptionPlan,
+            draftProducts,
+            openingHours, pincode, googleDirectionLink,
+            logoUrl, mainPhotoUrl, mainPhotoDescription, galleryUrls
         } = req.body;
-        log('Request Body: ' + JSON.stringify(req.body));
+        logger.debug(`Request Body (excl. products): ${JSON.stringify({ planType, fullName, phone, businessName, category, city })}`);
 
-        // Validate required fields
-        const missingFields = [];
-        if (!planType) missingFields.push('planType');
-        if (!fullName) missingFields.push('fullName');
-        if (!phone) missingFields.push('phone');
-        if (!businessName) missingFields.push('businessName');
-        if (!category) missingFields.push('category');
-        if (!city) missingFields.push('city');
-
-        if (missingFields.length > 0) {
-            log('Validation failed. Missing fields: ' + missingFields.join(', '));
-            res.status(400).json({ error: 'Missing required fields', missingFields });
-            return;
-        }
-
-        log('Checking for existing status for requesterId: ' + userId);
+        logger.debug(`Checking for existing status for requesterId: ${userId}`);
         
-        // 1. Prevent active vendors from submitting new requests
-        if (req.user?.role === 'VENDOR') {
-            log('User is already an active VENDOR. Blocking request.');
-            res.status(403).json({ error: 'You are already an active vendor. Use the dashboard to manage your listing.' });
-            return;
-        }
-
-        // 2. Check for PENDING requests
+        // Check for PENDING requests
         const existingPending = await db.select()
             .from(contactCardRequests)
             .where(
@@ -81,14 +97,19 @@ router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) 
             .limit(1);
         
         if (existingPending.length > 0) {
-            log('Found existing pending request ID: ' + existingPending[0].id);
+            logger.info(`Found existing pending request ID: ${existingPending[0].id}`);
             res.status(409).json({ error: 'You already have a pending request.' });
             return;
         }
 
-        log('Attempting to insert new contactCardRequest into database...');
+        // Sanitise products: filter out empty-name rows that may come from the UI
+        const sanitisedProducts = Array.isArray(draftProducts)
+            ? draftProducts.filter((p: any) => p?.name?.trim())
+            : undefined;
+
+        logger.info('Attempting to insert new contactCardRequest into database...');
         const [newRequest] = await db.insert(contactCardRequests).values({
-            requesterId: userId!,
+            requesterId: userId,
             planType: planType as 'card_only' | 'card_website',
             fullName,
             phone,
@@ -100,18 +121,26 @@ router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) 
             shortDescription: shortDescription || null,
             fullDescription: fullDescription || null,
             subscriptionPlan: subscriptionPlan || null,
+            draftProducts: sanitisedProducts?.length ? sanitisedProducts : null,
+            // New fields
+            openingHours: openingHours || null,
+            pincode: pincode || null,
+            googleDirectionLink: googleDirectionLink || null,
+            logoUrl: logoUrl || null,
+            mainPhotoUrl: mainPhotoUrl || null,
+            mainPhotoDescription: mainPhotoDescription || null,
+            galleryUrls: Array.isArray(galleryUrls) && galleryUrls.length > 0 ? galleryUrls : null,
         }).returning();
 
         if (newRequest) {
-            log('Insert successful! Created Request ID: ' + newRequest.id);
+            logger.info(`Insert successful! Created Request ID: ${newRequest.id}`);
             res.status(201).json({ request: newRequest });
         } else {
-            log('Insert returned no result (unexpected)');
+            logger.error('Insert returned no result (unexpected)');
             res.status(500).json({ error: 'Failed to create request record' });
         }
     } catch (error: any) {
-        log('EXCEPTION CAUGHT in POST /api/card-requests: ' + (error.stack || error.message || String(error)));
-        console.error('Full insertion error:', error);
+        logger.error(`EXCEPTION CAUGHT in POST /api/card-requests: ${error.message}`, { stack: error.stack });
         res.status(500).json({ 
             error: 'Failed to submit card request', 
             detail: error.message || String(error),
@@ -119,6 +148,7 @@ router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) 
         });
     }
 });
+
 
 /**
  * GET /api/card-requests/mine
@@ -254,89 +284,152 @@ router.put('/:id/review', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), asy
             return;
         }
 
-        // Update the request
-        const [updatedRequest] = await db.update(contactCardRequests)
-            .set({
-                status,
-                rejectionReason: status === 'REJECTED' ? rejectionReason : null,
-                rejectionNote: status === 'REJECTED' ? (rejectionNote || null) : null,
-                reviewedBy: req.user.id,
-                reviewedAt: new Date(),
-            })
-            .where(eq(contactCardRequests.id, requestId))
-            .returning();
-
         // On approval: auto-create vendor and upgrade user role
         if (status === 'APPROVED') {
             try {
-                // Generate slug from business name
-                const slug = existingRequest.businessName
-                    .toLowerCase()
-                    .replace(/[^a-z0-9]+/g, '-')
-                    .replace(/^-|-$/g, '');
+                let newVendorResult: any = null;
+                await db.transaction(async (tx) => {
+                    // Update the request
+                    await tx.update(contactCardRequests)
+                        .set({
+                            status,
+                            rejectionReason: null,
+                            rejectionNote: null,
+                            reviewedBy: req.user!.id,
+                            reviewedAt: new Date(),
+                        })
+                        .where(eq(contactCardRequests.id, requestId));
 
-                // Find category ID if possible
-                let categoryId: string | null = null;
-                const dbCategory = await db.query.categories.findFirst({
-                    where: eq(categories.name, existingRequest.category)
+                    // Generate slug from business name
+                    const slug = existingRequest.businessName
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]+/g, '-')
+                        .replace(/^-|-$/g, '');
+
+                    // Find category ID if possible
+                    let categoryId: string | null = null;
+                    const dbCategory = await tx.query.categories.findFirst({
+                        where: eq(categories.name, existingRequest.category)
+                    });
+                    if (dbCategory) {
+                        categoryId = dbCategory.id;
+                    }
+
+                    // Build miniWebsiteConfig from request data
+                    const miniConfig: Record<string, any> = {};
+                    if (existingRequest.googleDirectionLink) miniConfig.googleMapsUrl = existingRequest.googleDirectionLink;
+
+                    // Create vendor from request data
+                    const [newVendor] = await tx.insert(vendors).values({
+                        ownerId: existingRequest.requesterId,
+                        name: existingRequest.businessName,
+                        slug: slug + '-' + Date.now().toString(36), // Ensure uniqueness
+                        description: existingRequest.fullDescription || existingRequest.shortDescription || '',
+                        shortDescription: existingRequest.shortDescription || '',
+                        categoryId,
+                        city: existingRequest.city,
+                        address: existingRequest.pincode
+                            ? `${existingRequest.address || existingRequest.city} - ${existingRequest.pincode}`
+                            : existingRequest.address || existingRequest.city,
+                        phone: existingRequest.phone,
+                        email: existingRequest.email || '',
+                        coverImageUrl: existingRequest.logoUrl || existingRequest.mainPhotoUrl || null,
+                        isPremium: existingRequest.planType === 'card_website',
+                        planType: existingRequest.planType,
+                        isVerified: true, // Auto-verify on admin approval
+                        openingHours: existingRequest.openingHours || null,
+                        miniWebsiteConfig: miniConfig,
+                    }).returning();
+
+                    newVendorResult = newVendor;
+
+                    // Seed initial products from draftProducts if provided
+                    if (Array.isArray(existingRequest.draftProducts) && existingRequest.draftProducts.length > 0) {
+                        const productRows = (existingRequest.draftProducts as Array<{
+                            name: string;
+                            price: number;
+                            quantity?: number;
+                            unit?: string;
+                            category?: string;
+                            imageUrl?: string;
+                            description?: string;
+                        }>)
+                            .filter(p => p?.name?.trim())
+                            .map((p, idx) => ({
+                                vendorId: newVendor.id,
+                                name: p.name.trim(),
+                                description: p.description || null,
+                                price: String(p.price),
+                                imageUrl: p.imageUrl || null,
+                                category: p.category || null,
+                                quantity: p.quantity != null ? String(p.quantity) : null,
+                                unit: p.unit || null,
+                                sortOrder: idx,
+                                inStock: true,
+                            }));
+                        if (productRows.length > 0) {
+                            await tx.insert(products).values(productRows);
+                            logger.info(`Seeded ${productRows.length} products for vendor ${newVendor.id}`);
+                        }
+                    }
+
+                    // Seed gallery images from galleryUrls
+                    if (Array.isArray(existingRequest.galleryUrls) && existingRequest.galleryUrls.length > 0) {
+                        const galleryRows = existingRequest.galleryUrls.map((url: string, idx: number) => ({
+                            vendorId: newVendor.id,
+                            imageUrl: url,
+                            sortOrder: idx,
+                        }));
+                        await tx.insert(galleryImages).values(galleryRows);
+                        logger.info(`Seeded ${galleryRows.length} gallery images for vendor ${newVendor.id}`);
+                    }
+
+                    // Add to Home Cards automatically
+                    await tx.insert(homeCards).values({
+                        vendorId: newVendor.id,
+                        displayOrder: 100, // Default to a higher number
+                        isActive: true,
+                    });
+
+                    // Upgrade user role to VENDOR
+                    await tx.update(users)
+                        .set({ role: 'VENDOR' })
+                        .where(eq(users.id, existingRequest.requesterId));
                 });
-                if (dbCategory) {
-                    categoryId = dbCategory.id;
-                }
-
-                // Create vendor from request data
-                const [newVendor] = await db.insert(vendors).values({
-                    ownerId: existingRequest.requesterId,
-                    name: existingRequest.businessName,
-                    slug: slug + '-' + Date.now().toString(36), // Ensure uniqueness
-                    description: existingRequest.fullDescription || existingRequest.shortDescription || '',
-                    shortDescription: existingRequest.shortDescription || '',
-                    categoryId,
-                    city: existingRequest.city,
-                    address: existingRequest.address || existingRequest.city,
-                    phone: existingRequest.phone,
-                    email: existingRequest.email || '',
-                    isPremium: existingRequest.planType === 'card_website',
-                    planType: existingRequest.planType,
-                    isVerified: true, // Auto-verify on admin approval
-                    miniWebsiteConfig: {},
-                }).returning();
-
-                // Add to Home Cards automatically
-                await db.insert(homeCards).values({
-                    vendorId: newVendor.id,
-                    displayOrder: 100, // Default to a higher number
-                    isActive: true,
-                });
-
-                // Upgrade user role to VENDOR
-                await db.update(users)
-                    .set({ role: 'VENDOR' })
-                    .where(eq(users.id, existingRequest.requesterId));
 
                 res.json({
-                    request: updatedRequest,
-                    vendor: newVendor,
+                    request: { ...existingRequest, status: 'APPROVED', reviewedBy: req.user!.id },
+                    vendor: newVendorResult,
                     message: 'Request approved. Vendor created and user role upgraded to VENDOR.'
                 });
-            } catch (vendorError) {
-                console.error('Error creating vendor from approved request:', vendorError);
-                // Revert the request status if vendor creation fails
-                await db.update(contactCardRequests)
-                    .set({ status: 'PENDING', reviewedBy: null, reviewedAt: null })
-                    .where(eq(contactCardRequests.id, requestId));
-
-                res.status(500).json({ error: 'Request was approved but vendor creation failed. The request has been reverted to PENDING.' });
+            } catch (error) {
+                logger.error('Transaction failed during request approval:', { error });
+                res.status(500).json({ error: 'Failed to process approval. Changes rolled back.' });
             }
         } else {
             // Rejected
+            const [updatedRequest] = await db.update(contactCardRequests)
+                .set({
+                    status,
+                    rejectionReason,
+                    rejectionNote: rejectionNote || null,
+                    reviewedBy: req.user.id,
+                    reviewedAt: new Date(),
+                })
+                .where(eq(contactCardRequests.id, requestId))
+                .returning();
+
             res.json({
                 request: updatedRequest,
                 message: 'Request rejected.'
             });
         }
     } catch (error) {
-        console.error('Error reviewing card request:', error);
+        if (error instanceof Error) {
+            logger.error(`Error reviewing card request: ${error.message}`, { stack: error.stack });
+        } else {
+            logger.error(`Error reviewing card request: ${String(error)}`);
+        }
         res.status(500).json({ error: 'Failed to review card request' });
     }
 });

@@ -119,27 +119,15 @@ export const MiniWebsiteEditor: React.FC<MiniWebsiteEditorProps> = ({ vendor, on
                     </div>
                 </section>
 
-                {/* Appearance & Branding */}
+                {/* Location & Hours */}
                 <section className="space-y-6">
                     <div className="flex items-center gap-3 mb-2">
                         <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
-                            <Palette className="w-5 h-5" />
+                            <Clock className="w-5 h-5" />
                         </div>
-                        <h4 className="text-lg font-serif">Branding</h4>
+                        <h4 className="text-lg font-serif">Location & Hours</h4>
                     </div>
                     <div className="p-6 bg-white border border-gray-100 rounded-2xl shadow-sm space-y-6">
-                        <div>
-                            <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 block">Primary Theme Color</label>
-                            <div className="flex items-center gap-4">
-                                <input 
-                                    type="color"
-                                    value={config.theme?.primaryColor || '#000000'}
-                                    onChange={(e) => setConfig({ ...config, theme: { ...config.theme, primaryColor: e.target.value } })}
-                                    className="w-12 h-12 rounded-lg cursor-pointer border-none bg-transparent"
-                                />
-                                <span className="text-sm font-mono text-gray-600">{config.theme?.primaryColor || '#000000'}</span>
-                            </div>
-                        </div>
                         <div>
                             <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 block">Google Maps Location URL</label>
                             <div className="relative">
@@ -154,6 +142,16 @@ export const MiniWebsiteEditor: React.FC<MiniWebsiteEditorProps> = ({ vendor, on
                                     className="w-full pl-12 pr-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-black outline-none transition-all"
                                 />
                             </div>
+                        </div>
+                        <div>
+                            <label className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 block">Business Hours</label>
+                            <input 
+                                type="text"
+                                placeholder="e.g. Mon-Sat: 10 AM - 8 PM"
+                                value={config.operatingHours?.['general']?.open || ''}
+                                onChange={(e) => setConfig({ ...config, operatingHours: { ...config.operatingHours, general: { open: e.target.value, close: '' } } })}
+                                className="w-full p-4 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-black outline-none transition-all"
+                            />
                         </div>
                     </div>
                 </section>

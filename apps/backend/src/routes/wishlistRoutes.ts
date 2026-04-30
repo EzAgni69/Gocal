@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import { db, wishlists, wishlistItems, eq, and } from 'database';
 import { authenticate, AuthenticatedRequest } from '../middleware/auth';
+import { logger } from '../config/logger';
 
 const router = Router();
 
@@ -22,7 +23,7 @@ router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) =
 
         res.json({ wishlists: result });
     } catch (error) {
-        console.error('Error listing wishlists:', error);
+        logger.error('Error listing wishlists:', { error });
         res.status(500).json({ error: 'Failed to list wishlists' });
     }
 });
@@ -44,7 +45,7 @@ router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) 
 
         res.status(201).json({ wishlist });
     } catch (error) {
-        console.error('Error creating wishlist:', error);
+        logger.error('Error creating wishlist:', { error });
         res.status(500).json({ error: 'Failed to create wishlist' });
     }
 });
@@ -83,7 +84,7 @@ router.post('/:id/items', authenticate, async (req: AuthenticatedRequest, res: R
 
         res.status(201).json({ item });
     } catch (error) {
-        console.error('Error adding to wishlist:', error);
+        logger.error('Error adding to wishlist:', { error });
         res.status(500).json({ error: 'Failed to add to wishlist' });
     }
 });
@@ -94,7 +95,18 @@ router.post('/:id/items', authenticate, async (req: AuthenticatedRequest, res: R
  */
 router.delete('/:id/products/:productId', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
+        if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
+
         const { id: wishlistId, productId } = req.params;
+
+        // Verify wishlist ownership
+        const [wishlist] = await db.select().from(wishlists)
+            .where(eq(wishlists.id, wishlistId)).limit(1);
+
+        if (!wishlist || wishlist.userId !== req.user!.id) {
+            res.status(404).json({ error: 'Wishlist not found' });
+            return;
+        }
 
         await db.delete(wishlistItems).where(
             and(
@@ -104,7 +116,7 @@ router.delete('/:id/products/:productId', authenticate, async (req: Authenticate
         );
         res.json({ message: 'Item removed from wishlist' });
     } catch (error) {
-        console.error('Error removing from wishlist:', error);
+        logger.error('Error removing from wishlist:', { error });
         res.status(500).json({ error: 'Failed to remove from wishlist' });
     }
 });
@@ -167,7 +179,7 @@ router.get('/:id/whatsapp', authenticate, async (req: AuthenticatedRequest, res:
 
         res.json({ messages });
     } catch (error) {
-        console.error('Error generating WhatsApp message:', error);
+        logger.error('Error generating WhatsApp message:', { error });
         res.status(500).json({ error: 'Failed to generate WhatsApp message' });
     }
 });

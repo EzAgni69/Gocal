@@ -1,4 +1,4 @@
-import { pgTable, uuid, integer, text, timestamp, uniqueIndex, check } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, integer, text, timestamp, uniqueIndex, check, index } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { users } from './users';
 import { vendors } from './vendors';
@@ -10,8 +10,11 @@ export const reviews = pgTable('reviews', {
     rating: integer('rating').notNull(),
     comment: text('comment'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => [
     uniqueIndex('idx_reviews_user_vendor').on(table.userId, table.vendorId),
+    index('idx_reviews_vendor').on(table.vendorId),
+    index('idx_reviews_user').on(table.userId),
     check('rating_check', sql`${table.rating} >= 1 AND ${table.rating} <= 5`),
 ]);
 

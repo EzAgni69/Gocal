@@ -6,11 +6,18 @@ import { categories } from './categories';
 /**
  * JSONB structure for mini_website_config:
  * {
- *   operatingHours?: { [day: string]: { open: string; close: string; closed?: boolean } };
- *   socialLinks?: { whatsapp?: string; instagram?: string; facebook?: string; youtube?: string; twitter?: string };
+ *   socialLinks?: { whatsapp?: string; instagram?: string; facebook?: string; youtube?: string; twitter?: string; linkedin?: string; tiktok?: string };
  *   googleMapsUrl?: string;
  *   customSections?: Array<{ title: string; content: string }>;
- *   theme?: { primaryColor?: string; accentColor?: string };
+ *   theme?: { 
+ *     primaryColor?: string; 
+ *     accentColor?: string; 
+ *     backgroundColor?: string;
+ *     fontFamily?: string;
+ *     buttonStyle?: 'solid' | 'outline' | 'rounded' | 'sharp';
+ *     cardLayout?: 'compact' | 'split' | 'expanded';
+ *     cardTheme?: 'minimal' | 'elegant' | 'bold';
+ *   };
  * }
  */
 export const vendors = pgTable('vendors', {
@@ -33,6 +40,10 @@ export const vendors = pgTable('vendors', {
     isVerified: boolean('is_verified').notNull().default(false),
     rating: decimal('rating', { precision: 2, scale: 1 }).notNull().default('0.0'),
     reviewCount: decimal('review_count', { precision: 10, scale: 0 }).notNull().default('0'),
+    // Opening hours per day: { Mon: { open: "09:00", close: "21:00", closed?: false }, ... } or { Mon: { closed: true }, ... }
+    openingHours: jsonb('opening_hours').$type<{
+        [day: string]: { open: string; close: string; closed?: boolean } | { closed: true };
+    }>(),
     miniWebsiteConfig: jsonb('mini_website_config').notNull().default({}),
     websiteUrl: text('website_url'),
     // PostGIS: stored as longitude, latitude (SRID 4326)

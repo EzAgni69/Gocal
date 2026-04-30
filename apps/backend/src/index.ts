@@ -1,6 +1,10 @@
 import './env';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import { logger } from './config/logger';
+
 import placesRoutes from './routes/placesRoutes';
 import authRoutes from './routes/authRoutes';
 import vendorRoutes from './routes/vendorRoutes';
@@ -9,18 +13,49 @@ import favoriteRoutes from './routes/favoriteRoutes';
 import wishlistRoutes from './routes/wishlistRoutes';
 import userRoutes from './routes/userRoutes';
 import contactCardRequestRoutes from './routes/contactCardRequestRoutes';
+import translationRoutes from './routes/translationRoutes';
+import uploadRoutes from './routes/uploadRoutes';
+import reviewRoutes from './routes/reviewRoutes';
+import adminVendorRoutes from './routes/adminVendorRoutes';
+import path from 'path';
 
 const app = express();
 const port = process.env.PORT || 3001;
 
-app.use(cors());
+// Security headers
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    contentSecurityPolicy: {
+        directives: {
+            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+            "img-src": ["'self'", "data:", "blob:", "*"],
+        },
+    },
+}));
+
+// Cross-Origin Resource Sharing
+app.use(cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    credentials: true,
+}));
+
 app.use(express.json());
 
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 1000, // Limit each IP to 1000 requests per `window` (here, per 15 minutes)
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many requests, please try again later.' }
+});
+
+// Apply rate limiting to all /api routes
+app.use('/api/', limiter);
+
 // Request logger for debugging
-const fs = require('fs');
 app.use((req, res, next) => {
-    const logMsg = `${new Date().toISOString()} [ALL REQ] ${req.method} ${req.url}`;
-    // try { fs.appendFileSync('/Users/agni/Developer/Vanij/backend-debug.txt', logMsg + '\n'); } catch(e){}
+    logger.info(`[ALL REQ] ${req.method} ${req.url}`);
     next();
 });
 
@@ -37,6 +72,9 @@ app.use('/api/auth', authRoutes);
 // Vendor routes
 app.use('/api/vendors', vendorRoutes);
 
+// Admin vendor routes
+app.use('/api/admin/vendors', adminVendorRoutes);
+
 // Report routes
 app.use('/api/reports', reportRoutes);
 
@@ -52,15 +90,36 @@ app.use('/api/users', userRoutes);
 // Contact card request routes
 app.use('/api/card-requests', contactCardRequestRoutes);
 
+// Translation routes
+app.use('/api/translate', translationRoutes);
+
+// File upload routes
+app.use('/api/upload', uploadRoutes);
+
+// Review routes
+app.use('/api/reviews', reviewRoutes);
+
+// Serve uploaded files statically (product images, etc.)
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
 // Global Error Handler
 app.use((err: any, req: any, res: any, next: any) => {
-    const errMsg = `${new Date().toISOString()} [GLOBAL ERR] ${err.stack || err.message || err}`;
-    console.error(errMsg);
-    try { fs.appendFileSync('/Users/agni/Developer/Vanij/backend-debug.txt', errMsg + '\n'); } catch(e){}
-    res.status(500).json({ error: 'Internal Server Error', detail: err.message });
+    logger.error(`[GLOBAL ERR] ${err.message}`, { stack: err.stack, url: req.url, method: req.method });
+    
+    // Hide stack trace and exact error message in production
+    if (process.env.NODE_ENV === 'production') {
+        res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+        res.status(500).json({ error: 'Internal Server Error', detail: err.message, stack: err.stack });
+    }
 });
 
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
+// Export app for testing
+export { app };
+
+if (require.main === module) {
+    app.listen(port, () => {
+        logger.info(`Server running at http://localhost:${port}`);
+    });
+}
 

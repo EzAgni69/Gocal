@@ -3,7 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { 
   Upload, Save, Sparkles, Image as ImageIcon, LayoutGrid, 
   FileText, Trash2, Edit2, Package, Menu, X, 
-  Store, Globe, CreditCard, ExternalLink, Camera, MessageCircle
+  Store, Globe, CreditCard, ExternalLink, Camera, MessageCircle, Palette
 } from 'lucide-react';
 import { Vendor, Product, AnalyticsData } from '../types';
 import { generateVendorDescription } from '../services/geminiService';
@@ -11,6 +11,7 @@ import { AddProductModal } from './AddProductModal';
 import { VENDOR_CATEGORY_CONFIG } from '../constants';
 import { ImageGalleryManager } from './vendor/ImageGalleryManager';
 import { MiniWebsiteEditor } from './vendor/MiniWebsiteEditor';
+import { ThemeEditor } from './vendor/ThemeEditor';
 import { updateVendor } from '../services/vendorService';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/Button';
@@ -24,7 +25,7 @@ const DEFAULT_PRODUCT_IMAGE = 'https://placehold.co/200x200/f3f4f6/9ca3af?text=N
 
 export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initialVendor, analyticsData }) => {
   const [vendor, setVendor] = useState<Vendor>(initialVendor);
-  const [activeTab, setActiveTab] = useState<'profile' | 'storefront' | 'products' | 'analytics'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'appearance' | 'storefront' | 'products' | 'analytics'>('profile');
   const [isGenerating, setIsGenerating] = useState(false);
   const [products, setProducts] = useState<Product[]>(vendor.products || []);
   const [isSaving, setIsSaving] = useState(false);
@@ -141,6 +142,7 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
 
   const tabs = [
     { id: 'profile', label: 'Identity', icon: CreditCard },
+    { id: 'appearance', label: 'Appearance', icon: Palette },
     { id: 'storefront', label: 'Storefront', icon: Store },
     { id: 'products', label: 'Collection', icon: Package },
     { id: 'analytics', label: 'Insights', icon: Sparkles },
@@ -354,6 +356,21 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
                    </div>
                    <p className="text-center text-[10px] text-gray-400 px-10">This is how consumers will see your "Contact Card" in the main search.</p>
                 </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* APPEARANCE TAB */}
+          {activeTab === 'appearance' && (
+            <motion.div
+              key="appearance"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              className="space-y-16"
+            >
+              <div className="bg-white p-10 rounded-[3rem] shadow-xl shadow-black/[0.02] border border-gray-100">
+                <ThemeEditor vendor={vendor} onUpdate={(v) => setVendor(v)} />
               </div>
             </motion.div>
           )}

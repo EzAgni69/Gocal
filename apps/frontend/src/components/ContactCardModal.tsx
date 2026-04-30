@@ -24,7 +24,13 @@ import { Vendor } from '../types';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { useAppContext } from '../context/AppContext';
-import { TRANSLATIONS } from '../constants';
+import { useTranslation } from '../providers/TranslationProvider';
+import { formatOpeningHours, getAllOpeningHours } from '../utils/openingHours';
+import { ReviewModal } from './ReviewModal';
+import { ReviewsList } from './ReviewsList';
+import { Review } from '../types';
+import { apiClient } from '../services/apiClient';
+
 
 interface ContactCardModalProps {
     vendor: Vendor | null;
@@ -34,7 +40,11 @@ interface ContactCardModalProps {
 
 export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOpen, onClose }) => {
     const { language, requireAuth, wishlist, addToWishlist, removeFromWishlist } = useAppContext();
-    const t = TRANSLATIONS[language];
+    const { t } = useTranslation();
+    const [showReviewModal, setShowReviewModal] = React.useState(false);
+    const [showAllHours, setShowAllHours] = React.useState(false);
+    const [reviews, setReviews] = React.useState<Review[]>([]);
+    const [reviewsLoading, setReviewsLoading] = React.useState(false);
 
     useEffect(() => {
         if (isOpen) {
@@ -46,7 +56,41 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
         }
     }, [isOpen]);
 
+    // Fetch reviews whenever the modal opens for a vendor
+    useEffect(() => {
+        if (!isOpen || !vendor?.id) {
+            setReviews([]);
+            return;
+        }
+
+        // Use pre-loaded reviews if available, otherwise fetch from API
+        if (vendor.reviews && vendor.reviews.length > 0) {
+            setReviews(vendor.reviews);
+            return;
+        }
+
+        setReviewsLoading(true);
+        apiClient(`/api/reviews/vendor/${vendor.id}`)
+            .then((res) => res.json())
+            .then((data) => setReviews(data.reviews || []))
+            .catch((err) => console.error('Failed to fetch reviews:', err))
+            .finally(() => setReviewsLoading(false));
+    }, [isOpen, vendor?.id]);
+
     if (!vendor) return null;
+
+    const theme = vendor.miniWebsiteConfig?.theme || {};
+    const primaryColor = theme.primaryColor || '#000000';
+    const accentColor = theme.accentColor || '#D4AF37';
+    
+    // Map font name to generic Tailwind classes or allow the font to inherit
+    const getFontFamily = () => {
+        if (!theme.fontFamily) return '';
+        if (theme.fontFamily.includes('Playfair')) return 'font-serif';
+        if (theme.fontFamily.includes('Roboto') || theme.fontFamily.includes('Inter') || theme.fontFamily.includes('Outfit')) return 'font-sans';
+        return '';
+    };
+    const fontClass = getFontFamily();
 
     const handleCall = () => {
         if (!requireAuth('call this vendor')) return;
@@ -97,8 +141,27 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
 
     const handleWriteReview = () => {
         if (!requireAuth('write a review')) return;
-        // In a real app, this would open a review form modal
-        alert('Review form would open here. Thank you for your feedback!');
+        setShowReviewModal(true);
+    };
+
+    const handleSubmitReview = async (rating: number, comment: string) => {
+        const response = await apiClient('/api/reviews', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                vendorId: vendor!.id,
+                rating,
+                comment,
+            }),
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to submit review');
+        }
+
+        const data = await response.json();
+        setReviews((prev) => [data.review, ...prev]);
     };
 
     return (
@@ -121,7 +184,11 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                         animate={{ y: 0, opacity: 1 }}
                         exit={{ y: '100%', opacity: 0 }}
                         transition={{ type: 'spring', damping: 28, stiffness: 350 }}
-                        className="fixed inset-x-0 bottom-0 z-[101] max-h-[90vh] overflow-hidden rounded-t-3xl bg-white shadow-2xl md:inset-x-auto md:left-1/2 md:bottom-auto md:top-1/2 md:w-full md:max-w-lg md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl"
+                        className={`fixed inset-x-0 bottom-0 z-[101] max-h-[90vh] overflow-hidden rounded-t-3xl bg-white shadow-2xl md:inset-x-auto md:left-1/2 md:bottom-auto md:top-1/2 md:w-full md:max-w-lg md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl ${fontClass}`}
+                        style={{
+                            '--theme-primary': primaryColor,
+                            '--theme-accent': accentColor,
+                        } as React.CSSProperties}
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Cover Image Header */}
@@ -163,15 +230,15 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
 
                             {/* Vendor Info Overlay */}
                             <div className="absolute bottom-4 left-4 right-4 text-white">
-                                <h2 className="text-2xl font-serif font-bold mb-1">{vendor.name}</h2>
+                                <h2 className="text-2xl font-serif font-bold mb-1">{t(vendor.name)}</h2>
                                 <div className="flex items-center gap-3 text-sm">
                                     <span className="flex items-center gap-1">
-                                        <Star className="h-4 w-4 text-gold-400 fill-current" />
+                                        <Star className="h-4 w-4 fill-current" style={{ color: accentColor }} />
                                         <span className="font-bold">{vendor.rating}</span>
                                         <span className="opacity-75">({vendor.reviewCount} reviews)</span>
                                     </span>
                                     <span className="opacity-75">•</span>
-                                    <span className="opacity-90">{vendor.category}</span>
+                                    <span className="opacity-90">{t(vendor.category)}</span>
                                 </div>
                             </div>
                         </div>
@@ -179,7 +246,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                         {/* Content */}
                         <div className="max-h-[calc(90vh-12rem)] overflow-y-auto overscroll-contain p-6">
                             {/* Description */}
-                            <p className="text-gray-600 mb-6 leading-relaxed">{vendor.description}</p>
+                            <p className="text-gray-600 mb-6 leading-relaxed">{t(vendor.description)}</p>
 
                             {/* Quick Actions */}
                             <div className="grid grid-cols-4 gap-3 mb-6">
@@ -226,14 +293,15 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
 
                             {/* Contact Details */}
                             <div className="space-y-3 mb-6">
-                                <h3 className="font-serif text-lg font-bold text-luxury-black mb-3">Contact Details</h3>
+                                <h3 className="font-serif text-lg font-bold text-luxury-black mb-3">{t('Contact Details')}</h3>
 
                                 <div
-                                    className="flex items-center gap-3 p-3 rounded-xl bg-luxury-cream border border-gold-100 cursor-pointer hover:border-gold-300 transition-colors group"
+                                    className="flex items-center gap-3 p-3 rounded-xl bg-luxury-cream border cursor-pointer transition-colors group"
+                                    style={{ borderColor: accentColor + '40' }}
                                     onClick={() => copyToClipboard(vendor.phone, 'Phone number')}
                                 >
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gold-100">
-                                        <Phone className="h-4 w-4 text-gold-600" />
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full" style={{ backgroundColor: accentColor + '20' }}>
+                                        <Phone className="h-4 w-4" style={{ color: accentColor }} />
                                     </div>
                                     <div className="flex-1">
                                         <p className="text-xs text-gray-500 uppercase tracking-wider">Phone</p>
@@ -243,11 +311,12 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                 </div>
 
                                 <div
-                                    className="flex items-center gap-3 p-3 rounded-xl bg-luxury-cream border border-gold-100 cursor-pointer hover:border-gold-300 transition-colors group"
+                                    className="flex items-center gap-3 p-3 rounded-xl bg-luxury-cream border cursor-pointer transition-colors group"
+                                    style={{ borderColor: accentColor + '40' }}
                                     onClick={() => copyToClipboard(vendor.email, 'Email')}
                                 >
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gold-100">
-                                        <Mail className="h-4 w-4 text-gold-600" />
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full" style={{ backgroundColor: accentColor + '20' }}>
+                                        <Mail className="h-4 w-4" style={{ color: accentColor }} />
                                     </div>
                                     <div className="flex-1">
                                         <p className="text-xs text-gray-500 uppercase tracking-wider">Email</p>
@@ -257,15 +326,16 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                 </div>
 
                                 <div
-                                    className="flex items-center gap-3 p-3 rounded-xl bg-luxury-cream border border-gold-100 cursor-pointer hover:border-gold-300 transition-colors group"
+                                    className="flex items-center gap-3 p-3 rounded-xl bg-luxury-cream border cursor-pointer transition-colors group"
+                                    style={{ borderColor: accentColor + '40' }}
                                     onClick={() => copyToClipboard(vendor.address, 'Address')}
                                 >
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gold-100">
-                                        <MapPin className="h-4 w-4 text-gold-600" />
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full" style={{ backgroundColor: accentColor + '20' }}>
+                                        <MapPin className="h-4 w-4" style={{ color: accentColor }} />
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-xs text-gray-500 uppercase tracking-wider">Address</p>
-                                        <p className="font-medium text-luxury-black">{vendor.address}</p>
+                                        <p className="text-xs text-gray-500 uppercase tracking-wider">{t('Address')}</p>
+                                        <p className="font-medium text-luxury-black">{t(vendor.address)}</p>
                                     </div>
                                     <Copy className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </div>
@@ -276,18 +346,46 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                     </div>
                                     <div className="flex-1">
                                         <p className="text-xs text-gray-500 uppercase tracking-wider">Business Hours</p>
-                                        <p className="font-medium text-luxury-black">10:00 AM - 9:00 PM</p>
+                                        <p className="font-medium text-luxury-black">{formatOpeningHours(vendor.openingHours)}</p>
                                     </div>
+                                    {vendor.openingHours && (
+                                        <button
+                                            onClick={() => setShowAllHours(!showAllHours)}
+                                            className="text-xs text-gold-600 hover:text-gold-700 font-medium"
+                                        >
+                                            {showAllHours ? 'Hide' : 'View All'}
+                                        </button>
+                                    )}
                                 </div>
+
+                                {/* All Hours Dropdown */}
+                                {showAllHours && vendor.openingHours && (
+                                    <div className="p-4 rounded-xl bg-white border border-gray-200">
+                                        <h4 className="text-sm font-semibold text-luxury-black mb-3">Weekly Hours</h4>
+                                        <div className="space-y-2">
+                                            {getAllOpeningHours(vendor.openingHours).map(({ day, hours, isToday }) => (
+                                                <div
+                                                    key={day}
+                                                    className={`flex justify-between text-sm ${
+                                                        isToday ? 'font-semibold text-gold-600' : 'text-gray-600'
+                                                    }`}
+                                                >
+                                                    <span>{day}</span>
+                                                    <span>{hours}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Featured Products Section */}
                             {vendor.products && vendor.products.length > 0 && (
                                 <div className="mb-6">
                                     <h3 className="font-serif text-lg font-bold text-luxury-black mb-4 flex items-center justify-between">
-                                        <span>Featured Products</span>
+                                        <span>{t('Featured Products')}</span>
                                         <Badge variant="secondary" className="text-[10px]">
-                                            {vendor.products.length} Items
+                                            {vendor.products.length} {t('Items')}
                                         </Badge>
                                     </h3>
                                     <div className="space-y-4">
@@ -302,14 +400,14 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                                 </div>
                                                 <div className="flex-1 flex flex-col min-w-0">
                                                     <div className="flex justify-between items-start mb-1">
-                                                        <h4 className="font-bold text-luxury-black text-sm truncate pr-2">{product.name}</h4>
+                                                        <h4 className="font-bold text-luxury-black text-sm truncate pr-2">{t(product.name)}</h4>
                                                         <span className="font-bold text-gold-600 text-sm whitespace-nowrap">₹{product.price}</span>
                                                     </div>
                                                     <p className="text-[11px] text-gray-500 line-clamp-2 mb-2 leading-relaxed">
-                                                        {product.description}
+                                                        {t(product.description || '')}
                                                     </p>
                                                     <div className="mt-auto flex justify-between items-center">
-                                                        <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">{product.category}</span>
+                                                        <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">{t(product.category)}</span>
                                                         <button 
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
@@ -332,7 +430,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                                             }`}
                                                         >
                                                             <Heart className={`h-3 w-3 ${wishlist.some(p => p.id === product.id) ? 'fill-current' : ''}`} />
-                                                            {wishlist.some(p => p.id === product.id) ? 'In Wishlist' : 'Add to Wishlist'}
+                                                            {wishlist.some(p => p.id === product.id) ? t('In Wishlist') : t('Add to Wishlist')}
                                                         </button>
                                                     </div>
                                                 </div>
@@ -346,7 +444,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                             {vendor.galleryImages && vendor.galleryImages.length > 0 && (
                                 <div className="mb-6">
                                     <h3 className="font-serif text-lg font-bold text-luxury-black mb-3 flex items-center gap-2">
-                                        <Image className="h-5 w-5 text-gold-600" />
+                                        <Image className="h-5 w-5" style={{ color: accentColor }} />
                                         Gallery
                                     </h3>
                                     <div className="grid grid-cols-3 gap-2">
@@ -366,6 +464,18 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                 </div>
                             )}
 
+                            {/* Reviews Section */}
+                            <div className="mb-6">
+                                <h3 className="font-serif text-lg font-bold text-luxury-black mb-4 flex items-center justify-between">
+                                    <span>Reviews ({reviews.length})</span>
+                                </h3>
+                                {reviewsLoading ? (
+                                    <div className="text-center py-6 text-gray-400 text-sm">Loading reviews...</div>
+                                ) : (
+                                    <ReviewsList reviews={reviews} />
+                                )}
+                            </div>
+
                             {/* Write Review Button */}
                             <Button
                                 variant="outline"
@@ -380,11 +490,12 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                             <div className="flex flex-col gap-3">
                                 {vendor.planType === 'card_website' && vendor.websiteUrl && (
                                     <Button
-                                        className="w-full bg-luxury-black hover:bg-gold-600 text-white py-4"
+                                        className="w-full text-white py-4 hover:opacity-90"
+                                        style={{ backgroundColor: primaryColor }}
                                         onClick={() => window.open(vendor.websiteUrl, '_blank')}
                                     >
                                         <Globe className="mr-2 h-4 w-4" />
-                                        {t.visitWebsite}
+                                        {t('Visit Website')}
                                         <ExternalLink className="ml-2 h-4 w-4" />
                                     </Button>
                                 )}
@@ -392,11 +503,12 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                 {vendor.planType === 'card_website' && vendor.websiteUuid && (
                                     <Button
                                         variant={vendor.websiteUrl ? "outline" : "primary"}
-                                        className={`w-full py-4 ${!vendor.websiteUrl ? 'bg-luxury-black hover:bg-gold-600 text-white' : 'border-gold-200 hover:border-gold-400 hover:bg-gold-50 text-luxury-black'}`}
+                                        className={`w-full py-4`}
+                                        style={!vendor.websiteUrl ? { backgroundColor: primaryColor, color: 'white' } : { borderColor: accentColor, color: primaryColor }}
                                         onClick={() => window.location.href = `/store/${vendor.websiteUuid}`}
                                     >
                                         <Store className="mr-2 h-4 w-4" />
-                                        {t.visitWebsite}
+                                        {t('Visit Website')}
                                         <ExternalLink className="ml-2 h-4 w-4" />
                                     </Button>
                                 )}
@@ -408,7 +520,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                         className="w-full bg-gray-50 border-gray-200 cursor-not-allowed text-gray-400 py-4"
                                     >
                                         <Store className="mr-2 h-4 w-4" />
-                                        {t.listingOnly}
+                                        {t('Listing Only')}
                                     </Button>
                                 )}
                             </div>
@@ -417,6 +529,14 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                         {/* Bottom Safe Area for Mobile */}
                         <div className="h-safe-area-inset-bottom bg-white" />
                     </motion.div>
+
+                    {/* Review Modal */}
+                    <ReviewModal
+                        isOpen={showReviewModal}
+                        onClose={() => setShowReviewModal(false)}
+                        onSubmit={handleSubmitReview}
+                        vendorName={vendor.name}
+                    />
                 </>
             )}
         </AnimatePresence>

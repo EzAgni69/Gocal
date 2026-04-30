@@ -2,15 +2,25 @@ import { Router, Response } from 'express';
 import { db } from 'database';
 import { users } from 'database/src/schema/users';
 import { eq } from 'drizzle-orm';
+import rateLimit from 'express-rate-limit';
 import { authenticate, AuthenticatedRequest } from '../middleware/auth';
 
 const router = Router();
+
+// Strict rate limiting for authentication routes to prevent brute force
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 15, // Limit each IP to 15 authentication requests per `window`
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many authentication attempts from this IP, please try again after 15 minutes' }
+});
 
 /**
  * POST /api/auth/sync
  * Syncs the authenticated Firebase user with the Postgres Database
  */
-router.post('/sync', authenticate, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+router.post('/sync', authLimiter, authenticate, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         const firebaseUser = req.user;
 

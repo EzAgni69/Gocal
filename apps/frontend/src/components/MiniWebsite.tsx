@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ShoppingBag, Tag, Image as ImageIcon, MessageCircle, MapPin, Heart, Star, ExternalLink, Edit3, X, Clock, Navigation } from 'lucide-react';
-import { Vendor, Product, Language } from '../types';
+import { Vendor, Product, Language, Review } from '../types';
 import { TRANSLATIONS } from '../constants';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { useAppContext } from '../context/AppContext';
+import { useTranslation } from '../providers/TranslationProvider';
+import { ReviewModal } from './ReviewModal';
+import { apiClient } from '../services/apiClient';
+
 
 interface MiniWebsiteProps {
   vendor: Vendor;
@@ -23,8 +27,11 @@ const tabContentVariants = {
 
 export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBack, addToWishlist, wishlist }) => {
   const [activeTab, setActiveTab] = useState<'home' | 'products' | 'offers' | 'gallery' | 'reviews'>('home');
-  const t = TRANSLATIONS[language];
+  const { t } = useTranslation();
   const { requireAuth } = useAppContext();
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>(vendor.reviews || []);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
 
   const handleWhatsApp = () => {
     if (!requireAuth('message this vendor')) return;
@@ -45,8 +52,36 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
 
   const handleWriteReview = () => {
     if (!requireAuth('write a review')) return;
-    alert('Review form would open here. Thank you for your feedback!');
+    setShowReviewModal(true);
   };
+
+  const handleSubmitReview = async (rating: number, comment: string) => {
+    const response = await apiClient('/api/reviews', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ vendorId: vendor.id, rating, comment }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || 'Failed to submit review');
+    }
+
+    const data = await response.json();
+    setReviews((prev) => [data.review, ...prev]);
+  };
+
+  // Fetch reviews when switching to reviews tab if not yet loaded
+  useEffect(() => {
+    if (activeTab !== 'reviews') return;
+    if (reviews.length > 0) return;
+    setReviewsLoading(true);
+    apiClient(`/api/reviews/vendor/${vendor.id}`)
+      .then((res) => res.json())
+      .then((data) => setReviews(data.reviews || []))
+      .catch((err) => console.error('Failed to fetch reviews:', err))
+      .finally(() => setReviewsLoading(false));
+  }, [activeTab, vendor.id]);
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] pb-20 font-sans text-gray-800">
@@ -72,7 +107,7 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                   </div>
                 )}
               </div>
-              <h1 className="text-xl md:text-2xl font-serif font-bold text-black tracking-tight">{vendor.name}</h1>
+              <h1 className="text-xl md:text-2xl font-serif font-bold text-black tracking-tight">{t(vendor.name)}</h1>
             </div>
           </div>
           
@@ -164,7 +199,7 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                     transition={{ delay: 0.2, duration: 0.8 }}
                     className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-6 drop-shadow-2xl tracking-tight leading-tight"
                   >
-                    {vendor.name}
+                    {t(vendor.name)}
                   </motion.h2>
                   <motion.p 
                     initial={{ y: 20, opacity: 0 }}
@@ -172,7 +207,7 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                     transition={{ delay: 0.4, duration: 0.8 }}
                     className="text-lg md:text-xl text-gray-200 font-light tracking-wide max-w-2xl mx-auto leading-relaxed"
                   >
-                    {vendor.description}
+                    {t(vendor.description)}
                   </motion.p>
                   <motion.div
                     initial={{ y: 20, opacity: 0 }}
@@ -183,7 +218,7 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                       onClick={() => setActiveTab('products')}
                       className="mt-12 px-10 py-4 bg-white text-black text-xs uppercase tracking-[0.2em] font-bold hover:bg-gray-100 transition-colors shadow-[0_0_40px_rgba(255,255,255,0.3)]"
                     >
-                      Discover Products
+                      {t('Discover Products')}
                     </button>
                   </motion.div>
                 </div>
@@ -204,8 +239,8 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                           <MapPin className="w-5 h-5 text-black" />
                         </div>
                         <div>
-                          <p className="font-bold text-black tracking-widest uppercase text-xs mb-2">Location</p>
-                          <p className="text-gray-600 font-light leading-relaxed">{vendor.address}</p>
+                          <p className="font-bold text-black tracking-widest uppercase text-xs mb-2">{t('Location')}</p>
+                          <p className="text-gray-600 font-light leading-relaxed">{t(vendor.address)}</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-5">
@@ -222,7 +257,7 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                           <MessageCircle className="w-5 h-5 text-black" />
                         </div>
                         <div>
-                          <p className="font-bold text-black tracking-widest uppercase text-xs mb-2">Concierge</p>
+                          <p className="font-bold text-black tracking-widest uppercase text-xs mb-2">{t('Concierge')}</p>
                           <p className="text-gray-600 font-light">{vendor.phone}<br/>{vendor.email}</p>
                         </div>
                       </div>
@@ -278,8 +313,8 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                         </button>
                       </div>
                       <div className="text-center px-2">
-                        <p className="text-[10px] tracking-[0.2em] uppercase text-gray-400 mb-3 font-semibold">{product.category}</p>
-                        <h4 className="font-serif text-xl text-black mb-3 line-clamp-1 group-hover:text-gray-600 transition-colors">{product.name}</h4>
+                        <p className="text-[10px] tracking-[0.2em] uppercase text-gray-400 mb-3 font-semibold">{t(product.category)}</p>
+                        <h4 className="font-serif text-xl text-black mb-3 line-clamp-1 group-hover:text-gray-600 transition-colors">{t(product.name)}</h4>
                         <span className="text-sm font-medium tracking-wide text-gray-900">₹{product.price.toLocaleString()}</span>
                       </div>
                     </div>
@@ -317,9 +352,9 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                   <div key={idx} className="bg-black text-white p-8 md:p-12 shadow-[0_30px_60px_rgba(0,0,0,0.15)] relative overflow-hidden group">
                     <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
                       <div>
-                        <p className="text-[10px] tracking-[0.3em] uppercase text-gray-400 mb-4 font-semibold">Limited Time</p>
-                        <h4 className="text-3xl md:text-4xl font-serif font-bold mb-4">{offer.title}</h4>
-                        <p className="text-xl md:text-2xl font-light text-gray-300">{offer.discount}</p>
+                        <p className="text-[10px] tracking-[0.3em] uppercase text-gray-400 mb-4 font-semibold">{t('Limited Time')}</p>
+                        <h4 className="text-3xl md:text-4xl font-serif font-bold mb-4">{t(offer.title)}</h4>
+                        <p className="text-xl md:text-2xl font-light text-gray-300">{t(offer.discount)}</p>
                       </div>
                       <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 text-center min-w-[200px]">
                         <p className="text-xs tracking-[0.2em] uppercase text-gray-400 mb-2">Promo Code</p>
@@ -428,7 +463,9 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
 
               {/* Reviews List */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {vendor.reviews?.map((review) => (
+                {reviewsLoading ? (
+                  <div className="col-span-2 text-center py-20 text-gray-400 text-sm tracking-widest uppercase">Loading reviews...</div>
+                ) : reviews.map((review) => (
                   <div key={review.id} className="bg-white p-8 border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-shadow duration-300">
                     <div className="flex items-center gap-1 mb-6">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -440,16 +477,20 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                     </div>
                     <p className="text-gray-600 font-light leading-relaxed mb-6 italic">"{review.comment}"</p>
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                        <span className="font-serif text-black">{review.user.charAt(0)}</span>
+                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                        {review.user?.avatarUrl ? (
+                          <img src={review.user.avatarUrl} alt={review.user?.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="font-serif text-black">{(review.user?.name || 'A').charAt(0)}</span>
+                        )}
                       </div>
-                      <p className="font-semibold text-xs tracking-widest uppercase text-black">{review.user}</p>
+                      <p className="font-semibold text-xs tracking-widest uppercase text-black">{review.user?.name || 'Anonymous'}</p>
                     </div>
                   </div>
                 ))}
               </div>
               
-              {!vendor.reviews?.length && (
+              {!reviewsLoading && reviews.length === 0 && (
                 <div className="text-center py-20 border border-gray-100 bg-white">
                   <Star className="w-12 h-12 text-gray-200 mx-auto mb-6" />
                   <p className="font-serif text-2xl text-black mb-6">Be the first to share your experience.</p>
@@ -466,6 +507,13 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
           )}
         </AnimatePresence>
       </main>
+
+      <ReviewModal
+        isOpen={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+        onSubmit={handleSubmitReview}
+        vendorName={vendor.name}
+      />
     </div>
   );
 };

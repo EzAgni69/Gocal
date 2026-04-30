@@ -5,6 +5,7 @@ import { vendors } from 'database/src/schema/vendors';
 import { ilike, or, and, eq, count, desc, sql } from 'drizzle-orm';
 import { authenticate, requireRole, AuthenticatedRequest } from '../middleware/auth';
 import { authAdmin } from '../config/firebase';
+import { logger } from '../config/logger';
 
 const router = Router();
 
@@ -34,16 +35,24 @@ router.post('/', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), async (req: 
         await authAdmin.setCustomUserClaims(firebaseUser.uid, { role: userRole });
 
         // 3. Create user in Postgres Database
-        const newUsers = await db.insert(users).values({
-            firebaseUid: firebaseUser.uid,
-            email: email,
-            name: name || email.split('@')[0],
-            phone: phone || null,
-            role: userRole,
-            preferredLanguage: 'en',
-        }).returning();
-
-        const dbUser = newUsers[0];
+        let dbUser;
+        try {
+            const newUsers = await db.insert(users).values({
+                firebaseUid: firebaseUser.uid,
+                email: email,
+                name: name || email.split('@')[0],
+                phone: phone || null,
+                role: userRole,
+                preferredLanguage: 'en',
+            }).returning();
+            
+            dbUser = newUsers[0];
+        } catch (dbError) {
+            logger.error('Failed to create user in Postgres, rolling back Firebase user', { error: dbError });
+            await authAdmin.deleteUser(firebaseUser.uid);
+            res.status(500).json({ error: 'Failed to create user in database' });
+            return;
+        }
 
         res.status(201).json({
             message: 'User created successfully',
@@ -57,7 +66,7 @@ router.post('/', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), async (req: 
             }
         });
     } catch (error: any) {
-        console.error('Error creating user:', error);
+        logger.error('Error creating user', { error });
         
         // Return a clean error if Firebase fails (like email already exists)
         if (error.code && error.code.startsWith('auth/')) {
@@ -147,7 +156,7 @@ router.get('/', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), async (req: A
             }
         });
     } catch (error) {
-        console.error('Error fetching users:', error);
+        logger.error('Error fetching users', { error });
         res.status(500).json({ error: 'Failed to fetch users' });
     }
 });
@@ -202,7 +211,7 @@ router.put('/:id/role', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), async
             }
         });
     } catch (error) {
-        console.error('Error updating user role:', error);
+        logger.error('Error updating user role', { error });
         res.status(500).json({ error: 'Failed to update user role' });
     }
 });

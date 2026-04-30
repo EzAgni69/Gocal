@@ -3,6 +3,7 @@ import { authAdmin } from '../config/firebase';
 import { db } from 'database';
 import { users } from 'database/src/schema/users';
 import { eq } from 'drizzle-orm';
+import { logger } from '../config/logger';
 
 export interface AuthenticatedRequest extends Request {
     user?: {
@@ -43,7 +44,9 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
                 dbUserRole = dbUsers[0].role;
             }
         } catch (dbError) {
-            console.error('Error fetching Postgres user in auth middleware:', dbError);
+            logger.error('Error fetching Postgres user in auth middleware', { error: dbError });
+            res.status(503).json({ error: 'Database service unavailable' });
+            return;
         }
 
         req.user = {
@@ -58,7 +61,7 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
         
         next();
     } catch (error) {
-        console.error('Error verifying Firebase token:', error);
+        logger.error('Error verifying Firebase token', { error });
         res.status(401).json({ error: 'Invalid or expired token' });
     }
 }

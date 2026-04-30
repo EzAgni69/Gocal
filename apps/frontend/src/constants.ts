@@ -287,7 +287,7 @@ export const MOCK_ANALYTICS: AnalyticsData[] = [
 
 export const TRANSLATIONS = {
   en: {
-    searchPlaceholder: "Search for jewelry, decor...",
+    searchPlaceholder: "Search by name, city, contact...",
     // explore: "Explore Premium Collections",
     visitWebsite: "Website",
     callNow: "Call Now",
@@ -303,7 +303,7 @@ export const TRANSLATIONS = {
     listingOnly: "Listing Only",
   },
   hi: {
-    searchPlaceholder: "आभूषण, सजावट खोजें...",
+    searchPlaceholder: "नाम, शहर, संपर्क से खोजें...",
     // explore: "प्रीमियम संग्रह खोजें",
     visitWebsite: "वेबसाइट",
     callNow: "अभी कॉल करें",
@@ -319,7 +319,7 @@ export const TRANSLATIONS = {
     listingOnly: "केवल लिस्टिंग",
   },
   gu: {
-    searchPlaceholder: "જ્વેલરી, ડેકોર શોધો...",
+    searchPlaceholder: "નામ, શહેર, સંપર્ક દ્વારા શોધો...",
     // explore: "પ્રીમિયમ કલેક્શન જુઓ",
     visitWebsite: "વેબસાઇટ",
     callNow: "હમણાં કોલ કરો",

@@ -1,6 +1,8 @@
 import { Router, Response } from 'express';
-import { db, vendors, products, galleryImages, offers, reviews, tags, vendorTags, homeCards, eq, ilike, sql, and, isNull, isNotNull, desc } from 'database';
+import { db, vendors, products, galleryImages, offers, reviews, tags, vendorTags, homeCards, favorites, wishlistItems, eq, ilike, sql, and, or, isNull, isNotNull, desc, inArray } from 'database';
 import { authenticate, requireRole, AuthenticatedRequest } from '../middleware/auth';
+import { z } from 'zod';
+import { validate } from '../middleware/validation';
 
 const router = Router();
 
@@ -17,7 +19,14 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
         const conditions = [isNull(vendors.deletedAt)];
         if (city) conditions.push(eq(vendors.city, city as string));
         if (category) conditions.push(eq(vendors.categoryId, category as string));
-        if (search) conditions.push(ilike(vendors.name, `%${search}%`));
+        if (search) conditions.push(
+            or(
+                ilike(vendors.name, `%${search}%`),
+                ilike(vendors.city, `%${search}%`),
+                ilike(vendors.phone, `%${search}%`),
+                ilike(vendors.email, `%${search}%`)
+            )!
+        );
 
         // Get total count for pagination
         const totalResult = await db.select({ count: sql<number>`count(*)` })
@@ -29,7 +38,7 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
             .where(conditions.length > 0 ? and(...conditions) : undefined)
             .limit(Number(limit))
             .offset(offset)
-            .orderBy(desc(vendors.isPremium), desc(vendors.rating));
+            .orderBy(desc(vendors.createdAt));
 
         res.json({ vendors: result, total, page: Number(page), limit: Number(limit) });
     } catch (error) {
@@ -48,7 +57,7 @@ router.get('/home', async (req: AuthenticatedRequest, res: Response) => {
             where: eq(homeCards.isActive, true),
             with: { 
                 vendor: { 
-                    with: { products: true, category: true, galleryImages: true, tags: { with: { tag: true } } } 
+                    with: { products: true, category: true, galleryImages: true, tags: { with: { tag: true } }, reviews: { with: { user: { columns: { id: true, name: true, avatarUrl: true } } } } } 
                 } 
             },
             orderBy: (homeCards, { asc }) => [asc(homeCards.displayOrder)],
@@ -180,7 +189,28 @@ router.get('/store/:uuid', async (req: AuthenticatedRequest, res: Response) => {
  * POST /api/vendors
  * Create a new vendor (VENDOR role required)
  */
-router.post('/', authenticate, requireRole('VENDOR', 'SUPER_ADMIN'), async (req: AuthenticatedRequest, res: Response) => {
+
+const vendorSchema = z.object({
+    body: z.object({
+        name: z.string().min(1).max(255),
+        description: z.string().optional().nullable(),
+        shortDescription: z.string().optional().nullable(),
+        city: z.string().min(1).max(100),
+        address: z.string().min(1).max(500),
+        phone: z.string().max(20).optional().nullable(),
+        email: z.string().email().optional().nullable().or(z.literal('')),
+        coverImageUrl: z.string().url().optional().nullable().or(z.literal('')),
+        categoryId: z.string().uuid().optional().nullable(),
+        miniWebsiteConfig: z.any().optional(),
+        latitude: z.union([z.number(), z.string()]).optional().nullable(),
+        longitude: z.union([z.number(), z.string()]).optional().nullable(),
+        googlePlaceId: z.string().optional().nullable(),
+        tagsList: z.array(z.string().max(50)).optional(),
+        websiteUrl: z.string().url().optional().nullable().or(z.literal('')),
+    })
+});
+
+router.post('/', authenticate, requireRole('VENDOR', 'SUPER_ADMIN'), validate(vendorSchema), async (req: AuthenticatedRequest, res: Response) => {
     try {
         if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
         const {
@@ -251,7 +281,15 @@ router.post('/', authenticate, requireRole('VENDOR', 'SUPER_ADMIN'), async (req:
  * PUT /api/vendors/:id
  * Update a vendor (owner or SUPER_ADMIN only)
  */
-router.put('/:id', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+
+const updateVendorSchema = z.object({
+    params: z.object({
+        id: z.string().uuid()
+    }),
+    body: vendorSchema.shape.body.partial()
+});
+
+router.put('/:id', authenticate, validate(updateVendorSchema), async (req: AuthenticatedRequest, res: Response) => {
     try {
         if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
         const vendorId = req.params.id;
@@ -339,6 +377,19 @@ router.delete('/:id', authenticate, async (req: AuthenticatedRequest, res: Respo
         await db.update(vendors)
             .set({ deletedAt: new Date() })
             .where(eq(vendors.id, vendorId));
+
+        // Clean up favorites and wishlist items for this vendor
+        await db.delete(favorites).where(eq(favorites.vendorId, vendorId));
+
+        const vendorProducts = await db
+            .select({ id: products.id })
+            .from(products)
+            .where(eq(products.vendorId, vendorId));
+
+        if (vendorProducts.length > 0) {
+            await db.delete(wishlistItems)
+                .where(inArray(wishlistItems.productId, vendorProducts.map(p => p.id)));
+        }
 
         res.json({ message: 'Vendor removed successfully' });
     } catch (error) {

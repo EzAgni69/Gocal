@@ -8,6 +8,7 @@ export * from './gallery';
 export * from './offers';
 export * from './favorites';
 export * from './wishlists';
+export * from './translations';
 export * from './reviews';
 export * from './reports';
 export * from './ads';

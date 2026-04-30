@@ -10,7 +10,7 @@ export default function VendorPage() {
     const vendor = MOCK_VENDORS[3];
 
     return (
-        <ProtectedRoute allowedRoles={[UserRole.VENDOR, UserRole.SUPER_ADMIN]}>
+        <ProtectedRoute allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
             <VendorDashboard vendor={vendor} analyticsData={MOCK_ANALYTICS} />
         </ProtectedRoute>
     );

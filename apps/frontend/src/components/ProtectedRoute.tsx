@@ -25,9 +25,13 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
             setShowLoginRequiredModal(true);
             router.push('/');
         }
-    } else if (isAuthenticated && currentRole) {
-        if (!allowedRoles.includes(currentRole)) {
-            // User is authenticated but doesn't have the right role
+    } else if (isAuthenticated && user && currentRole) {
+        // Safe check for both currentRole and the base user role
+        const userDBRole = user.role as UserRole;
+        const hasAccess = allowedRoles.includes(currentRole) || allowedRoles.includes(userDBRole);
+        
+        if (!hasAccess) {
+            // User is authenticated but doesn't have the right role in either view
             router.push('/'); 
         }
     }
@@ -43,7 +47,8 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   }
 
   // Double check before rendering children
-  if (isAuthenticated && allowedRoles.includes(currentRole)) {
+  const userDBRole = user?.role as UserRole;
+  if (isAuthenticated && (allowedRoles.includes(currentRole) || allowedRoles.includes(userDBRole))) {
       return <>{children}</>;
   }
 

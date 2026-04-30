@@ -41,7 +41,7 @@ async function testConnection() {
     } catch (error: any) {
         console.error('❌ Connection failed:', error.message);
         console.error('\n💡 Make sure PostgreSQL is running and DATABASE_URL is set correctly:');
-        console.error('   DATABASE_URL=postgresql://user:pass@localhost:5432/gocal_db');
+        console.error('   DATABASE_URL=postgresql://user:pass@localhost:5432/vanij_db');
     }
 
     process.exit(0);

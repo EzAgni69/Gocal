@@ -2,9 +2,7 @@ import { auth } from '../config/firebase';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-interface RequestOptions extends RequestInit {
-    // Add any custom options here if needed in the future
-}
+type RequestOptions = RequestInit;
 
 /**
  * A wrapper around the native fetch API that automatically

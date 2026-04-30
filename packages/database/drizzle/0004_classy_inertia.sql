@@ -1,0 +1,1 @@
+ALTER TABLE "contact_card_requests" ADD COLUMN "draft_products" jsonb;
