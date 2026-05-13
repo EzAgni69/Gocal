@@ -2,6 +2,7 @@
 import React from 'react';
 import { Star, User } from 'lucide-react';
 import { Review } from '../types';
+import Image from 'next/image';
 
 interface ReviewsListProps {
     reviews: Review[];
@@ -44,11 +45,14 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({ reviews }) => {
                         {/* Avatar */}
                         <div className="flex-shrink-0">
                             {review.user?.avatarUrl ? (
-                                <img
-                                    src={review.user.avatarUrl}
-                                    alt={review.user.name}
-                                    className="w-10 h-10 rounded-full object-cover"
-                                />
+                                <div className="relative w-10 h-10 rounded-full overflow-hidden shrink-0">
+                                    <Image
+                                        src={review.user.avatarUrl}
+                                        alt={review.user.name}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
                             ) : (
                                 <div className="w-10 h-10 rounded-full bg-gold-100 flex items-center justify-center">
                                     <User className="w-5 h-5 text-gold-600" />

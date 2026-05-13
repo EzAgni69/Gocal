@@ -25,6 +25,18 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "Gocal.co | Premium B2B Commerce",
   description: "Experience the future of B2B commerce with Gocal.co",
+  openGraph: {
+    title: "Gocal.co | Premium B2B Commerce",
+    description: "Experience the future of B2B commerce with Gocal.co",
+    url: "https://gocal.co",
+    siteName: "Gocal.co",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Gocal.co | Premium B2B Commerce",
+    description: "Experience the future of B2B commerce with Gocal.co",
+  },
 };
 
 export default function RootLayout({

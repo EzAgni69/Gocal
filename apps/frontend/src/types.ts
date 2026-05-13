@@ -82,6 +82,10 @@ export interface MiniWebsiteConfig {
         cardLayout?: 'compact' | 'split' | 'expanded';
         cardTheme?: 'minimal' | 'elegant' | 'bold';
     };
+    businessLabel?: string;
+    tagline?: string;
+    aboutDescription?: string;
+    qrCodeUrl?: string;
 }
 
 export interface Vendor {
@@ -175,6 +179,10 @@ export interface ContactCardRequest {
     imageUrl?: string;
     description?: string;
   }> | null;
+  businessLabel?: string | null;
+  tagline?: string | null;
+  aboutDescription?: string | null;
+  qrCodeUrl?: string | null;
   createdAt: string;
   updatedAt: string;
   requester?: { id: string; name: string; email: string; phone?: string; avatarUrl?: string };

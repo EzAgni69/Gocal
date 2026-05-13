@@ -6,6 +6,15 @@ import { validate } from '../middleware/validation';
 
 const router = Router();
 
+function isValidUrl(value: string): boolean {
+    try {
+        new URL(value);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 /**
  * GET /api/vendors
  * List vendors with optional filters: city, category, search query
@@ -120,6 +129,42 @@ router.get('/nearby', async (req: AuthenticatedRequest, res: Response) => {
 });
 
 /**
+ * GET /api/vendors/me
+ * Get the vendor owned by the currently authenticated user
+ */
+router.get('/me', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        if (!req.user?.id) {
+            res.status(401).json({ error: 'User profile not fully synced' });
+            return;
+        }
+
+        const vendor = await db.query.vendors.findFirst({
+            where: and(eq(vendors.ownerId, req.user.id), isNull(vendors.deletedAt)),
+            with: {
+                products: true,
+                galleryImages: true,
+                offers: true,
+                reviews: {
+                    with: { user: { columns: { id: true, name: true, avatarUrl: true } } },
+                },
+                category: true,
+            },
+        });
+
+        if (!vendor) {
+            res.status(404).json({ error: 'No vendor found for this user' });
+            return;
+        }
+
+        res.json({ vendor });
+    } catch (error) {
+        console.error('Error fetching user vendor:', error);
+        res.status(500).json({ error: 'Failed to fetch vendor' });
+    }
+});
+
+/**
  * GET /api/vendors/:id
  * Get vendor details with products, gallery, offers, reviews
  */
@@ -202,6 +247,7 @@ const vendorSchema = z.object({
         coverImageUrl: z.string().url().optional().nullable().or(z.literal('')),
         categoryId: z.string().uuid().optional().nullable(),
         miniWebsiteConfig: z.any().optional(),
+        openingHours: z.any().optional(),
         latitude: z.union([z.number(), z.string()]).optional().nullable(),
         longitude: z.union([z.number(), z.string()]).optional().nullable(),
         googlePlaceId: z.string().optional().nullable(),
@@ -314,6 +360,29 @@ router.put('/:id', authenticate, validate(updateVendorSchema), async (req: Authe
                 updateData.miniWebsiteConfig = JSON.parse(updateData.miniWebsiteConfig);
             } catch (e) {
                 console.error('Error parsing miniWebsiteConfig:', e);
+            }
+        }
+
+        // Validate brand copy field lengths inside miniWebsiteConfig
+        const miniWebsiteConfig = updateData.miniWebsiteConfig as Record<string, unknown> | undefined;
+        if (miniWebsiteConfig?.businessLabel !== undefined) {
+            if (typeof miniWebsiteConfig.businessLabel !== 'string' || miniWebsiteConfig.businessLabel.length > 100) {
+                return res.status(400).json({ error: 'businessLabel must be a string of 100 characters or fewer' });
+            }
+        }
+        if (miniWebsiteConfig?.tagline !== undefined) {
+            if (typeof miniWebsiteConfig.tagline !== 'string' || miniWebsiteConfig.tagline.length > 150) {
+                return res.status(400).json({ error: 'tagline must be a string of 150 characters or fewer' });
+            }
+        }
+        if (miniWebsiteConfig?.aboutDescription !== undefined) {
+            if (typeof miniWebsiteConfig.aboutDescription !== 'string' || miniWebsiteConfig.aboutDescription.length > 1000) {
+                return res.status(400).json({ error: 'aboutDescription must be a string of 1000 characters or fewer' });
+            }
+        }
+        if (miniWebsiteConfig?.qrCodeUrl !== undefined && miniWebsiteConfig.qrCodeUrl !== null) {
+            if (typeof miniWebsiteConfig.qrCodeUrl !== 'string' || !isValidUrl(miniWebsiteConfig.qrCodeUrl)) {
+                return res.status(400).json({ error: 'qrCodeUrl must be a valid URL' });
             }
         }
 
@@ -541,6 +610,193 @@ router.delete('/:id/gallery/:imageId', authenticate, async (req: AuthenticatedRe
     } catch (error) {
         console.error('Error removing gallery image:', error);
         res.status(500).json({ error: 'Failed to remove gallery image' });
+    }
+});
+
+/**
+ * PRODUCT MANAGEMENT
+ */
+
+const productSchema = z.object({
+    body: z.object({
+        name: z.string().min(1).max(255),
+        price: z.union([z.number(), z.string()]),
+        description: z.string().optional().nullable(),
+        imageUrl: z.string().optional().nullable().or(z.literal('')),
+        category: z.string().max(100).optional().nullable(),
+        quantity: z.union([z.number(), z.string()]).optional().nullable(),
+        unit: z.string().max(20).optional().nullable(),
+        minOrderQty: z.union([z.number(), z.string()]).optional().nullable(),
+        inStock: z.boolean().optional(),
+        sku: z.string().max(100).optional().nullable(),
+    })
+});
+
+/**
+ * POST /api/vendors/:id/products
+ * Add a single product to a vendor
+ */
+router.post('/:id/products', authenticate, validate(productSchema), async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
+        const vendorId = req.params.id;
+
+        // Check ownership
+        const [existing] = await db.select().from(vendors).where(eq(vendors.id, vendorId)).limit(1);
+        if (!existing) { res.status(404).json({ error: 'Vendor not found' }); return; }
+        if (existing.ownerId !== req.user.id && req.user.role !== 'SUPER_ADMIN') {
+            res.status(403).json({ error: 'Access denied' }); return;
+        }
+
+        const { name, price, description, imageUrl, category, quantity, unit, minOrderQty, inStock, sku } = req.body;
+
+        const [newProduct] = await db.insert(products).values({
+            vendorId,
+            name,
+            price: String(price),
+            description: description || null,
+            imageUrl: imageUrl || null,
+            category: category || null,
+            quantity: quantity != null ? String(quantity) : null,
+            unit: unit || null,
+            minOrderQty: minOrderQty != null ? String(minOrderQty) : null,
+            inStock: inStock ?? true,
+            sku: sku || null,
+        }).returning();
+
+        res.status(201).json({ product: newProduct });
+    } catch (error) {
+        console.error('Error adding product:', error);
+        res.status(500).json({ error: 'Failed to add product' });
+    }
+});
+
+/**
+ * POST /api/vendors/:id/products/batch
+ * Bulk import products (e.g. from CSV)
+ */
+router.post('/:id/products/batch', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
+        const vendorId = req.params.id;
+
+        const [existing] = await db.select().from(vendors).where(eq(vendors.id, vendorId)).limit(1);
+        if (!existing) { res.status(404).json({ error: 'Vendor not found' }); return; }
+        if (existing.ownerId !== req.user.id && req.user.role !== 'SUPER_ADMIN') {
+            res.status(403).json({ error: 'Access denied' }); return;
+        }
+
+        const { items } = req.body;
+        if (!Array.isArray(items) || items.length === 0) {
+            res.status(400).json({ error: 'items array is required and must not be empty' });
+            return;
+        }
+
+        if (items.length > 200) {
+            res.status(400).json({ error: 'Maximum 200 products per batch import' });
+            return;
+        }
+
+        const rows = items.map((item: any) => ({
+            vendorId,
+            name: String(item.name || 'Untitled Product'),
+            price: String(item.price || 0),
+            description: item.description || null,
+            imageUrl: item.imageUrl || null,
+            category: item.category || null,
+            quantity: item.quantity != null ? String(item.quantity) : null,
+            unit: item.unit || null,
+            minOrderQty: item.minOrderQty != null ? String(item.minOrderQty) : null,
+            inStock: item.inStock !== false,
+            sku: item.sku || null,
+        }));
+
+        const inserted = await db.insert(products).values(rows).returning();
+
+        res.status(201).json({ products: inserted, count: inserted.length });
+    } catch (error) {
+        console.error('Error batch importing products:', error);
+        res.status(500).json({ error: 'Failed to import products' });
+    }
+});
+
+/**
+ * PUT /api/vendors/:id/products/:productId
+ * Update an existing product
+ */
+router.put('/:id/products/:productId', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
+        const { id: vendorId, productId } = req.params;
+
+        const [existing] = await db.select().from(vendors).where(eq(vendors.id, vendorId)).limit(1);
+        if (!existing) { res.status(404).json({ error: 'Vendor not found' }); return; }
+        if (existing.ownerId !== req.user.id && req.user.role !== 'SUPER_ADMIN') {
+            res.status(403).json({ error: 'Access denied' }); return;
+        }
+
+        const { name, price, description, imageUrl, category, quantity, unit, minOrderQty, inStock, sku } = req.body;
+
+        const updateData: Record<string, unknown> = {};
+        if (name !== undefined) updateData.name = name;
+        if (price !== undefined) updateData.price = String(price);
+        if (description !== undefined) updateData.description = description;
+        if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
+        if (category !== undefined) updateData.category = category;
+        if (quantity !== undefined) updateData.quantity = quantity != null ? String(quantity) : null;
+        if (unit !== undefined) updateData.unit = unit;
+        if (minOrderQty !== undefined) updateData.minOrderQty = minOrderQty != null ? String(minOrderQty) : null;
+        if (inStock !== undefined) updateData.inStock = inStock;
+        if (sku !== undefined) updateData.sku = sku;
+
+        const [updated] = await db.update(products)
+            .set(updateData)
+            .where(and(eq(products.id, productId), eq(products.vendorId, vendorId)))
+            .returning();
+
+        if (!updated) {
+            res.status(404).json({ error: 'Product not found' });
+            return;
+        }
+
+        res.json({ product: updated });
+    } catch (error) {
+        console.error('Error updating product:', error);
+        res.status(500).json({ error: 'Failed to update product' });
+    }
+});
+
+/**
+ * DELETE /api/vendors/:id/products/:productId
+ * Delete a product
+ */
+router.delete('/:id/products/:productId', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        if (!req.user?.id) { res.status(401).json({ error: 'User profile not fully synced' }); return; }
+        const { id: vendorId, productId } = req.params;
+
+        const [existing] = await db.select().from(vendors).where(eq(vendors.id, vendorId)).limit(1);
+        if (!existing) { res.status(404).json({ error: 'Vendor not found' }); return; }
+        if (existing.ownerId !== req.user.id && req.user.role !== 'SUPER_ADMIN') {
+            res.status(403).json({ error: 'Access denied' }); return;
+        }
+
+        // Also clean up any wishlist items referencing this product
+        await db.delete(wishlistItems).where(eq(wishlistItems.productId, productId));
+
+        const result = await db.delete(products)
+            .where(and(eq(products.id, productId), eq(products.vendorId, vendorId)))
+            .returning();
+
+        if (result.length === 0) {
+            res.status(404).json({ error: 'Product not found' });
+            return;
+        }
+
+        res.json({ message: 'Product deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        res.status(500).json({ error: 'Failed to delete product' });
     }
 });
 

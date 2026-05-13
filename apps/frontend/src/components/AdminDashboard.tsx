@@ -3,6 +3,8 @@ import { ShieldAlert, Check, Trash2, X, Store, Eye, Clock, CheckCircle2, XCircle
 import { Report, ContactCardRequest, CardRequestRejectionReason, Vendor } from '../types';
 import { apiClient } from '@/services/apiClient';
 import { User, fetchUsers, updateUserRole } from '../services/userServices';
+import { updateVendorStatus, deleteVendorSoft, getAllUsers, undoRemoveVendor } from '../services/adminService';
+import Image from 'next/image';
 import { fetchVendors, removeVendor, restoreVendor, deleteAdminVendor } from '../services/vendorService';
 import debounce from "lodash.debounce";
 import { useCallback } from 'react';
@@ -1149,7 +1151,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ reports }) => {
             <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 mb-6">
               <div className="flex items-center gap-3">
                 {vendorToRemove.coverImage && (
-                  <img src={vendorToRemove.coverImage} className="w-12 h-12 rounded-lg object-cover" alt="" />
+                  <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0">
+                    <Image src={vendorToRemove.coverImage} fill className="object-cover" alt="" />
+                  </div>
                 )}
                 <div>
                   <h4 className="font-bold text-gray-900">{vendorToRemove.name}</h4>

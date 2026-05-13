@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { GalleryImage } from '../../types';
 import { addGalleryImage, removeGalleryImage, updateGalleryImage } from '../../services/vendorService';
 import { Button } from '../ui/Button';
+import Image from 'next/image';
 
 interface ImageGalleryManagerProps {
     vendorId: string;
@@ -98,10 +99,11 @@ export const ImageGalleryManager: React.FC<ImageGalleryManagerProps> = ({ vendor
                                 className="group relative bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-500"
                             >
                                 <div className="aspect-[4/5] relative overflow-hidden">
-                                    <img 
+                                    <Image 
                                         src={img.imageUrl} 
                                         alt={img.caption || 'Gallery image'} 
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
+                                        fill
+                                        className="object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
                                     />
                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300" />
                                     

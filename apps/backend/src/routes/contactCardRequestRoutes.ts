@@ -51,6 +51,10 @@ const cardRequestSchema = z.object({
             .array(draftProductSchema)
             .max(20, 'You can add at most 20 products')
             .optional(),
+        businessLabel: z.string().max(100, 'Business label must be 100 characters or fewer').optional(),
+        tagline: z.string().max(150, 'Tagline must be 150 characters or fewer').optional(),
+        aboutDescription: z.string().max(1000, 'About description must be 1000 characters or fewer').optional(),
+        qrCodeUrl: z.string().url('Invalid QR code URL').optional().or(z.literal('').transform(() => undefined)),
     }),
 });
 
@@ -79,7 +83,8 @@ router.post('/', authenticate, validate(cardRequestSchema), async (req: Authenti
             shortDescription, fullDescription, subscriptionPlan,
             draftProducts,
             openingHours, pincode, googleDirectionLink,
-            logoUrl, mainPhotoUrl, mainPhotoDescription, galleryUrls
+            logoUrl, mainPhotoUrl, mainPhotoDescription, galleryUrls,
+            businessLabel, tagline, aboutDescription, qrCodeUrl
         } = req.body;
         logger.debug(`Request Body (excl. products): ${JSON.stringify({ planType, fullName, phone, businessName, category, city })}`);
 
@@ -130,6 +135,10 @@ router.post('/', authenticate, validate(cardRequestSchema), async (req: Authenti
             mainPhotoUrl: mainPhotoUrl || null,
             mainPhotoDescription: mainPhotoDescription || null,
             galleryUrls: Array.isArray(galleryUrls) && galleryUrls.length > 0 ? galleryUrls : null,
+            businessLabel: businessLabel || null,
+            tagline: tagline || null,
+            aboutDescription: aboutDescription || null,
+            qrCodeUrl: qrCodeUrl || null,
         }).returning();
 
         if (newRequest) {
@@ -318,6 +327,10 @@ router.put('/:id/review', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), asy
                     // Build miniWebsiteConfig from request data
                     const miniConfig: Record<string, any> = {};
                     if (existingRequest.googleDirectionLink) miniConfig.googleMapsUrl = existingRequest.googleDirectionLink;
+                    if (existingRequest.businessLabel)    miniConfig.businessLabel    = existingRequest.businessLabel;
+                    if (existingRequest.tagline)          miniConfig.tagline          = existingRequest.tagline;
+                    if (existingRequest.aboutDescription) miniConfig.aboutDescription = existingRequest.aboutDescription;
+                    if (existingRequest.qrCodeUrl)        miniConfig.qrCodeUrl        = existingRequest.qrCodeUrl;
 
                     // Create vendor from request data
                     const [newVendor] = await tx.insert(vendors).values({
@@ -391,10 +404,13 @@ router.put('/:id/review', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), asy
                         isActive: true,
                     });
 
-                    // Upgrade user role to VENDOR
-                    await tx.update(users)
-                        .set({ role: 'VENDOR' })
-                        .where(eq(users.id, existingRequest.requesterId));
+                    // Upgrade user role to VENDOR only if they are a regular consumer
+                    const [requester] = await tx.select({ role: users.role }).from(users).where(eq(users.id, existingRequest.requesterId)).limit(1);
+                    if (requester && requester.role === 'CONSUMER') {
+                        await tx.update(users)
+                            .set({ role: 'VENDOR' })
+                            .where(eq(users.id, existingRequest.requesterId));
+                    }
                 });
 
                 res.json({

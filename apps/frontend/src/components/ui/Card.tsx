@@ -3,6 +3,7 @@
 import * as React from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
     variant?: "default" | "glass" | "elevated" | "interactive";
@@ -82,21 +83,20 @@ const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
 );
 CardFooter.displayName = "CardFooter";
 
-interface CardImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+interface CardImageProps extends React.HTMLAttributes<HTMLDivElement> {
+    src: string;
+    alt: string;
     overlay?: boolean;
 }
 
 const CardImage = React.forwardRef<HTMLDivElement, CardImageProps>(
     ({ className, src, alt, overlay = false, ...props }, ref) => (
-        <div ref={ref} className="relative overflow-hidden">
-            <img
-                src={src}
-                alt={alt}
-                className={cn(
-                    "w-full h-full object-cover transition-transform duration-500 group-hover:scale-105",
-                    className
-                )}
-                {...props}
+        <div ref={ref} className={cn("relative overflow-hidden", className)} {...props}>
+            <Image
+                src={src || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80"}
+                alt={alt || "Card image"}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
             {overlay && (
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />

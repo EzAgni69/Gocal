@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Search, MapPin, Star, Phone, Globe, Lock, CheckCircle, ArrowRight, Clock, Heart, LayoutGrid, List, Store } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Search, MapPin, Star, Phone, Globe, Lock, CheckCircle, ArrowRight, Clock, Heart, LayoutGrid, List, Store, Share2, Check } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Vendor } from '../types';
 import { VADODARA_PINCODES, CATEGORIES, TRANSLATIONS } from '../constants';
@@ -8,8 +8,10 @@ import { motion, Variants } from 'framer-motion';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ContactCardModal } from './ContactCardModal';
+import { ContactCardSelectorModal } from './ContactCardSelectorModal';
 import { useTranslation } from '../providers/TranslationProvider';
 import { formatOpeningHours } from '../utils/openingHours';
+import Image from 'next/image';
 
 
 interface DirectoryProps {
@@ -52,8 +54,25 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
   const [selectedPincode, setSelectedPincode] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
+  const [selectingGroup, setSelectingGroup] = useState<Vendor[] | null>(null);
   const searchParams = useSearchParams();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [copiedVendorId, setCopiedVendorId] = useState<string | null>(null);
+
+  const handleShare = (e: React.MouseEvent, vendor: Vendor) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/store/${vendor.websiteUuid || vendor.id}`;
+    const title = vendor.name;
+    const text = `Check out ${vendor.name} on Gocal.co`;
+
+    if (navigator.share) {
+      navigator.share({ title, text, url }).catch((err) => console.log('Error sharing', err));
+    } else {
+      navigator.clipboard.writeText(url);
+      setCopiedVendorId(vendor.id);
+      setTimeout(() => setCopiedVendorId(null), 2000);
+    }
+  };
 
   useEffect(() => {
     const vendorId = searchParams.get('vendor');
@@ -89,6 +108,26 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
+  const groupedVendors = useMemo(() => {
+    return filteredVendors.reduce((acc, vendor) => {
+      const existing = acc.find(g => g.name === vendor.name);
+      if (existing) {
+        existing.items.push(vendor);
+      } else {
+        acc.push({ ...vendor, items: [vendor] });
+      }
+      return acc;
+    }, [] as (Vendor & { items: Vendor[] })[]);
+  }, [filteredVendors]);
+
+  const handleVendorClick = (vendor: Vendor & { items: Vendor[] }) => {
+    if (vendor.items.length > 1) {
+      setSelectingGroup(vendor.items);
+    } else {
+      setSelectedVendor(vendor);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-luxury-cream">
       {/* Hero Section */}
@@ -96,11 +135,12 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-b from-luxury-black/80 via-luxury-black/50 to-luxury-cream z-10" />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop"
             alt="Hero Background"
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            priority
           />
         </div>
 
@@ -209,26 +249,30 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
           initial="hidden"
           animate="visible"
         >
-          {filteredVendors.map((vendor) => viewMode === 'grid' ? (
+          {groupedVendors.map((vendor) => viewMode === 'grid' ? (
             <motion.div
               key={vendor.id}
               variants={itemVariants}
               className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col h-full hover-lift card-shine cursor-pointer"
               whileHover={{ y: -8 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              onClick={() => setSelectedVendor(vendor)}
+              onClick={() => handleVendorClick(vendor)}
             >
               <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent group-hover:from-black/60 transition-colors z-10" />
-                <motion.img
-                  src={vendor.coverImage}
-                  alt={vendor.name}
-                  className="w-full h-full object-cover"
+                <motion.div 
+                  className="w-full h-full absolute inset-0"
                   whileHover={{ scale: 1.1 }}
                   transition={{ duration: 0.7, ease: "easeOut" }}
-                  fetchPriority="high"
-                  decoding="sync"
-                />
+                >
+                  <Image
+                    src={vendor.coverImage || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop"}
+                    alt={vendor.name}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </motion.div>
 
                 <div className="absolute top-4 left-4 z-20 flex gap-2">
                   <Badge variant={vendor.isOpen ? "success" : "secondary"} className="shadow-lg backdrop-blur-md bg-white/90">
@@ -244,31 +288,52 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                   </div>
                 )}
 
-                {/* Favorite Heart Icon */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (!requireAuth('like this vendor')) return;
-                    
-                    if (isFavorite(vendor.id)) {
-                      removeFromFavorites(vendor.id);
-                    } else {
-                      // Adapt mock vendor to GooglePlaceResponse-like structure if strictly required
-                      // but backend stores placeData as jsonb which is flexible.
-                      addToFavorites(vendor as any); 
-                    }
-                  }}
-                  className="absolute top-4 right-4 z-20 p-2 rounded-full backdrop-blur-md bg-white/70 hover:bg-white transition-colors duration-300 shadow-sm"
-                  aria-label={isFavorite(vendor.id) ? "Remove from favorites" : "Add to favorites"}
-                >
-                  <Heart 
-                    className={`w-5 h-5 transition-colors duration-300 ${
-                      isFavorite(vendor.id) 
-                        ? "fill-red-500 text-red-500" 
-                        : "text-gray-600 hover:text-red-500"
-                    }`} 
-                  />
-                </button>
+                {vendor.items.length > 1 && (
+                  <div className="absolute top-14 left-4 z-20">
+                    <Badge variant="premium" className="shadow-lg backdrop-blur-md bg-gold-500/90 text-white border-none">
+                      {vendor.items.length} {t('Options')}
+                    </Badge>
+                  </div>
+                )}
+
+                {/* Share and Favorite Buttons */}
+                <div className="absolute top-4 right-4 z-20 flex gap-2">
+                  <button
+                    onClick={(e) => handleShare(e, vendor)}
+                    className="p-2 rounded-full backdrop-blur-md bg-white/70 hover:bg-white transition-colors duration-300 shadow-sm"
+                    title="Share Vendor"
+                  >
+                    {copiedVendorId === vendor.id ? (
+                      <Check className="w-5 h-5 text-green-500" />
+                    ) : (
+                      <Share2 className="w-5 h-5 text-gray-600" />
+                    )}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!requireAuth('like this vendor')) return;
+                      
+                      if (isFavorite(vendor.id)) {
+                        removeFromFavorites(vendor.id);
+                      } else {
+                        // Adapt mock vendor to GooglePlaceResponse-like structure if strictly required
+                        // but backend stores placeData as jsonb which is flexible.
+                        addToFavorites(vendor as any); 
+                      }
+                    }}
+                    className="p-2 rounded-full backdrop-blur-md bg-white/70 hover:bg-white transition-colors duration-300 shadow-sm"
+                    aria-label={isFavorite(vendor.id) ? "Remove from favorites" : "Add to favorites"}
+                  >
+                    <Heart 
+                      className={`w-5 h-5 transition-colors duration-300 ${
+                        isFavorite(vendor.id) 
+                          ? "fill-red-500 text-red-500" 
+                          : "text-gray-600 hover:text-red-500"
+                      }`} 
+                    />
+                  </button>
+                </div>
 
                 {/* Quick Stats Overlay */}
                 <motion.div
@@ -320,10 +385,11 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                       {vendor.products.slice(0, 3).map((product) => (
                         <div key={product.id} className="min-w-[100px] max-w-[100px] group/prod">
                           <div className="relative aspect-square rounded-lg overflow-hidden border border-gray-100 mb-1 shadow-sm group-hover/prod:border-gold-300 transition-colors">
-                            <img 
+                            <Image 
                               src={product.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80'} 
                               alt={product.name}
-                              className="w-full h-full object-cover group-hover/prod:scale-110 transition-transform duration-500"
+                              fill
+                              className="object-cover group-hover/prod:scale-110 transition-transform duration-500"
                             />
                             <div className="absolute inset-0 bg-black/0 group-hover/prod:bg-black/5 transition-colors" />
                           </div>
@@ -390,10 +456,25 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
             <motion.div
               key={vendor.id}
               variants={itemVariants}
-              className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 cursor-pointer hover-lift"
-              onClick={() => setSelectedVendor(vendor)}
+              className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex flex-row items-center gap-4 p-4 cursor-pointer hover-lift"
+              onClick={() => handleVendorClick(vendor)}
             >
-              <div className="flex flex-col w-full sm:w-auto flex-1 pr-4 mb-4 sm:mb-0">
+              {/* Instagram-style Round Profile Picture */}
+              <div className="relative shrink-0 group-hover:scale-105 transition-transform duration-300">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full p-[2px] bg-gradient-to-tr from-gold-400 to-gold-600 shadow-md">
+                  <div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-gray-50">
+                    <Image
+                      src={vendor.coverImage || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop"}
+                      alt={vendor.name}
+                      width={80}
+                      height={80}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col flex-1 min-w-0">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1">
                   <h3 className="text-lg font-bold text-luxury-charcoal font-serif group-hover:text-gold-600 transition-colors line-clamp-1">{t(vendor.name)}</h3>
                   <div className="flex gap-2 items-center shrink-0">
@@ -403,6 +484,11 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                     {vendor.isPremium && (
                       <Badge variant="premium" className="text-[10px] px-2 py-0.5 flex items-center gap-1">
                         <CheckCircle className="w-3 h-3" /> VERIFIED
+                      </Badge>
+                    )}
+                    {vendor.items.length > 1 && (
+                      <Badge variant="premium" className="text-[10px] px-2 py-0.5 bg-gold-500 text-white border-none">
+                        {vendor.items.length} {t('Options')}
                       </Badge>
                     )}
                   </div>
@@ -429,7 +515,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                 </div>
               </div>
 
-              <div className="flex flex-row gap-2 w-full sm:w-auto shrink-0 border-t sm:border-t-0 pt-3 sm:pt-0 border-gray-100 justify-end sm:justify-start">
+              <div className="flex flex-row gap-2 shrink-0 items-center">
                 <Button
                   variant="outline"
                   size="sm"
@@ -479,7 +565,18 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                     {t('Listing Only')}
                   </Button>
                 )}
-                <div className="flex items-center justify-center p-2 rounded-md hover:bg-gray-100 transition-colors ml-1">
+                <div className="flex items-center gap-2 ml-2">
+                  <button
+                    onClick={(e) => handleShare(e, vendor)}
+                    className="p-2 rounded-md hover:bg-gray-100 transition-colors"
+                    title="Share Vendor"
+                  >
+                    {copiedVendorId === vendor.id ? (
+                      <Check className="w-4 h-4 text-green-500" />
+                    ) : (
+                      <Share2 className="w-4 h-4 text-gray-400" />
+                    )}
+                  </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -511,7 +608,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
               <Search className="w-8 h-8 text-gray-400" />
             </div>
             <h3 className="text-xl font-medium text-gray-900">No vendors found</h3>
-            <p className="text-gray-500 mt-2">Try adjusting your search or filters to find what you're looking for.</p>
+            <p className="text-gray-500 mt-2">Try adjusting your search or filters to find what you&apos;re looking for.</p>
             <Button
               variant="link"
               onClick={() => { setSearchTerm(''); setSelectedPincode(''); setSelectedCategory(''); }}
@@ -527,6 +624,18 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
         vendor={selectedVendor}
         isOpen={!!selectedVendor}
         onClose={() => setSelectedVendor(null)}
+      />
+
+      {/* Contact Card Selector Modal */}
+      <ContactCardSelectorModal
+        vendors={selectingGroup || []}
+        isOpen={!!selectingGroup}
+        onClose={() => setSelectingGroup(null)}
+        onSelect={(vendor) => {
+          setSelectedVendor(vendor);
+          setSelectingGroup(null);
+        }}
+        vendorName={selectingGroup?.[0]?.name || ''}
       />
     </div>
   );

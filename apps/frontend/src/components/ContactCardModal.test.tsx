@@ -8,6 +8,18 @@ jest.mock('../context/AppContext', () => ({
   useAppContext: jest.fn(),
 }));
 
+// Mock apiClient to avoid Firebase/undici import issues in jsdom
+jest.mock('../services/apiClient', () => ({
+  apiClient: jest.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({ reviews: [] }) })),
+}));
+
+// Mock TranslationProvider to avoid Firebase import chain
+jest.mock('../providers/TranslationProvider', () => ({
+  useTranslation: jest.fn(() => ({
+    t: (key: string) => key,
+  })),
+}));
+
 // Mock framer-motion to avoid animation issues in tests
 jest.mock('framer-motion', () => ({
   motion: {
@@ -16,6 +28,11 @@ jest.mock('framer-motion', () => ({
     h2: ({ children, ...props }: any) => <h2 {...props}>{children}</h2>,
   },
   AnimatePresence: ({ children }: any) => <>{children}</>,
+}));
+
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: ({ src, alt, ...props }: any) => <img src={src} alt={alt} {...props} />,
 }));
 
 const mockVendor = {

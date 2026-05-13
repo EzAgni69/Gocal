@@ -9,11 +9,12 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { FavoriteButton } from './FavoriteButton';
 
+import { useTranslation } from '../providers/TranslationProvider';
 import { ContactCardModal } from './ContactCardModal';
 import { Vendor } from '../types';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useAppContext } from '../context/AppContext';
-import { TRANSLATIONS } from '../constants';
+import Image from 'next/image';
 
 const SUGGESTED_SEARCHES = [
     'Electronics Shops',
@@ -52,7 +53,7 @@ const DEFAULT_STORE_IMAGE = 'https://images.unsplash.com/photo-1604719312566-891
 
 export const VadodaraPlaces: React.FC = () => {
     const { language } = useAppContext();
-    const t = TRANSLATIONS[language];
+    const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState('');
     const [places, setPlaces] = useState<GooglePlaceResponse[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -171,11 +172,12 @@ export const VadodaraPlaces: React.FC = () => {
                 {/* Background with Overlay */}
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-gradient-to-b from-luxury-black/85 via-luxury-black/60 to-luxury-cream z-10" />
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                         src="https://images.unsplash.com/photo-1567157577867-05ccb1388e66?q=80&w=1974&auto=format&fit=crop"
-                        alt="Vadodara City"
-                        className="w-full h-full object-cover"
+                        alt={t("Vadodara City")}
+                        fill
+                        className="object-cover"
+                        priority
                     />
                 </div>
 
@@ -187,13 +189,16 @@ export const VadodaraPlaces: React.FC = () => {
                     >
                         <Badge variant="premium" className="mb-3 px-4 py-1 text-[10px] sm:text-xs uppercase tracking-[0.2em] border border-gold-500/30">
                             <MapPin className="w-3 h-3 mr-1 inline" />
-                            Vadodara, Gujarat
+                            {t('Vadodara, Gujarat')}
                         </Badge>
                         <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif font-medium mb-3 text-white leading-tight tracking-wide">
-                            Discover Local <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 to-gold-600">Stores & Services</span>
+                            {t('Discover Local')}{' '}
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 to-gold-600">
+                                {t('Stores & Services')}
+                            </span>
                         </h1>
                         <p className="text-sm sm:text-base text-gray-300 font-light mb-8 max-w-2xl mx-auto tracking-wide">
-                            Find the best shops, services, and businesses in Vadodara city
+                            {t('Find the best shops, services, and businesses in Vadodara city')}
                         </p>
                     </motion.div>
 
@@ -210,7 +215,7 @@ export const VadodaraPlaces: React.FC = () => {
                                     <MapPin className="text-gold-400 w-4 h-4 mr-2" />
                                     <input
                                         type="text"
-                                        placeholder="Enter PIN code (e.g., 390001) for accurate results nearby"
+                                        placeholder={t("Enter PIN code (e.g., 390001) for accurate results nearby")}
                                         className="w-full bg-transparent outline-none text-white placeholder-gray-300 font-medium text-xs sm:text-sm"
                                         value={pincode}
                                         onChange={(e) => setPincode(e.target.value)}
@@ -226,7 +231,7 @@ export const VadodaraPlaces: React.FC = () => {
                                 <Search className="text-gold-400 w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
                                 <input
                                     type="text"
-                                    placeholder="Search stores..."
+                                    placeholder={t("Search stores...")}
                                     className="w-full bg-transparent outline-none text-white placeholder-gray-400 font-medium text-sm sm:text-base"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -257,14 +262,14 @@ export const VadodaraPlaces: React.FC = () => {
                         <h2 className="text-2xl sm:text-3xl font-serif text-luxury-black mb-2">
                             {hasSearched ? (
                                 <>
-                                    Results for &quot;<span className="text-gold-600">{searchQuery || 'popular stores'}</span>&quot;
+                                    {t('Results for')} &quot;<span className="text-gold-600">{searchQuery || t('popular stores')}</span>&quot;
                                 </>
                             ) : (
-                                'Popular Places in Vadodara'
+                                t('Popular Places in Vadodara')
                             )}
                         </h2>
                         <p className="text-sm text-gray-500">
-                            {places.length} places found in Vadodara
+                            {places.length} {t('places found in Vadodara')}
                         </p>
                     </div>
 
@@ -274,14 +279,14 @@ export const VadodaraPlaces: React.FC = () => {
                             <button
                                 onClick={() => setViewMode('grid')}
                                 className={`p-2 rounded-md flex items-center justify-center transition-colors ${viewMode === 'grid' ? 'bg-gold-50 text-gold-600' : 'text-gray-500 hover:bg-gray-100'}`}
-                                aria-label="Grid View"
+                                aria-label={t("Grid View")}
                             >
                                 <LayoutGrid className="w-5 h-5" />
                             </button>
                             <button
                                 onClick={() => setViewMode('list')}
                                 className={`p-2 rounded-md flex items-center justify-center transition-colors ${viewMode === 'list' ? 'bg-gold-50 text-gold-600' : 'text-gray-500 hover:bg-gray-100'}`}
-                                aria-label="List View"
+                                aria-label={t("List View")}
                             >
                                 <List className="w-5 h-5" />
                             </button>
@@ -294,7 +299,7 @@ export const VadodaraPlaces: React.FC = () => {
                     
                     {/* Filters Sidebar */}
                     <div className="w-full lg:w-64 shrink-0 top-24 sticky hidden lg:block bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                        <h3 className="font-serif text-lg font-bold text-luxury-black mb-4">Quick Browse</h3>
+                        <h3 className="font-serif text-lg font-bold text-luxury-black mb-4">{t('Quick Browse')}</h3>
                         <div className="space-y-2">
                             {SUGGESTED_SEARCHES.map((suggestion) => (
                                 <button
@@ -306,7 +311,7 @@ export const VadodaraPlaces: React.FC = () => {
                                             : 'bg-transparent text-gray-600 hover:bg-gray-50 hover:text-luxury-black border-l-4 border-transparent'
                                     }`}
                                 >
-                                    {suggestion}
+                                    {t(suggestion)}
                                 </button>
                             ))}
                         </div>
@@ -324,7 +329,7 @@ export const VadodaraPlaces: React.FC = () => {
                                         : 'bg-white text-gray-600 border-gray-200 hover:border-gold-300'
                                 }`}
                             >
-                                {suggestion}
+                                {t(suggestion)}
                             </button>
                         ))}
                     </div>
@@ -338,14 +343,14 @@ export const VadodaraPlaces: React.FC = () => {
                                 <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100/50 rounded-full mb-4">
                                     <Store className="w-8 h-8 text-red-500" />
                                 </div>
-                                <h3 className="text-xl font-medium text-gray-900">Something went wrong</h3>
-                                <p className="text-gray-500 mt-2">{error}</p>
+                                <h3 className="text-xl font-medium text-gray-900">{t('Something went wrong')}</h3>
+                                <p className="text-gray-500 mt-2">{t(error)}</p>
                                 <Button
                                     variant="outline"
                                     onClick={() => handleSearch(searchQuery)}
                                     className="mt-4 border-gray-200"
                                 >
-                                    Try Again
+                                    {t('Try Again')}
                                 </Button>
                             </div>
                         )}
@@ -354,7 +359,7 @@ export const VadodaraPlaces: React.FC = () => {
                         {isLoading && (
                             <div className="absolute inset-0 z-10 bg-luxury-cream/50 backdrop-blur-sm flex flex-col items-center justify-center py-20 rounded-2xl">
                                 <Loader2 className="w-12 h-12 text-gold-500 animate-spin mb-4" />
-                                <p className="text-gray-500 animate-pulse">Finding the best places...</p>
+                                <p className="text-gray-500 animate-pulse">{t('Finding the best places...')}</p>
                             </div>
                         )}
 
@@ -364,8 +369,8 @@ export const VadodaraPlaces: React.FC = () => {
                                 <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-50 rounded-full mb-6">
                                     <Search className="w-10 h-10 text-gray-400" />
                                 </div>
-                                <h3 className="text-xl font-medium text-gray-900 mb-2">No places found</h3>
-                                <p className="text-gray-500 max-w-md mx-auto">We couldn't find any results for "{searchQuery}". Try exploring our popular categories or adjusting your search.</p>
+                                <h3 className="text-xl font-medium text-gray-900 mb-2">{t('No places found')}</h3>
+                                <p className="text-gray-500 max-w-md mx-auto">{t('We couldn\'t find any results for')} &quot;{searchQuery}&quot;. {t('Try exploring our popular categories or adjusting your search.')}</p>
                             </div>
                         )}
 
@@ -417,20 +422,18 @@ export const VadodaraPlaces: React.FC = () => {
                                         {/* Image */}
                                         <div className="relative h-[180px] overflow-hidden">
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent z-10" />
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <motion.img
-                                                src={place.photoUrl || DEFAULT_STORE_IMAGE}
-                                                alt={place.displayName.text}
-                                                className="w-full h-full object-cover"
+                                            <motion.div
+                                                className="w-full h-full absolute inset-0"
                                                 whileHover={{ scale: 1.1 }}
                                                 transition={{ duration: 0.7, ease: "easeOut" }}
-                                                onError={(e) => {
-                                                    const target = e.target as HTMLImageElement;
-                                                    if (target.src !== DEFAULT_STORE_IMAGE) {
-                                                        target.src = DEFAULT_STORE_IMAGE;
-                                                    }
-                                                }}
-                                            />
+                                            >
+                                                <Image
+                                                    src={place.photoUrl || DEFAULT_STORE_IMAGE}
+                                                    alt={t(place.displayName.text)}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            </motion.div>
 
                                             {/* Status Badge */}
                                             <div className="absolute top-3 left-3 z-20">
@@ -438,7 +441,7 @@ export const VadodaraPlaces: React.FC = () => {
                                                     variant={place.regularOpeningHours?.openNow ? 'success' : 'secondary'}
                                                     className="shadow-lg backdrop-blur-md bg-white/95"
                                                 >
-                                                    {place.regularOpeningHours?.openNow ? 'Open Now' : 'Closed'}
+                                                    {place.regularOpeningHours?.openNow ? t('Open Now') : t('Closed')}
                                                 </Badge>
                                             </div>
 
@@ -446,7 +449,7 @@ export const VadodaraPlaces: React.FC = () => {
                                             {place.primaryTypeDisplayName?.text && (
                                                 <div className="absolute top-3 right-3 z-20">
                                                     <Badge variant="premium" className="text-[10px] tracking-wide shadow-lg">
-                                                        {place.primaryTypeDisplayName.text}
+                                                        {t(place.primaryTypeDisplayName.text)}
                                                     </Badge>
                                                 </div>
                                             )}
@@ -461,7 +464,7 @@ export const VadodaraPlaces: React.FC = () => {
                                         <div className="p-5 flex flex-col flex-grow">
                                             <div className="flex justify-between items-start mb-3 gap-3">
                                                 <h3 className="text-xl font-bold text-luxury-charcoal font-serif line-clamp-1 group-hover:text-gold-600 transition-colors">
-                                                    {place.displayName.text}
+                                                    {t(place.displayName.text)}
                                                 </h3>
                                                 {place.rating !== undefined && place.rating > 0 && (
                                                     <div className="flex items-center bg-gold-50 border border-gold-200 px-2 py-1 rounded-lg shrink-0 shadow-sm">
@@ -473,12 +476,12 @@ export const VadodaraPlaces: React.FC = () => {
 
                                             <p className="text-sm text-gray-500 flex items-start mb-3 line-clamp-2 leading-relaxed">
                                                 <MapPin className="w-4 h-4 mr-2 mt-0.5 text-gold-500 shrink-0" />
-                                                {place.shortFormattedAddress || place.formattedAddress}
+                                                {t(place.shortFormattedAddress || place.formattedAddress || '')}
                                             </p>
 
                                             {place.userRatingCount ? (
                                                 <p className="text-xs text-gray-400 mb-4 font-medium tracking-wide uppercase">
-                                                    Based on {place.userRatingCount} reviews
+                                                    {t('Based on')} {place.userRatingCount} {t('reviews')}
                                                 </p>
                                             ) : <div className="mb-4"></div>}
 
@@ -494,7 +497,7 @@ export const VadodaraPlaces: React.FC = () => {
                                                         }}
                                                     >
                                                         <Phone className="w-4 h-4 mr-1.5" />
-                                                        Call
+                                                        {t('Call')}
                                                     </Button>
                                                 )}
                                                 {place.websiteUri ? (
@@ -508,7 +511,7 @@ export const VadodaraPlaces: React.FC = () => {
                                                         }}
                                                     >
                                                         <ExternalLink className="w-4 h-4 mr-1.5" />
-                                                        {t.visitWebsite}
+                                                        {t('Website')}
                                                     </Button>
                                                 ) : (
                                                     <Button
@@ -518,7 +521,7 @@ export const VadodaraPlaces: React.FC = () => {
                                                         className="flex-1 h-10 cursor-not-allowed bg-gray-50 border-gray-200 text-gray-400 font-medium rounded-xl"
                                                     >
                                                         <Store className="w-4 h-4 mr-1.5" />
-                                                        {t.listingOnly}
+                                                        {t('Listing Only')}
                                                     </Button>
                                                 )}
                                             </div>
@@ -556,19 +559,19 @@ export const VadodaraPlaces: React.FC = () => {
                                     <div className="flex flex-col w-full sm:w-auto flex-1 pr-4 mb-4 sm:mb-0">
                                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1">
                                             <h3 className="text-lg font-bold text-luxury-charcoal font-serif group-hover:text-gold-600 transition-colors line-clamp-1">
-                                                {place.displayName.text}
+                                                {t(place.displayName.text)}
                                             </h3>
                                             <div className="flex gap-2 items-center shrink-0">
                                                 {place.primaryTypeDisplayName?.text && (
                                                     <Badge variant="premium" className="text-[10px] px-2 py-0.5">
-                                                        {place.primaryTypeDisplayName.text}
+                                                        {t(place.primaryTypeDisplayName.text)}
                                                     </Badge>
                                                 )}
                                                 <Badge
                                                     variant={place.regularOpeningHours?.openNow ? 'success' : 'secondary'}
                                                     className="text-[10px] px-2 py-0.5"
                                                 >
-                                                    {place.regularOpeningHours?.openNow ? 'Open Now' : 'Closed'}
+                                                    {place.regularOpeningHours?.openNow ? t('Open Now') : t('Closed')}
                                                 </Badge>
                                             </div>
                                         </div>
@@ -576,7 +579,7 @@ export const VadodaraPlaces: React.FC = () => {
                                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-sm text-gray-500 mt-1">
                                             <span className="flex items-center line-clamp-1">
                                                 <MapPin className="w-3.5 h-3.5 mr-1.5 text-gold-500 shrink-0" /> 
-                                                <span className="line-clamp-1">{place.shortFormattedAddress || place.formattedAddress}</span>
+                                                <span className="line-clamp-1">{t(place.shortFormattedAddress || place.formattedAddress || '')}</span>
                                             </span>
                                             {place.rating !== undefined && place.rating > 0 && (
                                                 <span className="flex items-center font-medium text-luxury-black shrink-0">
@@ -599,7 +602,7 @@ export const VadodaraPlaces: React.FC = () => {
                                                 }}
                                             >
                                                 <Phone className="w-3.5 h-3.5 sm:mr-2" />
-                                                <span className="hidden sm:inline">Call</span>
+                                                <span className="hidden sm:inline">{t('Call')}</span>
                                             </Button>
                                         )}
                                         {place.websiteUri ? (
@@ -612,7 +615,7 @@ export const VadodaraPlaces: React.FC = () => {
                                                 }}
                                             >
                                                 <ExternalLink className="w-3.5 h-3.5 sm:mr-2" />
-                                                <span className="hidden sm:inline">{t.visitWebsite}</span>
+                                                <span className="hidden sm:inline">{t('Website')}</span>
                                             </Button>
                                         ) : (
                                             <Button
@@ -621,7 +624,7 @@ export const VadodaraPlaces: React.FC = () => {
                                                 className="h-9 cursor-not-allowed bg-gray-50 border-gray-200 text-gray-400"
                                             >
                                                 <Store className="w-3.5 h-3.5 sm:mr-2" />
-                                                <span className="hidden sm:inline">{t.listingOnly}</span>
+                                                <span className="hidden sm:inline">{t('Listing Only')}</span>
                                             </Button>
                                         )}
                                         <div 

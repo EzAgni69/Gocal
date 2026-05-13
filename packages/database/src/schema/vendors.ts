@@ -18,6 +18,10 @@ import { categories } from './categories';
  *     cardLayout?: 'compact' | 'split' | 'expanded';
  *     cardTheme?: 'minimal' | 'elegant' | 'bold';
  *   };
+ *   businessLabel?: string;
+ *   tagline?: string;
+ *   aboutDescription?: string;
+ *   qrCodeUrl?: string;  // URL of the vendor's payment QR code image (e.g. UPI, PhonePe, Google Pay)
  * }
  */
 export const vendors = pgTable('vendors', {

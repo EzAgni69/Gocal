@@ -56,6 +56,14 @@ export const contactCardRequests = pgTable('contact_card_requests', {
         description?: string;
     }>>(),
 
+    // Customizable Mini Website copy (optional, vendor-supplied)
+    businessLabel: varchar('business_label', { length: 100 }),
+    tagline: varchar('tagline', { length: 150 }),
+    aboutDescription: text('about_description'),
+
+    // Payment QR code (optional, uploaded by vendor during request)
+    qrCodeUrl: text('qr_code_url'),
+
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => [

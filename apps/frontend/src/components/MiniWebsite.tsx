@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, ShoppingBag, Tag, Image as ImageIcon, MessageCircle, MapPin, Heart, Star, ExternalLink, Edit3, X, Clock, Navigation } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Tag, Image as ImageIcon, MessageCircle, MapPin, Heart, Star, ExternalLink, Edit3, X, Clock, Navigation, Phone, Mail, Copy, Check, Share2, QrCode } from 'lucide-react';
 import { Vendor, Product, Language, Review } from '../types';
 import { TRANSLATIONS } from '../constants';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,6 +9,8 @@ import { useAppContext } from '../context/AppContext';
 import { useTranslation } from '../providers/TranslationProvider';
 import { ReviewModal } from './ReviewModal';
 import { apiClient } from '../services/apiClient';
+import { formatOpeningHours, getAllOpeningHours } from '../utils/openingHours';
+import Image from 'next/image';
 
 
 interface MiniWebsiteProps {
@@ -32,11 +34,43 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviews, setReviews] = useState<Review[]>(vendor.reviews || []);
   const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [copiedItem, setCopiedItem] = useState<string | null>(null);
+
+  // Derived display values with fallbacks
+  const businessLabel = vendor.miniWebsiteConfig?.businessLabel?.trim() || vendor.name;
+  const tagline = vendor.miniWebsiteConfig?.tagline?.trim()
+      || vendor.shortDescription?.trim()
+      || null;
+  const aboutDescription = vendor.miniWebsiteConfig?.aboutDescription?.trim()
+      || vendor.description?.trim()
+      || vendor.shortDescription?.trim()
+      || null;
+
+  const handleCopy = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedItem(label);
+    setTimeout(() => setCopiedItem(null), 2000);
+  };
+
+  const handleShare = (e: React.MouseEvent, title: string, text: string, url: string) => {
+    e.stopPropagation();
+    if (navigator.share) {
+      navigator.share({ title, text, url }).catch((err) => console.log('Error sharing', err));
+    } else {
+      navigator.clipboard.writeText(url);
+      setCopiedItem('link');
+      setTimeout(() => setCopiedItem(null), 2000);
+    }
+  };
 
   const handleWhatsApp = () => {
     if (!requireAuth('message this vendor')) return;
     const message = encodeURIComponent(`Hi, I found your store on Gocal.co and would like to inquire about your products.`);
-    const phoneNumber = vendor.phone.replace(/\D/g, '');
+    const phoneNumber = (vendor.phone || '').replace(/\D/g, '');
+    if (!phoneNumber) {
+      alert('Vendor phone number not available');
+      return;
+    }
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
   };
 
@@ -98,9 +132,9 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
             </button>
             <div className="h-8 w-px bg-gray-200 hidden md:block"></div>
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border border-gray-100 shadow-sm flex-shrink-0 bg-white">
+            <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border border-gray-100 shadow-sm flex-shrink-0 bg-white">
                 {vendor.coverImage ? (
-                  <img src={vendor.coverImage} alt="logo" className="w-full h-full object-cover" />
+                  <Image src={vendor.coverImage} alt="logo" fill className="object-cover" />
                 ) : (
                   <div className="w-full h-full bg-black flex items-center justify-center">
                     <span className="text-white font-serif text-lg md:text-xl">{vendor.name.charAt(0)}</span>
@@ -136,13 +170,42 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
             ))}
           </div>
 
-          <button
-             onClick={handleWhatsApp}
-             className="hidden sm:flex items-center px-6 py-2.5 bg-black hover:bg-gray-900 text-white text-xs tracking-widest uppercase font-semibold transition-all hover:scale-105 shadow-xl shadow-black/10"
-          >
-             <MessageCircle className="w-4 h-4 mr-2" />
-             Inquire
-          </button>
+          <div className="flex items-center gap-2 md:gap-3">
+            {vendor.phone && (
+              <a
+                href={`tel:${vendor.phone}`}
+                className="flex items-center justify-center w-10 h-10 bg-white border border-gray-100 text-black hover:bg-gray-50 transition-all hover:scale-110 shadow-sm rounded-full"
+                title="Call Vendor"
+              >
+                <Phone className="w-4 h-4" />
+              </a>
+            )}
+            {(vendor.address || vendor.miniWebsiteConfig?.googleMapsUrl) && (
+              <a
+                href={vendor.miniWebsiteConfig?.googleMapsUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(vendor.address)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center w-10 h-10 bg-white border border-gray-100 text-black hover:bg-gray-50 transition-all hover:scale-110 shadow-sm rounded-full"
+                title="View on Maps"
+              >
+                <MapPin className="w-4 h-4" />
+              </a>
+            )}
+            <button
+               onClick={handleWhatsApp}
+               className="hidden sm:flex items-center px-6 py-2.5 bg-black hover:bg-gray-900 text-white text-xs tracking-widest uppercase font-semibold transition-all hover:scale-105 shadow-xl shadow-black/10 rounded-full"
+            >
+               <MessageCircle className="w-4 h-4 mr-2 text-[#25D366] fill-[#25D366]/10" />
+               WhatsApp
+            </button>
+            {/* Mobile Inquire Icon */}
+            <button
+               onClick={handleWhatsApp}
+               className="sm:hidden flex items-center justify-center w-10 h-10 bg-black text-white hover:bg-gray-900 transition-all hover:scale-110 shadow-xl shadow-black/10 rounded-full"
+            >
+               <MessageCircle className="w-4 h-4 text-[#25D366] fill-[#25D366]/10" />
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation Tabs */}
@@ -228,18 +291,29 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
               <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
                   <div className="flex flex-col justify-center order-2 lg:order-1">
-                    <p className="text-sm tracking-[0.3em] uppercase text-gray-400 mb-4 font-semibold">The Maison</p>
-                    <h3 className="font-serif text-4xl md:text-5xl mb-8 text-black leading-tight">Heritage & <br/>Elegance</h3>
-                    <p className="text-gray-500 mb-10 leading-relaxed text-lg font-light max-w-lg">
-                      Visit our exclusive boutique to experience true craftsmanship. We offer a curated collection of premium products, tailored for those with an uncompromising taste for excellence.
-                    </p>
+                    <p className="text-sm tracking-[0.3em] uppercase text-gray-400 mb-4 font-semibold">{businessLabel}</p>
+                    {tagline && <h3 className="font-serif text-4xl md:text-5xl mb-8 text-black leading-tight">{tagline}</h3>}
+                    {aboutDescription && <p className="text-gray-500 mb-10 leading-relaxed text-lg font-light max-w-lg">
+                      {aboutDescription}
+                    </p>}
                     <div className="space-y-8 bg-white p-8 md:p-10 border border-gray-100 shadow-[0_20px_40px_rgba(0,0,0,0.04)]">
                       <div className="flex items-start gap-5">
-                        <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
-                          <MapPin className="w-5 h-5 text-black" />
+                        <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0 group-hover:bg-black group-hover:text-white transition-colors duration-300">
+                          <MapPin className="w-5 h-5" />
                         </div>
-                        <div>
-                          <p className="font-bold text-black tracking-widest uppercase text-xs mb-2">{t('Location')}</p>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="font-bold text-black tracking-widest uppercase text-xs">{t('Location')}</p>
+                            <a 
+                              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(vendor.address)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[10px] text-gray-400 hover:text-black uppercase tracking-widest font-bold flex items-center gap-1.5 transition-colors"
+                            >
+                              <Navigation className="w-3 h-3" />
+                              Directions
+                            </a>
+                          </div>
                           <p className="text-gray-600 font-light leading-relaxed">{t(vendor.address)}</p>
                         </div>
                       </div>
@@ -248,26 +322,96 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                           <Clock className="w-5 h-5 text-black" />
                         </div>
                         <div>
-                          <p className="font-bold text-black tracking-widest uppercase text-xs mb-2">Boutique Hours</p>
-                          <p className="text-gray-600 font-light">Mon - Sat: 10:00 AM - 9:00 PM<br/>Sun: By Appointment</p>
+                          <p className="font-bold text-black tracking-widest uppercase text-xs mb-2">Opening Hours</p>
+                          <div className="text-gray-600 font-light space-y-1">
+                            {getAllOpeningHours(vendor.openingHours).length > 0
+                              ? getAllOpeningHours(vendor.openingHours).map(({ day, hours, isToday }) => (
+                                  <p key={day} className={isToday ? 'font-semibold text-black' : ''}>
+                                    {day}: {hours}
+                                  </p>
+                                ))
+                              : <p>{formatOpeningHours(vendor.openingHours)}</p>
+                            }
+                          </div>
                         </div>
                       </div>
                       <div className="flex items-start gap-5">
                         <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
                           <MessageCircle className="w-5 h-5 text-black" />
                         </div>
-                        <div>
-                          <p className="font-bold text-black tracking-widest uppercase text-xs mb-2">{t('Concierge')}</p>
-                          <p className="text-gray-600 font-light">{vendor.phone}<br/>{vendor.email}</p>
+                        <div className="flex-1">
+                          <p className="font-bold text-black tracking-widest uppercase text-xs mb-4">{t('Contact')}</p>
+                          <div className="space-y-4">
+                            {vendor.phone && (
+                              <div className="flex items-center justify-between group/contact">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center">
+                                    <Phone className="w-3.5 h-3.5 text-gray-400" />
+                                  </div>
+                                  <a href={`tel:${vendor.phone}`} className="text-gray-600 font-light hover:text-black transition-colors">{vendor.phone}</a>
+                                </div>
+                                <button 
+                                  onClick={() => handleCopy(vendor.phone, 'phone')}
+                                  className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-black transition-all flex items-center gap-2"
+                                  title="Copy Phone"
+                                >
+                                  {copiedItem === 'phone' ? (
+                                    <Check className="w-3.5 h-3.5 text-green-500" />
+                                  ) : (
+                                    <Copy className="w-3.5 h-3.5" />
+                                  )}
+                                </button>
+                              </div>
+                            )}
+                            {vendor.email && (
+                              <div className="flex items-center justify-between group/contact">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center">
+                                    <Mail className="w-3.5 h-3.5 text-gray-400" />
+                                  </div>
+                                  <a href={`mailto:${vendor.email}`} className="text-gray-600 font-light hover:text-black transition-colors">{vendor.email}</a>
+                                </div>
+                                <button 
+                                  onClick={() => handleCopy(vendor.email, 'email')}
+                                  className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-black transition-all flex items-center gap-2"
+                                  title="Copy Email"
+                                >
+                                  {copiedItem === 'email' ? (
+                                    <Check className="w-3.5 h-3.5 text-green-500" />
+                                  ) : (
+                                    <Copy className="w-3.5 h-3.5" />
+                                  )}
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
+                      {vendor.miniWebsiteConfig?.qrCodeUrl && (
+                        <div className="flex items-start gap-5">
+                          <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
+                            <QrCode className="w-5 h-5 text-black" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-black tracking-widest uppercase text-xs mb-3">Scan to Pay</p>
+                            <Image
+                              src={vendor.miniWebsiteConfig.qrCodeUrl}
+                              alt="Payment QR Code"
+                              width={200}
+                              height={200}
+                              className="rounded-lg border border-gray-100"
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="relative h-[500px] lg:h-[700px] overflow-hidden order-1 lg:order-2">
-                    <img 
-                      src={vendor.coverImage} 
+                    <Image 
+                      src={vendor.coverImage || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop"} 
                       alt="Store front" 
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                     <div className="absolute inset-0 border-[1px] border-black/10 m-4 md:m-8 pointer-events-none"></div>
                   </div>
@@ -299,18 +443,40 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                   return (
                     <div key={product.id} className="group cursor-pointer">
                       <div className="relative aspect-[3/4] overflow-hidden bg-gray-100 mb-6">
-                        <img 
-                          src={product.image} 
-                          alt={product.name} 
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" 
+                        <Image 
+                          src={product.image || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80"} 
+                          alt={product.name || 'Product'} 
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" 
                         />
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"></div>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleAddToWishlist(product); }}
-                          className="absolute top-4 right-4 p-3 rounded-full bg-white/90 backdrop-blur-md shadow-[0_10px_20px_rgba(0,0,0,0.1)] transition-all duration-300 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 hover:scale-110"
-                        >
-                          <Heart className={`w-5 h-5 ${isInWishlist ? 'fill-black stroke-black' : 'stroke-black group-hover:fill-black/10'}`} />
-                        </button>
+                        <div className="absolute top-4 right-4 flex gap-2 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                          <button
+                            onClick={(e) => {
+                              handleShare(
+                                e,
+                                product.name,
+                                `Check out ${product.name} at ${vendor.name}`,
+                                window.location.href
+                              );
+                            }}
+                            className="p-3 rounded-full bg-white/90 backdrop-blur-md shadow-[0_10px_20px_rgba(0,0,0,0.1)] transition-all duration-300 hover:scale-110"
+                            title="Share Product"
+                          >
+                            {copiedItem === 'link' ? (
+                              <Check className="w-5 h-5 text-green-500" />
+                            ) : (
+                              <Share2 className="w-5 h-5 text-black" />
+                            )}
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleAddToWishlist(product); }}
+                            className="p-3 rounded-full bg-white/90 backdrop-blur-md shadow-[0_10px_20px_rgba(0,0,0,0.1)] transition-all duration-300 hover:scale-110"
+                            title={isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                          >
+                            <Heart className={`w-5 h-5 ${isInWishlist ? 'fill-black stroke-black' : 'stroke-black group-hover:fill-black/10'}`} />
+                          </button>
+                        </div>
                       </div>
                       <div className="text-center px-2">
                         <p className="text-[10px] tracking-[0.2em] uppercase text-gray-400 mb-3 font-semibold">{t(product.category)}</p>
@@ -395,7 +561,7 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
               <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
                 {vendor.galleryImages?.map((img, idx) => (
                   <div key={idx} className="break-inside-avoid relative group overflow-hidden bg-gray-100">
-                    <img src={img.imageUrl} alt={img.caption || "Gallery"} className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+                    <Image src={img.imageUrl || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80"} alt={img.caption || "Gallery"} width={800} height={800} className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
                     {img.caption && (
                       <div className="absolute bottom-0 left-0 right-0 p-4 bg-black/60 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity">
                         {img.caption}
@@ -477,9 +643,9 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                     </div>
                     <p className="text-gray-600 font-light leading-relaxed mb-6 italic">"{review.comment}"</p>
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                      <div className="relative w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
                         {review.user?.avatarUrl ? (
-                          <img src={review.user.avatarUrl} alt={review.user?.name} className="w-full h-full object-cover" />
+                          <Image src={review.user.avatarUrl} alt={review.user?.name || "User"} fill className="object-cover" />
                         ) : (
                           <span className="font-serif text-black">{(review.user?.name || 'A').charAt(0)}</span>
                         )}

@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { FavoriteButton } from './FavoriteButton';
 import Link from 'next/link';
+import Image from 'next/image';
+import { useTranslation } from '../providers/TranslationProvider';
 import { Vendor } from '../types';
 
 const DEFAULT_STORE_IMAGE = 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&q=80';
@@ -36,6 +38,7 @@ const itemVariants: Variants = {
 
 export const MyFavorites: React.FC = () => {
     const { favorites, isAuthenticated } = useAppContext();
+    const { t } = useTranslation();
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
     const categories = useMemo(() => {
@@ -62,11 +65,12 @@ export const MyFavorites: React.FC = () => {
                 {/* Background with Overlay */}
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-gradient-to-b from-luxury-black/85 via-luxury-black/60 to-luxury-cream z-10" />
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                         src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1974&auto=format&fit=crop"
-                        alt="My Favourites"
-                        className="w-full h-full object-cover"
+                        alt={t('My Favourites')}
+                        fill
+                        className="object-cover"
+                        priority
                     />
                 </div>
 
@@ -78,16 +82,16 @@ export const MyFavorites: React.FC = () => {
                     >
                         <Badge variant="premium" className="mb-4 px-4 py-1 text-xs sm:text-sm uppercase tracking-widest border border-gold-500/30">
                             <Heart className="w-3 h-3 mr-1 inline fill-current" />
-                            Your Collection
+                            {t('Your Collection')}
                         </Badge>
                         <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold mb-4 text-white leading-tight">
-                            My{' '}
+                            {t('My')}{' '}
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 to-gold-600">
-                                Favourites
+                                {t('Favourites')}
                             </span>
                         </h1>
                         <p className="text-base sm:text-lg text-gray-200 font-light max-w-2xl mx-auto">
-                            Your curated collection of favorite stores and services
+                            {t('Your curated collection of favorite stores and services')}
                         </p>
                     </motion.div>
                 </div>
@@ -99,16 +103,16 @@ export const MyFavorites: React.FC = () => {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
                     <div>
                         <h2 className="text-2xl sm:text-3xl font-serif text-luxury-black mb-2">
-                            Saved Places
+                            {t('Saved Places')}
                         </h2>
                         <p className="text-sm text-gray-500">
-                            {filteredFavorites.length} {filteredFavorites.length === 1 ? 'place' : 'places'} saved
+                            {filteredFavorites.length} {filteredFavorites.length === 1 ? t('place') : t('places')} {t('saved')}
                         </p>
                     </div>
                     <Link href="/vadodara">
                         <Button variant="outline" className="gap-2">
                             <Store className="w-4 h-4" />
-                            Discover More
+                            {t('Discover More')}
                         </Button>
                     </Link>
                 </div>
@@ -132,7 +136,7 @@ export const MyFavorites: React.FC = () => {
                                     : 'bg-white shadow-sm text-gray-600 border-gray-200 hover:border-gold-300 hover:text-luxury-black hover:bg-gold-50/50'
                                 }`}
                             >
-                                All Collections
+                                {t('All Collections')}
                             </motion.button>
                             {categories.map((category) => (
                                 <motion.button
@@ -146,7 +150,7 @@ export const MyFavorites: React.FC = () => {
                                         : 'bg-white shadow-sm text-gray-600 border-gray-200 hover:border-gold-300 hover:text-luxury-black hover:bg-gold-50/50'
                                     }`}
                                 >
-                                    {category}
+                                    {t(category)}
                                 </motion.button>
                             ))}
                         </div>
@@ -163,13 +167,13 @@ export const MyFavorites: React.FC = () => {
                         <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-gold-100 to-gold-200 rounded-full mb-6">
                             <Heart className="w-10 h-10 text-gold-600" />
                         </div>
-                        <h3 className="text-2xl font-serif font-medium text-gray-900 mb-3">Sign in to see your favorites</h3>
+                        <h3 className="text-2xl font-serif font-medium text-gray-900 mb-3">{t('Sign in to see your favorites')}</h3>
                         <p className="text-gray-500 mb-6 max-w-md mx-auto">
-                            Create an account or sign in to save your favorite stores and services
+                            {t('Create an account or sign in to save your favorite stores and services')}
                         </p>
                         <Link href="/vadodara">
                             <Button className="bg-gold-500 hover:bg-gold-600 text-luxury-black">
-                                Explore Stores
+                                {t('Explore Stores')}
                             </Button>
                         </Link>
                     </motion.div>
@@ -185,13 +189,13 @@ export const MyFavorites: React.FC = () => {
                         <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full mb-6">
                             <Heart className="w-10 h-10 text-gray-400" />
                         </div>
-                        <h3 className="text-2xl font-serif font-medium text-gray-900 mb-3">No favorites yet</h3>
+                        <h3 className="text-2xl font-serif font-medium text-gray-900 mb-3">{t('No favorites yet')}</h3>
                         <p className="text-gray-500 mb-6 max-w-md mx-auto">
-                            Start exploring and save your favorite stores and services by clicking the heart icon
+                            {t('Start exploring and save your favorite stores and services by clicking the heart icon')}
                         </p>
                         <Link href="/vadodara">
                             <Button className="bg-gold-500 hover:bg-gold-600 text-luxury-black">
-                                Discover Stores
+                                {t('Discover Stores')}
                             </Button>
                         </Link>
                     </motion.div>
@@ -207,15 +211,15 @@ export const MyFavorites: React.FC = () => {
                         <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full mb-6">
                             <Filter className="w-10 h-10 text-gray-400" />
                         </div>
-                        <h3 className="text-2xl font-serif font-medium text-gray-900 mb-3">No places in this collection</h3>
+                        <h3 className="text-2xl font-serif font-medium text-gray-900 mb-3">{t('No places in this collection')}</h3>
                         <p className="text-gray-500 mb-6 max-w-md mx-auto">
-                            You haven't saved any places matching this category yet.
+                            {t("You haven't saved any places matching this category yet.")}
                         </p>
                         <Button 
                             onClick={() => setSelectedCategory(null)}
                             className="bg-gold-500 hover:bg-gold-600 text-luxury-black"
                         >
-                            View All Collections
+                            {t('View All Collections')}
                         </Button>
                     </motion.div>
                 )}
@@ -244,14 +248,11 @@ export const MyFavorites: React.FC = () => {
                                 {/* Image */}
                                 <div className="relative h-44 overflow-hidden">
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10" />
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
+                                    <Image
                                         src={place.photoUrl || (place as unknown as Vendor).coverImage || DEFAULT_STORE_IMAGE}
-                                        alt={place.displayName?.text || (place as unknown as Vendor).name || 'Store Image'}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                        onError={(e) => {
-                                            (e.target as HTMLImageElement).src = DEFAULT_STORE_IMAGE;
-                                        }}
+                                        alt={place.displayName?.text || (place as unknown as Vendor).name || t('Store Image')}
+                                        fill
+                                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                                     />
 
                                     {/* Status Badge */}
@@ -260,7 +261,7 @@ export const MyFavorites: React.FC = () => {
                                             variant={place.regularOpeningHours?.openNow || (place as unknown as Vendor).isOpen ? 'success' : 'secondary'}
                                             className="shadow-lg backdrop-blur-md bg-white/90"
                                         >
-                                            {place.regularOpeningHours?.openNow || (place as unknown as Vendor).isOpen ? 'Open Now' : 'Closed'}
+                                            {place.regularOpeningHours?.openNow || (place as unknown as Vendor).isOpen ? t('Open Now') : t('Closed')}
                                         </Badge>
                                     </div>
 

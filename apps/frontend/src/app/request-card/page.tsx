@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import {
   Building2, User, Phone, Mail, MapPin,
   CheckCircle2, ChevronRight,
@@ -36,11 +37,16 @@ type OpeningHoursMap = { [day: string]: { open: string; close: string; closed?: 
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as const;
 
+const FULL_TO_ABBR: Record<string, string> = {
+  Monday: 'Mon', Tuesday: 'Tue', Wednesday: 'Wed',
+  Thursday: 'Thu', Friday: 'Fri', Saturday: 'Sat', Sunday: 'Sun',
+};
+
 const defaultOpeningHours: OpeningHoursMap = Object.fromEntries(
   DAYS.map(d => [d, { open: '09:00', close: '21:00', closed: false }])
 );
 
-interface FormData {
+export interface FormData {
   plan: PlanType;
   fullName: string;
   phone: string;
@@ -60,13 +66,17 @@ interface FormData {
   mainPhotoUrl: string;
   mainPhotoDescription: string;
   galleryUrls: string[];
+  businessLabel: string;
+  tagline: string;
+  aboutDescription: string;
+  qrCodeUrl: string;
 }
 
 interface FieldErrors {
   [key: string]: string;
 }
 
-const initialFormData: FormData = {
+export const initialFormData: FormData = {
   plan: null, fullName: '', phone: '', email: '',
   businessName: '', category: '', city: '', pincode: '', address: '',
   shortDescription: '', fullDescription: '',
@@ -75,6 +85,10 @@ const initialFormData: FormData = {
   googleDirectionLink: '',
   logoUrl: '', mainPhotoUrl: '', mainPhotoDescription: '',
   galleryUrls: [],
+  businessLabel: '',
+  tagline: '',
+  aboutDescription: '',
+  qrCodeUrl: '',
 };
 
 const REJECTION_REASON_LABELS: Record<string, string> = {
@@ -180,6 +194,13 @@ export default function RequestCardPage() {
           description: p.description || undefined,
         }));
 
+      const normalizedOpeningHours = Object.fromEntries(
+        Object.entries(formData.openingHours).map(([day, hours]) => [
+          FULL_TO_ABBR[day] ?? day,
+          hours,
+        ])
+      );
+
       const payload = {
         planType: formData.plan,
         fullName: formData.fullName,
@@ -194,12 +215,16 @@ export default function RequestCardPage() {
         fullDescription: formData.fullDescription || undefined,
         subscriptionPlan: formData.subscriptionPlan || undefined,
         draftProducts: products.length ? products : undefined,
-        openingHours: formData.openingHours,
+        openingHours: normalizedOpeningHours,
         googleDirectionLink: formData.googleDirectionLink || undefined,
         logoUrl: formData.logoUrl || undefined,
         mainPhotoUrl: formData.mainPhotoUrl || undefined,
         mainPhotoDescription: formData.mainPhotoDescription || undefined,
         galleryUrls: formData.galleryUrls.length > 0 ? formData.galleryUrls : undefined,
+        businessLabel: formData.businessLabel || undefined,
+        tagline: formData.tagline || undefined,
+        aboutDescription: formData.aboutDescription || undefined,
+        qrCodeUrl: formData.qrCodeUrl || undefined,
       };
 
       const res = await apiClient('/api/card-requests', { method: 'POST', body: JSON.stringify(payload) });
@@ -514,6 +539,49 @@ function Step3Business({ formData, updateFormData, errors }: { formData: FormDat
           </div>
           <p className="text-xs text-gray-400 mt-1">Paste your Google Maps share link for easy navigation</p>
         </div>
+
+        {/* ── Brand Copy (optional) ── */}
+        <div className="pt-4 border-t border-gray-100">
+          <h3 className="text-sm font-bold text-gray-700 mb-1">Brand Copy <span className="text-gray-400 font-normal">(optional)</span></h3>
+          <p className="text-xs text-gray-400 mb-4">Personalise your mini website with your own brand voice. Leave blank to use defaults.</p>
+          <div className="space-y-5">
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">Business Label</label>
+              <input
+                type="text"
+                value={formData.businessLabel}
+                onChange={e => updateFormData({ businessLabel: e.target.value })}
+                className={cls}
+                placeholder="e.g. The Maison"
+                maxLength={100}
+              />
+              <p className="text-xs text-gray-400 mt-1 text-right">{formData.businessLabel.length}/100</p>
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">Tagline</label>
+              <input
+                type="text"
+                value={formData.tagline}
+                onChange={e => updateFormData({ tagline: e.target.value })}
+                className={cls}
+                placeholder="e.g. Heritage & Elegance"
+                maxLength={150}
+              />
+              <p className="text-xs text-gray-400 mt-1 text-right">{formData.tagline.length}/150</p>
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">About Description</label>
+              <textarea
+                value={formData.aboutDescription}
+                onChange={e => updateFormData({ aboutDescription: e.target.value })}
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-luxury-black focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-all font-medium min-h-[120px] resize-y"
+                placeholder="Describe your business in your own words…"
+                maxLength={1000}
+              />
+              <p className="text-xs text-gray-400 mt-1 text-right">{formData.aboutDescription.length}/1000</p>
+            </div>
+          </div>
+        </div>
       </div>
     </motion.div>
   );
@@ -716,7 +784,7 @@ function ProductRow({ product, index, errors, onChange, onRemove }: {
         <div className="flex items-center gap-3">
           {product.imageUrl ? (
             <div className="relative w-16 h-16 flex-shrink-0">
-              <img src={product.imageUrl} alt="preview" className="w-full h-full object-cover rounded-lg border border-gray-200" />
+              <Image src={product.imageUrl} alt="preview" fill className="object-cover rounded-lg border border-gray-200" />
               <button onClick={() => onChange({ imageUrl: '' })} className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center text-xs hover:bg-red-600">×</button>
             </div>
           ) : (
@@ -742,12 +810,13 @@ function ProductRow({ product, index, errors, onChange, onRemove }: {
 
 // ─── Step 6: Media Uploads ────────────────────────────────────────────────────
 function Step6Media({ formData, updateFormData }: { formData: FormData; updateFormData: (d: Partial<FormData>) => void }) {
-  const [uploading, setUploading] = useState<{ logo?: boolean; mainPhoto?: boolean; gallery?: boolean }>({});
-  const [uploadErrors, setUploadErrors] = useState<{ logo?: string; mainPhoto?: string; gallery?: string }>({});
+  const [uploading, setUploading] = useState<{ logo?: boolean; mainPhoto?: boolean; gallery?: boolean; qrCode?: boolean }>({});
+  const [uploadErrors, setUploadErrors] = useState<{ logo?: string; mainPhoto?: string; gallery?: string; qrCode?: string }>({});
   
   const logoRef = useRef<HTMLInputElement>(null);
   const mainPhotoRef = useRef<HTMLInputElement>(null);
   const galleryRef = useRef<HTMLInputElement>(null);
+  const qrCodeRef = useRef<HTMLInputElement>(null);
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -826,6 +895,34 @@ function Step6Media({ formData, updateFormData }: { formData: FormData; updateFo
     updateFormData({ galleryUrls: formData.galleryUrls.filter((_, i) => i !== index) });
   };
 
+  const handleQrCodeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Client-side file type validation
+    if (!file.type.startsWith('image/')) {
+      setUploadErrors(prev => ({ ...prev, qrCode: 'Only image files are accepted for QR code upload' }));
+      return;
+    }
+    setUploading(prev => ({ ...prev, qrCode: true }));
+    setUploadErrors(prev => ({ ...prev, qrCode: undefined }));
+    try {
+      const form = new FormData();
+      form.append('image', file);
+      const res = await apiClient('/api/upload/qr-code', { method: 'POST', body: form });
+      if (res.ok) {
+        const { imageUrl } = await res.json();
+        updateFormData({ qrCodeUrl: imageUrl });
+      } else {
+        const err = await res.json();
+        setUploadErrors(prev => ({ ...prev, qrCode: err.error || 'Upload failed' }));
+      }
+    } catch {
+      setUploadErrors(prev => ({ ...prev, qrCode: 'Network error during upload' }));
+    } finally {
+      setUploading(prev => ({ ...prev, qrCode: false }));
+    }
+  };
+
   return (
     <motion.div {...stepMotion}>
       <h2 className="text-2xl font-serif text-luxury-black mb-2 font-bold">Media & Photos</h2>
@@ -838,7 +935,7 @@ function Step6Media({ formData, updateFormData }: { formData: FormData; updateFo
           <div className="flex items-center gap-4">
             {formData.logoUrl ? (
               <div className="relative w-24 h-24 flex-shrink-0">
-                <img src={formData.logoUrl} alt="logo" className="w-full h-full object-cover rounded-xl border border-gray-200" />
+                <Image src={formData.logoUrl} alt="logo" fill className="object-cover rounded-xl border border-gray-200" />
                 <button onClick={() => updateFormData({ logoUrl: '' })} className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-sm hover:bg-red-600">×</button>
               </div>
             ) : (
@@ -865,7 +962,7 @@ function Step6Media({ formData, updateFormData }: { formData: FormData; updateFo
           <div className="flex items-start gap-4">
             {formData.mainPhotoUrl ? (
               <div className="relative w-32 h-24 flex-shrink-0">
-                <img src={formData.mainPhotoUrl} alt="main" className="w-full h-full object-cover rounded-xl border border-gray-200" />
+                <Image src={formData.mainPhotoUrl} alt="main" fill className="object-cover rounded-xl border border-gray-200" />
                 <button onClick={() => updateFormData({ mainPhotoUrl: '', mainPhotoDescription: '' })} className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-sm hover:bg-red-600">×</button>
               </div>
             ) : (
@@ -902,7 +999,7 @@ function Step6Media({ formData, updateFormData }: { formData: FormData; updateFo
           <div className="grid grid-cols-3 gap-3 mb-3">
             {formData.galleryUrls.map((url, idx) => (
               <div key={idx} className="relative aspect-square">
-                <img src={url} alt={`gallery ${idx + 1}`} className="w-full h-full object-cover rounded-lg border border-gray-200" />
+                <Image src={url} alt={`gallery ${idx + 1}`} fill className="object-cover rounded-lg border border-gray-200" />
                 <button onClick={() => removeGalleryImage(idx)} className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-sm hover:bg-red-600">×</button>
               </div>
             ))}
@@ -919,6 +1016,35 @@ function Step6Media({ formData, updateFormData }: { formData: FormData; updateFo
             </>
           )}
           {uploadErrors.gallery && <p className="text-xs text-red-500 mt-1">{uploadErrors.gallery}</p>}
+        </div>
+
+        {/* QR Code Upload */}
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-2">
+            Payment QR Code <span className="text-gray-400 font-normal">(optional)</span>
+          </label>
+          <div className="flex items-center gap-4">
+            {formData.qrCodeUrl ? (
+              <div className="relative w-24 h-24 flex-shrink-0">
+                <Image src={formData.qrCodeUrl} alt="QR code" fill className="object-cover rounded-xl border border-gray-200" />
+                <button onClick={() => updateFormData({ qrCodeUrl: '' })} className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-sm hover:bg-red-600">×</button>
+              </div>
+            ) : (
+              <div className="w-24 h-24 flex-shrink-0 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
+                <ImageIcon className="w-8 h-8 text-gray-300" />
+              </div>
+            )}
+            <div className="flex-1">
+              <input ref={qrCodeRef} type="file" accept="image/*" className="hidden" onChange={handleQrCodeUpload} />
+              <button onClick={() => qrCodeRef.current?.click()} disabled={uploading.qrCode}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 hover:border-gold-300 hover:bg-gold-50 transition-all disabled:opacity-50">
+                {uploading.qrCode ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                {uploading.qrCode ? 'Uploading…' : formData.qrCodeUrl ? 'Replace QR Code' : 'Upload QR Code'}
+              </button>
+              <p className="text-xs text-gray-400 mt-1">Recommended — helps customers pay you directly. You can change this later.</p>
+              {uploadErrors.qrCode && <p className="text-xs text-red-500 mt-1">{uploadErrors.qrCode}</p>}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -991,7 +1117,7 @@ function Step8Pricing({ formData, updateFormData, errors }: { formData: FormData
 }
 
 // ─── Step Review ──────────────────────────────────────────────────────────────
-function StepReview({ formData, isSubmitting, handleSubmit, handleEdit }: { formData: FormData; isSubmitting: boolean; handleSubmit: () => void; handleEdit: (s: number) => void }) {
+export function StepReview({ formData, isSubmitting, handleSubmit, handleEdit }: { formData: FormData; isSubmitting: boolean; handleSubmit: () => void; handleEdit: (s: number) => void }) {
   const productsWithName = formData.draftProducts.filter(p => p.name.trim());
   return (
     <motion.div {...stepMotion} className="flex flex-col h-full">
@@ -1013,6 +1139,45 @@ function StepReview({ formData, isSubmitting, handleSubmit, handleEdit }: { form
           <ReviewSection title="Business Details" icon={Store} onEdit={() => handleEdit(3)} items={[['Business', formData.businessName], ['Category', formData.category], ['City', formData.city], ['Address', formData.address || '—']]} />
         </div>
 
+        {/* Brand Copy */}
+        <div className="pb-4 border-b border-gray-200">
+          <div className="flex justify-between items-center mb-3">
+            <h4 className="text-luxury-black font-semibold flex items-center gap-2">
+              <Star className="w-4 h-4 text-gold-500" /> Brand Copy
+            </h4>
+            <button onClick={() => handleEdit(3)} className="text-sm text-gray-400 hover:text-gold-600 underline">Edit</button>
+          </div>
+          <div className="space-y-2">
+            {([
+              ['Business Label', formData.businessLabel],
+              ['Tagline', formData.tagline],
+              ['About Description', formData.aboutDescription],
+            ] as [string, string][]).map(([k, v]) => (
+              <div key={k} className="flex justify-between text-sm">
+                <span className="text-gray-400">{k}:</span>
+                <span className="text-luxury-black font-medium max-w-[60%] text-right truncate">{v || '—'}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Media — QR Code */}
+        <div className="pb-4 border-b border-gray-200">
+          <div className="flex justify-between items-center mb-3">
+            <h4 className="text-luxury-black font-semibold flex items-center gap-2">
+              <ImageIcon className="w-4 h-4 text-gold-500" /> Payment QR Code
+            </h4>
+            <button onClick={() => handleEdit(6)} className="text-sm text-gray-400 hover:text-gold-600 underline">Edit</button>
+          </div>
+          {formData.qrCodeUrl ? (
+            <div className="relative w-20 h-20">
+              <Image src={formData.qrCodeUrl} alt="Payment QR Code" fill className="object-cover rounded-lg border border-gray-200" />
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400">No QR code uploaded</p>
+          )}
+        </div>
+
         {/* Products */}
         {productsWithName.length > 0 && (
           <div className="pb-4 border-b border-gray-200">
@@ -1023,7 +1188,7 @@ function StepReview({ formData, isSubmitting, handleSubmit, handleEdit }: { form
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {productsWithName.map(p => (
                 <div key={p._localId} className="flex items-center gap-3 bg-white rounded-lg p-3 border border-gray-100">
-                  {p.imageUrl ? <img src={p.imageUrl} alt={p.name} className="w-10 h-10 object-cover rounded-lg flex-shrink-0" /> : <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0"><ImageIcon className="w-4 h-4 text-gray-300" /></div>}
+                  {p.imageUrl ? <div className="relative w-10 h-10 flex-shrink-0"><Image src={p.imageUrl} alt={p.name} fill className="object-cover rounded-lg" /></div> : <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0"><ImageIcon className="w-4 h-4 text-gray-300" /></div>}
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-luxury-black text-sm truncate">{p.name}</p>
                     <p className="text-xs text-gray-500">₹{p.price}{p.quantity ? ` · ${p.quantity} ${p.unit}` : ''}</p>

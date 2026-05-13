@@ -1,22 +1,21 @@
 'use client';
 import { useAppContext } from '../context/AppContext';
-import { MOCK_VENDORS } from '../constants';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShoppingBag, Trash2, ExternalLink, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import Image from 'next/image';
 
 export const WishlistDrawer = () => {
     const { wishlist, showWishlistDrawer, setShowWishlistDrawer, removeFromWishlist, requireAuth } = useAppContext();
 
     const groupedWishlist = wishlist.reduce((acc, item) => {
         const key = item.vendorId || 'unknown';
-        const fallbackVendor = MOCK_VENDORS.find(v => v.id === key);
         
         if (!acc[key]) {
             acc[key] = {
-                vendorName: item.vendorName || fallbackVendor?.name || 'General Items',
-                vendorPhone: item.vendorPhone || fallbackVendor?.phone || '919313449825',
+                vendorName: item.vendorName || 'General Items',
+                vendorPhone: item.vendorPhone || '',
                 items: []
             };
         }
@@ -120,10 +119,11 @@ export const WishlistDrawer = () => {
                                                         >
                                                             {/* Product Image */}
                                                             <div className="relative h-24 w-20 overflow-hidden bg-gray-50 shrink-0 shadow-sm border border-gray-100 rounded-sm">
-                                                                <img
-                                                                    src={p.image}
-                                                                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                                                    alt={p.name}
+                                                                <Image
+                                                                    src={p.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80'}
+                                                                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                                                    alt={p.name || 'Wishlist item'}
+                                                                    fill
                                                                 />
                                                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
                                                             </div>

@@ -13,8 +13,9 @@ const UPLOADS_PRODUCTS = path.join(UPLOADS_BASE, 'products');
 const UPLOADS_LOGOS = path.join(UPLOADS_BASE, 'logos');
 const UPLOADS_MAIN_PHOTOS = path.join(UPLOADS_BASE, 'main-photos');
 const UPLOADS_GALLERY = path.join(UPLOADS_BASE, 'gallery');
+const UPLOADS_QR_CODES = path.join(UPLOADS_BASE, 'qr-codes');
 
-[UPLOADS_PRODUCTS, UPLOADS_LOGOS, UPLOADS_MAIN_PHOTOS, UPLOADS_GALLERY].forEach(dir => {
+[UPLOADS_PRODUCTS, UPLOADS_LOGOS, UPLOADS_MAIN_PHOTOS, UPLOADS_GALLERY, UPLOADS_QR_CODES].forEach(dir => {
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
     }
@@ -52,6 +53,7 @@ const uploadProduct = createUpload(UPLOADS_PRODUCTS);
 const uploadLogo = createUpload(UPLOADS_LOGOS);
 const uploadMainPhoto = createUpload(UPLOADS_MAIN_PHOTOS);
 const uploadGallery = createUpload(UPLOADS_GALLERY);
+const uploadQrCode = createUpload(UPLOADS_QR_CODES);
 
 /**
  * POST /api/upload/product-image
@@ -232,6 +234,50 @@ router.post(
         logger.info(`[upload] ${files.length} gallery image(s) uploaded by user ${req.user.id}`);
 
         res.status(201).json({ imageUrls });
+    }
+);
+
+/**
+ * POST /api/upload/qr-code
+ * Upload a QR code image
+ */
+router.post(
+    '/qr-code',
+    authenticate,
+    (req: AuthenticatedRequest, res: Response, next) => {
+        uploadQrCode.single('image')(req as any, res as any, (err) => {
+            if (err instanceof multer.MulterError) {
+                if (err.code === 'LIMIT_FILE_SIZE') {
+                    res.status(413).json({ error: 'Image must be smaller than 5 MB' });
+                    return;
+                }
+                res.status(400).json({ error: err.message });
+                return;
+            }
+            if (err) {
+                res.status(400).json({ error: err.message });
+                return;
+            }
+            next();
+        });
+    },
+    (req: AuthenticatedRequest, res: Response) => {
+        if (!req.file) {
+            res.status(400).json({ error: 'No image file provided' });
+            return;
+        }
+
+        if (!req.user?.id) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+
+        const baseUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
+        const imageUrl = `${baseUrl}/uploads/qr-codes/${req.file.filename}`;
+
+        logger.info(`[upload] QR code uploaded: ${req.file.filename} by user ${req.user.id}`);
+
+        res.status(201).json({ imageUrl });
     }
 );
 

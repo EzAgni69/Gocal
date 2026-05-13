@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { 
   Upload, Save, Sparkles, Image as ImageIcon, LayoutGrid, 
   FileText, Trash2, Edit2, Package, Menu, X, 
-  Store, Globe, CreditCard, ExternalLink, Camera, MessageCircle, Palette
+  Store, Globe, CreditCard, ExternalLink, Camera, MessageCircle, Palette,
+  BarChart3, Clock, Loader2, Info
 } from 'lucide-react';
-import { Vendor, Product, AnalyticsData } from '../types';
+import { Vendor, Product } from '../types';
 import { generateVendorDescription } from '../services/geminiService';
 import { AddProductModal } from './AddProductModal';
 import { VENDOR_CATEGORY_CONFIG } from '../constants';
 import { ImageGalleryManager } from './vendor/ImageGalleryManager';
 import { MiniWebsiteEditor } from './vendor/MiniWebsiteEditor';
 import { ThemeEditor } from './vendor/ThemeEditor';
-import { updateVendor } from '../services/vendorService';
+import { updateVendor, addProduct, updateProduct, deleteProduct, importProductsCSV } from '../services/vendorService';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/Button';
+import Image from 'next/image';
 
 interface VendorDashboardProps {
   vendor: Vendor;
-  analyticsData: AnalyticsData[];
 }
 
 const DEFAULT_PRODUCT_IMAGE = 'https://placehold.co/200x200/f3f4f6/9ca3af?text=No+Image';
 
-export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initialVendor, analyticsData }) => {
+export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initialVendor }) => {
   const [vendor, setVendor] = useState<Vendor>(initialVendor);
   const [activeTab, setActiveTab] = useState<'profile' | 'appearance' | 'storefront' | 'products' | 'analytics'>('profile');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -45,6 +45,7 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showCSVHelp, setShowCSVHelp] = useState(false);
 
   const config = VENDOR_CATEGORY_CONFIG[vendor.category] || {
     requiresImage: false,
@@ -85,27 +86,63 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
     }
   };
 
-  const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const mockProducts: Product[] = [
-        {
-          id: `p-${Date.now()}`,
-          name: "Imported Item 1",
-          price: 100,
-          category: "Imported",
-          inStock: true,
-        },
-        {
-          id: `p-${Date.now() + 1}`,
-          name: "Imported Item 2",
-          price: 150,
-          category: "Imported",
-          inStock: true,
-        },
-      ];
+  const [isImporting, setIsImporting] = useState(false);
 
-      setProducts([...products, ...mockProducts]);
-      alert(`✅ Imported ${mockProducts.length} products from CSV.`);
+  const handleCSVUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setIsImporting(true);
+
+      try {
+        const text = await file.text();
+        const lines = text.split('\n').filter(line => line.trim());
+        if (lines.length < 2) {
+          alert('CSV file must have a header row and at least one data row.');
+          setIsImporting(false);
+          return;
+        }
+
+        const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+        const nameIdx = headers.indexOf('name');
+        const priceIdx = headers.indexOf('price');
+
+        if (nameIdx === -1 || priceIdx === -1) {
+          alert('CSV must include "name" and "price" columns.');
+          setIsImporting(false);
+          return;
+        }
+
+        const items = lines.slice(1).map(line => {
+          const cols = line.split(',').map(c => c.trim());
+          return {
+            name: cols[nameIdx] || 'Untitled',
+            price: parseFloat(cols[priceIdx]) || 0,
+            category: cols[headers.indexOf('category')] || undefined,
+            description: cols[headers.indexOf('description')] || undefined,
+            quantity: cols[headers.indexOf('quantity')] ? parseFloat(cols[headers.indexOf('quantity')]) : undefined,
+            unit: cols[headers.indexOf('unit')] || undefined,
+            sku: cols[headers.indexOf('sku')] || undefined,
+            inStock: cols[headers.indexOf('instock')]?.toLowerCase() !== 'false',
+          };
+        }).filter(item => item.name && item.name !== 'Untitled');
+
+        if (items.length === 0) {
+          alert('No valid products found in CSV.');
+          setIsImporting(false);
+          return;
+        }
+
+        const result = await importProductsCSV(vendor.id, items);
+        setProducts(prev => [...prev, ...result.products]);
+        alert(`✅ Successfully imported ${result.count} products from CSV.`);
+      } catch (error) {
+        console.error('CSV import error:', error);
+        alert('Failed to import CSV. Please check the file format and try again.');
+      } finally {
+        setIsImporting(false);
+        // Reset file input
+        e.target.value = '';
+      }
     }
   };
 
@@ -119,17 +156,31 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
     setIsModalOpen(true);
   };
 
-  const handleSaveProduct = (product: Product) => {
-    if (editingProduct) {
-      setProducts(products.map(p => p.id === product.id ? product : p));
-    } else {
-      setProducts([...products, product]);
+  const handleSaveProduct = async (product: Product) => {
+    try {
+      if (editingProduct) {
+        const updated = await updateProduct(vendor.id, product.id, product);
+        setProducts(products.map(p => p.id === product.id ? updated : p));
+      } else {
+        const created = await addProduct(vendor.id, product);
+        setProducts([...products, created]);
+      }
+    } catch (error) {
+      console.error('Failed to save product:', error);
+      alert('Failed to save product. Please try again.');
     }
   };
 
-  const handleDeleteProduct = (productId: string) => {
-    setProducts(products.filter(p => p.id !== productId));
-    setDeleteConfirmId(null);
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      await deleteProduct(vendor.id, productId);
+      setProducts(products.filter(p => p.id !== productId));
+      setDeleteConfirmId(null);
+    } catch (error) {
+      console.error('Failed to delete product:', error);
+      alert('Failed to delete product. Please try again.');
+      setDeleteConfirmId(null);
+    }
   };
 
   const formatPrice = (price: number, unit?: string) => {
@@ -185,7 +236,7 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
 
         <div className="p-8 mt-auto border-t border-white/5">
            <a 
-            href={`/store/${vendor.websiteUuid}`} 
+            href={vendor.planType === 'card_only' || !vendor.websiteUuid ? `/vendor/${vendor.id}` : `/store/${vendor.websiteUuid}`} 
             target="_blank" 
             className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all group"
            >
@@ -234,7 +285,7 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
                     <div className="relative group">
                       <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-3 block">Marketplace Cover</label>
                       <div className="relative h-56 rounded-3xl overflow-hidden bg-gray-100 group">
-                        <img src={coverImage} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
+                        {coverImage && <Image src={coverImage} alt="Cover" fill className="object-cover transition-transform duration-1000 group-hover:scale-105" />}
                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                           <button 
                             onClick={() => {
@@ -260,7 +311,7 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 block px-1">Concierge Phone</label>
+                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 block px-1">Contact Phone</label>
                         <input 
                           type="text" 
                           value={phone} 
@@ -336,8 +387,8 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
                 <div className="w-full md:w-96 space-y-6 sticky top-44">
                    <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-gray-400 px-4">Marketplace Preview</h3>
                    <div className="bg-white rounded-[2rem] overflow-hidden shadow-2xl shadow-black/5 border border-gray-100 group hover:shadow-gold-500/5 transition-all">
-                      <div className="aspect-[4/3] bg-gray-100 overflow-hidden">
-                        <img src={coverImage} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                      <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+                        {coverImage && <Image src={coverImage} alt="Cover Preview" fill className="object-cover group-hover:scale-110 transition-transform duration-1000" />}
                       </div>
                       <div className="p-8">
                         <div className="flex items-center gap-2 mb-3">
@@ -410,20 +461,73 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
                       {config.requiresImage ? 'Visual collection of your offerings.' : 'Your store listings and inventory details.'}
                     </p>
                   </div>
-                  <div className="flex gap-4">
-                    <label className="cursor-pointer px-6 py-3 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-2xl text-[10px] font-bold tracking-widest uppercase transition-all flex items-center border border-gray-100">
-                      <Upload className="w-4 h-4 mr-2" />
-                      Import CSV
-                      <input type="file" className="hidden" accept=".csv" onChange={handleCSVUpload} />
-                    </label>
-                    <Button
-                      onClick={handleAddProduct}
-                      className="px-8 py-3 bg-black text-white rounded-2xl text-[10px] font-bold tracking-widest uppercase hover:scale-105 transition-all shadow-xl shadow-black/10"
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="flex gap-4">
+                      <label className={`cursor-pointer px-6 py-3 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-2xl text-[10px] font-bold tracking-widest uppercase transition-all flex items-center border border-gray-100 ${isImporting ? 'opacity-50 pointer-events-none' : ''}`}>
+                        {isImporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
+                        {isImporting ? 'Importing...' : 'Import CSV'}
+                        <input type="file" className="hidden" accept=".csv" onChange={handleCSVUpload} disabled={isImporting} />
+                      </label>
+                      <Button
+                        onClick={handleAddProduct}
+                        className="px-8 py-3 bg-black text-white rounded-2xl text-[10px] font-bold tracking-widest uppercase hover:scale-105 transition-all shadow-xl shadow-black/10"
+                      >
+                        <Package className="w-4 h-4 mr-2" /> Add Selection
+                      </Button>
+                    </div>
+                    <button 
+                      onClick={() => setShowCSVHelp(!showCSVHelp)}
+                      className="text-[9px] text-gold-600 font-bold tracking-widest uppercase hover:text-gold-700 transition-colors flex items-center gap-1.5 px-2"
                     >
-                      <Package className="w-4 h-4 mr-2" /> Add Selection
-                    </Button>
+                      <Info className="w-3 h-3" />
+                      {showCSVHelp ? 'Hide Format' : 'View CSV Format'}
+                    </button>
                   </div>
                 </div>
+
+                <AnimatePresence>
+                  {showCSVHelp && (
+                    <motion.div 
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mb-8 overflow-hidden"
+                    >
+                      <div className="bg-gold-50/30 border border-gold-100/50 rounded-2xl p-6 text-[11px]">
+                        <div className="flex items-center gap-2 mb-4 text-gold-700 font-bold uppercase tracking-[0.2em] text-[9px]">
+                          <Info className="w-3.5 h-3.5" />
+                          CSV Import Specification
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                          <div className="space-y-4">
+                            <div>
+                              <p className="text-gray-400 font-bold uppercase tracking-widest text-[8px] mb-1.5">Required Headers</p>
+                              <div className="flex flex-wrap gap-2">
+                                <span className="bg-white border border-gold-200 px-2 py-1 rounded-md font-mono text-gold-700">name</span>
+                                <span className="bg-white border border-gold-200 px-2 py-1 rounded-md font-mono text-gold-700">price</span>
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-gray-400 font-bold uppercase tracking-widest text-[8px] mb-1.5">Optional Headers</p>
+                              <div className="flex flex-wrap gap-2">
+                                {['category', 'description', 'quantity', 'unit', 'sku', 'instock'].map(h => (
+                                  <span key={h} className="bg-white border border-gray-100 px-2 py-1 rounded-md font-mono text-gray-500">{h}</span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-gray-400 font-bold uppercase tracking-widest text-[8px] mb-1.5">Sample Row Content</p>
+                            <div className="bg-white/50 border border-gold-100 rounded-xl p-4 font-mono text-gray-600 leading-relaxed overflow-x-auto whitespace-nowrap">
+                              name,price,category,description,quantity,unit,sku,instock<br/>
+                              Gold Necklace,15000,Jewelry,Handcrafted,10,pcs,GN-01,true
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {products.length === 0 ? (
                   <div className="text-center py-24 text-gray-300">
@@ -448,9 +552,9 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
                           <tr key={p.id} className="group hover:bg-gray-50/50 transition-colors">
                             <td className="py-6 pl-2">
                                <div className="flex items-center gap-5">
-                                  <div className="w-16 h-20 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
+                                  <div className="relative w-16 h-20 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
                                     {p.image ? (
-                                      <img src={p.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                      <Image src={p.image} alt={p.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                                     ) : (
                                       <div className="w-full h-full flex items-center justify-center text-gray-300"><ImageIcon className="w-6 h-6" /></div>
                                     )}
@@ -496,7 +600,7 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
             </motion.div>
           )}
 
-          {/* ANALYTICS TAB */}
+          {/* ANALYTICS TAB — Coming Soon */}
           {activeTab === 'analytics' && (
             <motion.div
               key="analytics"
@@ -504,43 +608,23 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
               animate={{ opacity: 1 }}
               className="space-y-12"
             >
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  {[
-                    { label: 'Total Visits', value: '2.4k', growth: '+12%', icon: Globe },
-                    { label: 'Favorites', value: '482', growth: '+5%', icon: Sparkles },
-                    { label: 'Inquiries', value: '84', growth: '+18%', icon: MessageCircle },
-                  ].map((stat, i) => (
-                    <div key={i} className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-black/[0.02] border border-gray-100">
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="p-3 bg-gray-50 rounded-2xl text-black"><stat.icon className="w-5 h-5" /></div>
-                        <span className="text-[10px] font-bold text-green-500 bg-green-50 px-2 py-0.5 rounded tracking-tighter">{stat.growth}</span>
-                      </div>
-                      <p className="text-3xl font-serif font-bold mb-1">{stat.value}</p>
-                      <p className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">{stat.label}</p>
-                    </div>
-                  ))}
-               </div>
-
-               <div className="bg-white p-10 rounded-[3rem] shadow-xl shadow-black/[0.02] border border-gray-100">
-                  <h3 className="text-xl font-serif mb-10">Audience Growth</h3>
-                  <div className="h-80 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={analyticsData}>
-                        <defs>
-                          <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#000" stopOpacity={0.1}/>
-                            <stop offset="95%" stopColor="#000" stopOpacity={0}/>
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 10, fill: '#999'}} />
-                        <YAxis hide />
-                        <Tooltip contentStyle={{borderRadius: '16px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.1)'}} />
-                        <Line type="monotone" dataKey="visits" stroke="#000" strokeWidth={3} dot={{ r: 4, fill: '#000', strokeWidth: 2, stroke: '#fff' }} />
-                      </LineChart>
-                    </ResponsiveContainer>
+              <div className="bg-white p-16 rounded-[3rem] shadow-xl shadow-black/[0.02] border border-gray-100 text-center">
+                <div className="max-w-md mx-auto space-y-8">
+                  <div className="w-24 h-24 bg-gradient-to-br from-gray-50 to-gray-100 rounded-full flex items-center justify-center mx-auto">
+                    <BarChart3 className="w-10 h-10 text-gray-300" />
                   </div>
-               </div>
+                  <div>
+                    <h3 className="text-3xl font-serif mb-3">Insights Coming Soon</h3>
+                    <p className="text-gray-500 font-light leading-relaxed">
+                      We&apos;re building a powerful analytics dashboard to track your store&apos;s visits, favorites, and customer inquiries. Stay tuned.
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-center gap-3 text-gray-400">
+                    <Clock className="w-4 h-4" />
+                    <span className="text-[10px] font-bold tracking-widest uppercase">In Development</span>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

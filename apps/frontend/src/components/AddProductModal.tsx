@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Upload, ImageIcon, Package } from 'lucide-react';
 import { Product, VendorCategoryConfig } from '../types';
 import { VENDOR_CATEGORY_CONFIG, UNIT_OPTIONS, CATEGORIES } from '../constants';
+import Image from 'next/image';
 
 interface AddProductModalProps {
     isOpen: boolean;
@@ -169,9 +170,9 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
                             Product Image {config.requiresImage ? <span className="text-red-500">*</span> : <span className="text-gray-400 font-normal">(Optional)</span>}
                         </label>
                         <div className="flex gap-4">
-                            <div className="w-24 h-24 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-50">
+                            <div className="relative w-24 h-24 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-50">
                                 {imagePreview ? (
-                                    <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" onError={() => setImagePreview('')} />
+                                    <Image src={imagePreview} alt="Preview" fill className="object-cover" onError={() => setImagePreview('')} />
                                 ) : (
                                     <ImageIcon className="w-8 h-8 text-gray-400" />
                                 )}

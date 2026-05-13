@@ -15,7 +15,7 @@ import {
     Copy,
     ExternalLink,
     Edit3,
-    Image,
+    Image as ImageIcon,
     Share2,
     Store,
     Heart
@@ -30,6 +30,7 @@ import { ReviewModal } from './ReviewModal';
 import { ReviewsList } from './ReviewsList';
 import { Review } from '../types';
 import { apiClient } from '../services/apiClient';
+import Image from 'next/image';
 
 
 interface ContactCardModalProps {
@@ -39,7 +40,16 @@ interface ContactCardModalProps {
 }
 
 export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOpen, onClose }) => {
-    const { language, requireAuth, wishlist, addToWishlist, removeFromWishlist } = useAppContext();
+    const { 
+        language, 
+        requireAuth, 
+        wishlist, 
+        addToWishlist, 
+        removeFromWishlist,
+        isFavorite,
+        addToFavorites,
+        removeFromFavorites
+    } = useAppContext();
     const { t } = useTranslation();
     const [showReviewModal, setShowReviewModal] = React.useState(false);
     const [showAllHours, setShowAllHours] = React.useState(false);
@@ -139,6 +149,19 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
         alert(`${label} copied to clipboard!`);
     };
 
+    const isFav = vendor ? isFavorite(vendor.id) : false;
+    const handleFavorite = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!vendor) return;
+        if (!requireAuth('favorite this vendor')) return;
+        
+        if (isFav) {
+            removeFromFavorites(vendor.id);
+        } else {
+            addToFavorites(vendor as any);
+        }
+    };
+
     const handleWriteReview = () => {
         if (!requireAuth('write a review')) return;
         setShowReviewModal(true);
@@ -193,19 +216,30 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                     >
                         {/* Cover Image Header */}
                         <div className="relative h-48 overflow-hidden">
-                            <img
+                            <Image
                                 src={vendor.coverImage}
                                 alt={vendor.name}
-                                className="h-full w-full object-cover"
+                                fill
+                                className="object-cover"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
                             {/* Share Button */}
                             <button
                                 onClick={handleShare}
-                                className="absolute right-16 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-colors"
+                                className="absolute right-28 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-colors"
+                                title="Share Vendor"
                             >
                                 <Share2 className="h-4 w-4" />
+                            </button>
+
+                            {/* Favorite Button */}
+                            <button
+                                onClick={handleFavorite}
+                                className="absolute right-16 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-colors"
+                                title={isFav ? "Remove from Favorites" : "Add to Favorites"}
+                            >
+                                <Heart className={`h-4 w-4 ${isFav ? 'fill-red-500 text-red-500' : 'text-white'}`} />
                             </button>
 
                             {/* Close Button */}
@@ -219,11 +253,11 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                             {/* Badges */}
                             <div className="absolute left-4 top-4 flex gap-2">
                                 <Badge variant={vendor.isOpen ? "success" : "secondary"} className="backdrop-blur-md">
-                                    {vendor.isOpen ? 'Open Now' : 'Closed'}
+                                    {vendor.isOpen ? t('Open Now') : t('Closed')}
                                 </Badge>
                                 {vendor.verified && (
                                     <Badge variant="premium" className="flex items-center gap-1 backdrop-blur-md">
-                                        <CheckCircle className="h-3 w-3" /> Verified
+                                        <CheckCircle className="h-3 w-3" /> {t('Verified')}
                                     </Badge>
                                 )}
                             </div>
@@ -235,7 +269,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                     <span className="flex items-center gap-1">
                                         <Star className="h-4 w-4 fill-current" style={{ color: accentColor }} />
                                         <span className="font-bold">{vendor.rating}</span>
-                                        <span className="opacity-75">({vendor.reviewCount} reviews)</span>
+                                        <span className="opacity-75">({vendor.reviewCount} {t('reviews')})</span>
                                     </span>
                                     <span className="opacity-75">•</span>
                                     <span className="opacity-90">{t(vendor.category)}</span>
@@ -257,7 +291,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500 text-white group-hover:scale-110 transition-transform">
                                         <Phone className="h-5 w-5" />
                                     </div>
-                                    <span className="text-xs font-semibold text-green-700">Call</span>
+                                    <span className="text-xs font-semibold text-green-700">{t('Call')}</span>
                                 </button>
 
                                 <button
@@ -267,7 +301,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-white group-hover:scale-110 transition-transform">
                                         <MessageCircle className="h-5 w-5" />
                                     </div>
-                                    <span className="text-xs font-semibold text-emerald-700">WhatsApp</span>
+                                    <span className="text-xs font-semibold text-emerald-700">{t('WhatsApp')}</span>
                                 </button>
 
                                 <button
@@ -277,7 +311,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500 text-white group-hover:scale-110 transition-transform">
                                         <Mail className="h-5 w-5" />
                                     </div>
-                                    <span className="text-xs font-semibold text-blue-700">Email</span>
+                                    <span className="text-xs font-semibold text-blue-700">{t('Email')}</span>
                                 </button>
 
                                 <button
@@ -287,7 +321,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-500 text-white group-hover:scale-110 transition-transform">
                                         <Navigation className="h-5 w-5" />
                                     </div>
-                                    <span className="text-xs font-semibold text-orange-700">Directions</span>
+                                    <span className="text-xs font-semibold text-orange-700">{t('Directions')}</span>
                                 </button>
                             </div>
 
@@ -304,7 +338,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                         <Phone className="h-4 w-4" style={{ color: accentColor }} />
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-xs text-gray-500 uppercase tracking-wider">Phone</p>
+                                        <p className="text-xs text-gray-500 uppercase tracking-wider">{t('Phone')}</p>
                                         <p className="font-medium text-luxury-black">{vendor.phone}</p>
                                     </div>
                                     <Copy className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -319,7 +353,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                         <Mail className="h-4 w-4" style={{ color: accentColor }} />
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-xs text-gray-500 uppercase tracking-wider">Email</p>
+                                        <p className="text-xs text-gray-500 uppercase tracking-wider">{t('Email')}</p>
                                         <p className="font-medium text-luxury-black">{vendor.email}</p>
                                     </div>
                                     <Copy className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -345,7 +379,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                         <Clock className="h-4 w-4 text-gold-600" />
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-xs text-gray-500 uppercase tracking-wider">Business Hours</p>
+                                        <p className="text-xs text-gray-500 uppercase tracking-wider">{t('Business Hours')}</p>
                                         <p className="font-medium text-luxury-black">{formatOpeningHours(vendor.openingHours)}</p>
                                     </div>
                                     {vendor.openingHours && (
@@ -353,7 +387,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                             onClick={() => setShowAllHours(!showAllHours)}
                                             className="text-xs text-gold-600 hover:text-gold-700 font-medium"
                                         >
-                                            {showAllHours ? 'Hide' : 'View All'}
+                                            {showAllHours ? t('Hide') : t('View All')}
                                         </button>
                                     )}
                                 </div>
@@ -361,7 +395,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                 {/* All Hours Dropdown */}
                                 {showAllHours && vendor.openingHours && (
                                     <div className="p-4 rounded-xl bg-white border border-gray-200">
-                                        <h4 className="text-sm font-semibold text-luxury-black mb-3">Weekly Hours</h4>
+                                        <h4 className="text-sm font-semibold text-luxury-black mb-3">{t('Weekly Hours')}</h4>
                                         <div className="space-y-2">
                                             {getAllOpeningHours(vendor.openingHours).map(({ day, hours, isToday }) => (
                                                 <div
@@ -370,14 +404,30 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                                         isToday ? 'font-semibold text-gold-600' : 'text-gray-600'
                                                     }`}
                                                 >
-                                                    <span>{day}</span>
-                                                    <span>{hours}</span>
+                                                    <span>{t(day)}</span>
+                                                    <span>{t(hours)}</span>
                                                 </div>
                                             ))}
                                         </div>
                                     </div>
                                 )}
                             </div>
+
+                            {/* Scan to Pay — QR Code */}
+                            {vendor.miniWebsiteConfig?.qrCodeUrl && (
+                                <div className="mb-6">
+                                    <h3 className="font-serif text-lg font-bold text-luxury-black mb-3">{t('Scan to Pay')}</h3>
+                                    <div className="flex justify-center p-4 bg-luxury-cream rounded-xl border" style={{ borderColor: accentColor + '40' }}>
+                                        <Image
+                                            src={vendor.miniWebsiteConfig.qrCodeUrl}
+                                            alt={t("Payment QR Code")}
+                                            width={200}
+                                            height={200}
+                                            className="rounded-lg"
+                                        />
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Featured Products Section */}
                             {vendor.products && vendor.products.length > 0 && (
@@ -392,10 +442,11 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                         {vendor.products.map((product) => (
                                             <div key={product.id} className="flex gap-4 p-3 rounded-2xl bg-gray-50 border border-gray-100 group transition-all hover:bg-white hover:shadow-md hover:border-gold-200">
                                                 <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border border-gray-100">
-                                                    <img
+                                                    <Image
                                                         src={product.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80'}
-                                                        alt={product.name}
-                                                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                                        alt={t(product.name)}
+                                                        fill
+                                                        className="object-cover transition-transform duration-500 group-hover:scale-110"
                                                     />
                                                 </div>
                                                 <div className="flex-1 flex flex-col min-w-0">
@@ -410,18 +461,18 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                                         <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">{t(product.category)}</span>
                                                         <button 
                                                             onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                const isInWishlist = wishlist.some((p: any) => p.id === product.id);
-                                                                if (isInWishlist) {
-                                                                    removeFromWishlist(product.id);
-                                                                } else {
-                                                                    addToWishlist({
-                                                                        ...product,
-                                                                        vendorId: vendor.id,
-                                                                        vendorName: vendor.name,
-                                                                        vendorPhone: vendor.phone
-                                                                    });
-                                                                }
+                                                                 e.stopPropagation();
+                                                                 const isInWishlist = wishlist.some((p: any) => p.id === product.id);
+                                                                 if (isInWishlist) {
+                                                                     removeFromWishlist(product.id);
+                                                                 } else {
+                                                                     addToWishlist({
+                                                                         ...product,
+                                                                         vendorId: vendor.id,
+                                                                         vendorName: vendor.name,
+                                                                         vendorPhone: vendor.phone
+                                                                     });
+                                                                 }
                                                             }}
                                                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all ${
                                                                 wishlist.some(p => p.id === product.id)
@@ -444,19 +495,20 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                             {vendor.galleryImages && vendor.galleryImages.length > 0 && (
                                 <div className="mb-6">
                                     <h3 className="font-serif text-lg font-bold text-luxury-black mb-3 flex items-center gap-2">
-                                        <Image className="h-5 w-5" style={{ color: accentColor }} />
-                                        Gallery
+                                        <ImageIcon className="h-5 w-5" style={{ color: accentColor }} />
+                                        {t('Gallery')}
                                     </h3>
                                     <div className="grid grid-cols-3 gap-2">
                                         {vendor.galleryImages.map((img, index) => (
                                             <div
                                                 key={index}
-                                                className="aspect-square rounded-xl overflow-hidden border border-gold-100 hover:border-gold-300 transition-all cursor-pointer group"
+                                                className="relative aspect-square rounded-xl overflow-hidden border border-gold-100 hover:border-gold-300 transition-all cursor-pointer group"
                                             >
-                                                <img
+                                                <Image
                                                     src={img.imageUrl}
-                                                    alt={`${vendor.name} gallery ${index + 1}`}
-                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                                    alt={`${t(vendor.name)} gallery ${index + 1}`}
+                                                    fill
+                                                    className="object-cover group-hover:scale-110 transition-transform duration-300"
                                                 />
                                             </div>
                                         ))}
@@ -467,10 +519,10 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                             {/* Reviews Section */}
                             <div className="mb-6">
                                 <h3 className="font-serif text-lg font-bold text-luxury-black mb-4 flex items-center justify-between">
-                                    <span>Reviews ({reviews.length})</span>
+                                    <span>{t('Reviews')} ({reviews.length})</span>
                                 </h3>
                                 {reviewsLoading ? (
-                                    <div className="text-center py-6 text-gray-400 text-sm">Loading reviews...</div>
+                                    <div className="text-center py-6 text-gray-400 text-sm">{t('Loading reviews...')}</div>
                                 ) : (
                                     <ReviewsList reviews={reviews} />
                                 )}
@@ -483,7 +535,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                 onClick={handleWriteReview}
                             >
                                 <Edit3 className="mr-2 h-4 w-4" />
-                                Write a Review
+                                {t('Write a Review')}
                             </Button>
 
                             {/* Website Links */}

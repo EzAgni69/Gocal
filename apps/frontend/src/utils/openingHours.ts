@@ -2,6 +2,26 @@ import { OpeningHours as OpeningHoursType } from '../types';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+// Map full day names to abbreviated keys used by the utilities and DB schema
+const FULL_TO_ABBR: Record<string, string> = {
+  Sunday: 'Sun', Monday: 'Mon', Tuesday: 'Tue',
+  Wednesday: 'Wed', Thursday: 'Thu', Friday: 'Fri', Saturday: 'Sat',
+};
+
+/**
+ * Normalize an OpeningHours object so all keys are abbreviated (Mon–Sun).
+ * If the object already uses abbreviated keys, it is returned unchanged.
+ * Full day-name keys (Monday–Sunday) are remapped to their abbreviated equivalents.
+ */
+function normalizeKeys(openingHours: OpeningHoursType): OpeningHoursType {
+  const entries = Object.entries(openingHours);
+  const hasFullKeys = entries.some(([key]) => key in FULL_TO_ABBR);
+  if (!hasFullKeys) return openingHours;
+  return Object.fromEntries(
+    entries.map(([day, hours]) => [FULL_TO_ABBR[day] ?? day, hours])
+  ) as OpeningHoursType;
+}
+
 export interface OpeningHoursStatus {
     isOpen: boolean;
     currentDay: string;
@@ -22,15 +42,16 @@ export function getOpeningHoursStatus(openingHours: OpeningHoursType | null | un
         };
     }
 
+    const normalized = normalizeKeys(openingHours);
     const now = new Date();
     const currentDay = DAYS[now.getDay()];
     const currentTime = now.getHours() * 60 + now.getMinutes(); // minutes since midnight
 
-    const todaySchedule = openingHours[currentDay];
+    const todaySchedule = normalized[currentDay];
 
     if (!todaySchedule || ('closed' in todaySchedule && todaySchedule.closed)) {
         // Find next open day
-        const { nextDay, nextTime } = findNextOpenDay(openingHours, now.getDay());
+        const { nextDay, nextTime } = findNextOpenDay(normalized, now.getDay());
         return {
             isOpen: false,
             currentDay,
@@ -91,9 +112,10 @@ function findNextOpenDay(openingHours: OpeningHoursType, currentDayIndex: number
 export function formatOpeningHours(openingHours: OpeningHoursType | null | undefined): string {
     if (!openingHours) return 'Hours not available';
 
+    const normalized = normalizeKeys(openingHours);
     const now = new Date();
     const currentDay = DAYS[now.getDay()];
-    const todaySchedule = openingHours[currentDay];
+    const todaySchedule = normalized[currentDay];
 
     if (!todaySchedule || ('closed' in todaySchedule && todaySchedule.closed)) {
         return 'Closed today';
@@ -122,10 +144,11 @@ export function formatTime(time: string): string {
 export function getAllOpeningHours(openingHours: OpeningHoursType | null | undefined): Array<{ day: string; hours: string; isToday: boolean }> {
     if (!openingHours) return [];
 
+    const normalized = normalizeKeys(openingHours);
     const today = new Date().getDay();
 
     return DAYS.map((day, index) => {
-        const schedule = openingHours[day];
+        const schedule = normalized[day];
         if (!schedule || ('closed' in schedule && schedule.closed)) {
             return { day, hours: 'Closed', isToday: index === today };
         }
