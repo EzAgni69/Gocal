@@ -22,6 +22,11 @@ import path from 'path';
 const app = express();
 const port = process.env.PORT || 3001;
 
+// Trust the first proxy hop (Vercel / any reverse proxy).
+// Required so express-rate-limit can read X-Forwarded-For without throwing
+// ERR_ERL_UNEXPECTED_X_FORWARDED_FOR / ERR_ERL_FORWARDED_HEADER.
+app.set('trust proxy', 1);
+
 // Security headers
 app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
@@ -33,10 +38,27 @@ app.use(helmet({
     },
 }));
 
-// Cross-Origin Resource Sharing
+// ─── CORS (production-grade) ────────────────────────────────────
+const ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    process.env.FRONTEND_URL,           // e.g. https://vanij-frontend.vercel.app
+].filter(Boolean) as string[];
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: (origin, callback) => {
+        // Allow requests with no origin (mobile apps, curl, server-to-server)
+        if (!origin) return callback(null, true);
+        // Allow any Vercel preview deployment
+        if (/\.vercel\.app$/.test(origin)) return callback(null, true);
+        if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+        callback(new Error(`CORS: origin ${origin} not allowed`));
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Content-Length', 'X-Request-Id'],
+    maxAge: 86400, // Cache preflight for 24 hours
 }));
 
 app.use(express.json());
