@@ -5,7 +5,7 @@ async function check() {
         console.log("Trying to enable postgis...");
         await db.execute(sql`CREATE EXTENSION IF NOT EXISTS postgis;`);
         console.log("Successfully enabled postgis!");
-    } catch (e) {
+    } catch (e: any) {
         console.error("Failed to enable postgis:", e.message);
         
         try {
@@ -13,7 +13,7 @@ async function check() {
             await db.execute(sql`CREATE EXTENSION IF NOT EXISTS cube;`);
             await db.execute(sql`CREATE EXTENSION IF NOT EXISTS earthdistance;`);
             console.log("Successfully enabled earthdistance!");
-        } catch (e2) {
+        } catch (e2: any) {
             console.error("Failed to enable earthdistance:", e2.message);
         }
     }
