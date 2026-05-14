@@ -4607,3 +4607,113 @@
 2026-05-11 15:37:52 [info]: [ALL REQ] GET /api/vendors/home
 2026-05-11 15:37:52 [info]: [ALL REQ] GET /api/vendors/home
 2026-05-11 16:09:53 [info]: [ALL REQ] GET /api/reviews/vendor/24857367-a43f-4a71-844c-be313427b3b7
+2026-05-14 11:12:35 [info]: Server running at http://localhost:3001
+2026-05-14 11:14:23 [info]: [ALL REQ] GET /api/vendors/home
+2026-05-14 11:14:25 [info]: [ALL REQ] POST /api/auth/sync
+2026-05-14 11:14:25 [info]: [ALL REQ] GET /api/favorites
+2026-05-14 11:14:25 [info]: [ALL REQ] GET /api/wishlists
+2026-05-14 11:14:26 [info]: [ALL REQ] POST /api/auth/sync
+2026-05-14 11:14:26 [info]: [ALL REQ] GET /api/favorites
+2026-05-14 11:14:26 [info]: [ALL REQ] GET /api/wishlists
+2026-05-14 11:14:26 [info]: [ALL REQ] GET /api/card-requests?status=PENDING
+2026-05-14 11:14:26 [info]: [ALL REQ] GET /api/card-requests?status=PENDING
+2026-05-14 11:14:27 [info]: [ALL REQ] GET /api/vendors/home
+2026-05-14 11:14:27 [info]: [ALL REQ] GET /api/vendors/home
+2026-05-14 11:14:46 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
+2026-05-14 11:14:46 [info]: [ALL REQ] GET /api/vendors/home
+2026-05-14 11:14:46 [info]: [ALL REQ] GET /api/vendors/home
+2026-05-14 11:14:47 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
+2026-05-14 11:14:48 [info]: [ALL REQ] POST /api/translate/batch
+2026-05-14 11:14:48 [debug]: [Translate Manual Hit] Consumer -> उपभोक्ता
+2026-05-14 11:14:48 [debug]: [Translate Manual Hit] Vendor -> विक्रेता
+2026-05-14 11:14:48 [debug]: [Translate Manual Hit] Admin -> एडमिन
+2026-05-14 11:14:48 [debug]: [Translate Manual Hit] Open -> खुला है
+2026-05-14 11:14:48 [debug]: [Translate Manual Hit] Call Now -> अभी कॉल करें
+2026-05-14 11:14:48 [debug]: [Translate Manual Hit] Closed -> बंद है
+2026-05-14 11:14:48 [debug]: [Translate Manual Hit] Visit Website -> वेबसाइट पर जाएं
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:14:48 [debug]: [Translate Cache Hit] hi
+2026-05-14 11:15:05 [info]: [ALL REQ] POST /api/translate/batch
+2026-05-14 11:15:05 [debug]: [Translate Manual Hit] Consumer -> ગ્રાહક
+2026-05-14 11:15:05 [debug]: [Translate Manual Hit] Vendor -> વિક્રેતા
+2026-05-14 11:15:05 [debug]: [Translate Manual Hit] Admin -> એડમિન
+2026-05-14 11:15:05 [debug]: [Translate Manual Hit] Open -> ખુલ્લું છે
+2026-05-14 11:15:05 [debug]: [Translate Manual Hit] Call Now -> હમણાં કોલ કરો
+2026-05-14 11:15:05 [debug]: [Translate Manual Hit] Closed -> બંધ છે
+2026-05-14 11:15:05 [debug]: [Translate Manual Hit] Visit Website -> વેબસાઇટની મુલાકાત લો
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:15:05 [debug]: [Translate Cache Hit] gu
+2026-05-14 11:16:09 [info]: [ALL REQ] POST /api/auth/sync
+2026-05-14 11:16:09 [info]: [ALL REQ] GET /api/favorites
+2026-05-14 11:16:09 [info]: [ALL REQ] GET /api/wishlists
+2026-05-14 11:16:35 [info]: [ALL REQ] GET /api/card-requests?status=PENDING
+2026-05-14 11:16:35 [info]: [ALL REQ] GET /api/card-requests?status=PENDING
+2026-05-14 11:16:41 [info]: [ALL REQ] POST /api/auth/sync
+2026-05-14 11:16:41 [info]: [ALL REQ] GET /api/favorites
+2026-05-14 11:16:41 [info]: [ALL REQ] GET /api/wishlists
+2026-05-14 11:17:47 [info]: [ALL REQ] GET /api/vendors/home
+2026-05-14 11:17:47 [info]: [ALL REQ] GET /api/vendors/home
+2026-05-14 11:17:52 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
+2026-05-14 11:17:52 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
+2026-05-14 11:17:55 [info]: [ALL REQ] GET /api/vendors/home
+2026-05-14 11:17:55 [info]: [ALL REQ] GET /api/vendors/home
+2026-05-14 11:18:48 [info]: [ALL REQ] GET /api/card-requests?status=PENDING
+2026-05-14 11:18:48 [info]: [ALL REQ] GET /api/card-requests?status=PENDING
+2026-05-14 11:18:48 [info]: [ALL REQ] GET /api/vendors/me
+2026-05-14 11:18:48 [info]: [ALL REQ] GET /api/vendors/me
+2026-05-14 11:19:27 [info]: [ALL REQ] GET /api/card-requests?status=PENDING
+2026-05-14 11:19:27 [info]: [ALL REQ] GET /api/card-requests?status=PENDING
+2026-05-14 11:19:28 [info]: [ALL REQ] GET /api/users?page=1&limit=20
+2026-05-14 11:21:40 [info]: [ALL REQ] GET /api/vendors/home
+2026-05-14 11:21:40 [info]: [ALL REQ] GET /api/vendors/home
+2026-05-14 11:24:19 [info]: [ALL REQ] GET /api/vendors/home
+2026-05-14 11:25:17 [info]: [ALL REQ] GET /api/vendors/home
+2026-05-14 11:26:14 [info]: [ALL REQ] POST /api/wishlists/ee8460b4-3263-4620-85f2-c866ac89c125/items
+2026-05-14 11:26:22 [info]: [ALL REQ] DELETE /api/wishlists/ee8460b4-3263-4620-85f2-c866ac89c125/products/bd14a62b-cf16-4790-901e-c98b467ff0d3
+2026-05-14 11:28:51 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
+2026-05-14 11:28:52 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
+2026-05-14 11:36:05 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
+2026-05-14 11:36:05 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
+2026-05-14 11:36:55 [info]: [ALL REQ] GET /api/reviews/vendor/d69a2eca-3223-4ef5-b006-febfbfb7df5d

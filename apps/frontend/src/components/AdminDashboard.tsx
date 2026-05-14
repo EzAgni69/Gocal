@@ -3,7 +3,7 @@ import { ShieldAlert, Check, Trash2, X, Store, Eye, Clock, CheckCircle2, XCircle
 import { Report, ContactCardRequest, CardRequestRejectionReason, Vendor } from '../types';
 import { apiClient } from '@/services/apiClient';
 import { User, fetchUsers, updateUserRole } from '../services/userServices';
-import { updateVendorStatus, deleteVendorSoft, getAllUsers, undoRemoveVendor } from '../services/adminService';
+
 import Image from 'next/image';
 import { fetchVendors, removeVendor, restoreVendor, deleteAdminVendor } from '../services/vendorService';
 import debounce from "lodash.debounce";
