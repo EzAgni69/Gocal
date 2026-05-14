@@ -17,7 +17,7 @@ router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) =
 
         const result = await db.query.favorites.findMany({
             where: eq(favorites.userId, req.user!.id),
-            orderBy: (favorites, { desc }) => [desc(favorites.createdAt)],
+            orderBy: (t: any, { desc }: any) => [desc(t.createdAt)],
         });
 
         res.json({ favorites: result });

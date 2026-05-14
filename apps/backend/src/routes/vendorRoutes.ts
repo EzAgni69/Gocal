@@ -69,7 +69,7 @@ router.get('/home', async (req: AuthenticatedRequest, res: Response) => {
                     with: { products: true, category: true, galleryImages: true, tags: { with: { tag: true } }, reviews: { with: { user: { columns: { id: true, name: true, avatarUrl: true } } } } } 
                 } 
             },
-            orderBy: (homeCards, { asc }) => [asc(homeCards.displayOrder)],
+            orderBy: (t: any, { asc }: any) => [asc(t.displayOrder)],
         });
 
         const result = home_cards
@@ -457,7 +457,7 @@ router.delete('/:id', authenticate, async (req: AuthenticatedRequest, res: Respo
 
         if (vendorProducts.length > 0) {
             await db.delete(wishlistItems)
-                .where(inArray(wishlistItems.productId, vendorProducts.map(p => p.id)));
+                .where(inArray(wishlistItems.productId, vendorProducts.map((p: any) => p.id)));
         }
 
         res.json({ message: 'Vendor removed successfully' });

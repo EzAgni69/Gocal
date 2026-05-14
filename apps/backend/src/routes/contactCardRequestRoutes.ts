@@ -201,7 +201,7 @@ router.get('/', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), async (req: A
             with: {
                 requester: { columns: { id: true, name: true, email: true, phone: true } },
             },
-            orderBy: (contactCardRequests, { desc }) => [desc(contactCardRequests.createdAt)],
+            orderBy: (t: any, { desc }: any) => [desc(t.createdAt)],
         });
 
         res.json({ requests: result });
@@ -297,7 +297,7 @@ router.put('/:id/review', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), asy
         if (status === 'APPROVED') {
             try {
                 let newVendorResult: any = null;
-                await db.transaction(async (tx) => {
+                await db.transaction(async (tx: any) => {
                     // Update the request
                     await tx.update(contactCardRequests)
                         .set({

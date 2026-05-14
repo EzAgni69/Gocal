@@ -18,7 +18,7 @@ router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) =
             with: {
                 items: true,
             },
-            orderBy: (wishlists, { desc }) => [desc(wishlists.createdAt)],
+            orderBy: (t: any, { desc }: any) => [desc(t.createdAt)],
         });
 
         res.json({ wishlists: result });

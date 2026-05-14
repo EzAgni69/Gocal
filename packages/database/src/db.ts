@@ -1,28 +1,40 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
+import { drizzle as drizzleHttp, NeonHttpDatabase } from 'drizzle-orm/neon-http';
+import { drizzle as drizzlePg, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { neon } from '@neondatabase/serverless';
 import postgres from 'postgres';
 import * as schema from './schema';
 
-// Use a singleton pattern to prevent multiple connection pools being created
-// msespecially important during Hot Module Replacement (HMR) in development
 const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL || 'postgresql://postgres:password@localhost:5434/vanij_db';
+
+const isNeon = connectionString.includes('neon.tech');
 
 /**
  * Stable Database Client Singleton
  */
 const globalForDb = global as unknown as {
-    conn: postgres.Sql | undefined;
+    db: any | undefined;
 };
 
-const queryClient = globalForDb.conn ?? postgres(connectionString, {
-    max: process.env.DB_MAX_CONNECTIONS ? parseInt(process.env.DB_MAX_CONNECTIONS) : undefined,
-    onnotice: () => { }, // Suppress notices for cleaner logs
-});
+function createDb() {
+    if (isNeon) {
+        const client = neon(connectionString);
+        return drizzleHttp(client, { schema });
+    } else {
+        const queryClient = postgres(connectionString, {
+            max: process.env.DB_MAX_CONNECTIONS ? parseInt(process.env.DB_MAX_CONNECTIONS) : undefined,
+            onnotice: () => { },
+        });
+        return drizzlePg(queryClient, { schema });
+    }
+}
 
-if (process.env.NODE_ENV !== 'production') globalForDb.conn = queryClient;
+export const db = (globalForDb.db as ReturnType<typeof createDb>) ?? createDb();
 
-export const db = drizzle(queryClient, { schema });
+if (process.env.NODE_ENV !== 'production') {
+    globalForDb.db = db;
+}
 
-// Export for migration scripts that need the raw client (limited to 1 connection)
-export const migrationClient = postgres(connectionString, { max: 1 });
+// Export for migration scripts
+export const migrationClient = isNeon ? null : postgres(connectionString, { max: 1 });
 
-export type Database = typeof db;
+export type Database = ReturnType<typeof createDb>;
