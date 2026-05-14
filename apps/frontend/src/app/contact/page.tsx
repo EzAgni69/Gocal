@@ -55,7 +55,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                      <h4 className="text-sm font-medium text-gray-500 mb-1">Phone</h4>
-                     <p className="text-luxury-black font-medium">+91 98765 43210</p>
+                     <p className="text-luxury-black font-medium">+91 7211119969</p>
                   </div>
                 </div>
 
@@ -65,8 +65,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500 mb-1">Email Us</h4>
-                    <p className="text-luxury-black font-medium mb-1"><a href="mailto:support@gocal.co" className="hover:text-gold-600 transition-colors">support@gocal.co</a></p>
-                    <p className="text-luxury-black font-medium"><a href="mailto:sales@gocal.co" className="hover:text-gold-600 transition-colors">sales@gocal.co</a></p>
+                    {/* <p className="text-luxury-black font-medium mb-1"><a href="mailto:support@gocal.co" className="hover:text-gold-600 transition-colors">support@gocal.co</a></p> */}
+                    <p className="text-luxury-black font-medium"><a href="mailto:sales@gocal.co" className="hover:text-gold-600 transition-colors">imgocal@gmail.com</a></p>
                   </div>
                 </div>
               </div>

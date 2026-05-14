@@ -1,6 +1,6 @@
 'use client';
 
-import { Mail, Phone, MapPin, Instagram, Twitter, Linkedin, ArrowRight } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
@@ -113,7 +113,7 @@ export const Footer = () => {
                         </div>
 
                         {/* Social Links */}
-                        <div className="flex items-center gap-4">
+                        {/* <div className="flex items-center gap-4">
                             <a href="#" className="p-2 rounded-full bg-white/5 hover:bg-gold-500 text-gray-400 hover:text-luxury-black transition-all">
                                 <Twitter className="w-4 h-4" />
                             </a>
@@ -123,7 +123,7 @@ export const Footer = () => {
                             <a href="#" className="p-2 rounded-full bg-white/5 hover:bg-gold-500 text-gray-400 hover:text-luxury-black transition-all">
                                 <Linkedin className="w-4 h-4" />
                             </a>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
