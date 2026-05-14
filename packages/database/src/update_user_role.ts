@@ -3,7 +3,7 @@ import { users } from './schema/users';
 import { eq } from 'drizzle-orm';
 
 async function main() {
-  const emails = ['mehtanishant1030@gmail.com', 'mehtanishant3010@gmail.com'];
+  const emails = ['mehtanishant1030@gmail.com', 'mehtanishant3010@gmail.com', 'imgocal@gmail.com'];
   
   for (const email of emails) {
     console.log(`Updating role for ${email} to SUPER_ADMIN...`);

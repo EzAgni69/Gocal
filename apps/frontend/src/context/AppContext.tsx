@@ -219,11 +219,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const loginWithGoogle = async (): Promise<boolean> => {
         try {
             const provider = new GoogleAuthProvider();
-            await signInWithPopup(auth, provider);
+            // Force account selection to avoid auto-closing popups
+            provider.setCustomParameters({ prompt: 'select_account' });
+            
+            const result = await signInWithPopup(auth, provider);
+            console.log("Google Login Success:", result.user.email);
             setShowAuthModal(false);
             return true;
-        } catch (error) {
-            console.error("Google Login Error:", error);
+        } catch (error: any) {
+            console.error("Full Google Login Error Object:", error);
+            console.error("Google Login Error Code:", error.code);
+            console.error("Google Login Error Message:", error.message);
+            
+            if (error.code === 'auth/unauthorized-domain') {
+                console.error("CRITICAL: This domain is not authorized in Firebase Console.");
+            }
+            
             throw error;
         }
     }

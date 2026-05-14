@@ -4,12 +4,13 @@
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "scripts": {
-        "build": "if [ \"$VERCEL\" = \"1\" ]; then npm run db:migrate; fi && tsc",
+        "build": "if [ \"$VERCEL\" = \"1\" ]; then npm run db:migrate && npm run db:update-roles; fi && tsc",
         "db:generate": "drizzle-kit generate",
         "db:migrate": "drizzle-kit migrate",
         "db:push": "drizzle-kit push",
         "db:studio": "drizzle-kit studio",
-        "db:view": "tsx src/view-data.ts"
+        "db:view": "tsx src/view-data.ts",
+        "db:update-roles": "tsx src/update_user_role.ts"
     },
     "dependencies": {
         "@neondatabase/serverless": "^0.9.5",
