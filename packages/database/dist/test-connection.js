@@ -29,22 +29,25 @@ function testConnection() {
             // Test basic connectivity
             const result = yield db_1.db.execute((0, drizzle_orm_1.sql) `SELECT NOW() as current_time, version() as pg_version`);
             console.log('✅ Connected to PostgreSQL');
-            console.log(`   Time: ${(_a = result[0]) === null || _a === void 0 ? void 0 : _a.current_time}`);
-            console.log(`   Version: ${(_c = (_b = result[0]) === null || _b === void 0 ? void 0 : _b.pg_version) === null || _c === void 0 ? void 0 : _c.split(' ').slice(0, 2).join(' ')}\n`);
+            const rows = result.rows || result;
+            console.log(`   Time: ${(_a = rows[0]) === null || _a === void 0 ? void 0 : _a.current_time}`);
+            console.log(`   Version: ${(_c = (_b = rows[0]) === null || _b === void 0 ? void 0 : _b.pg_version) === null || _c === void 0 ? void 0 : _c.split(' ').slice(0, 2).join(' ')}\n`);
             // Test PostGIS
             try {
                 const postgis = yield db_1.db.execute((0, drizzle_orm_1.sql) `SELECT PostGIS_Version() as postgis_version`);
-                console.log(`✅ PostGIS enabled: v${(_d = postgis[0]) === null || _d === void 0 ? void 0 : _d.postgis_version}`);
+                const postgisRows = postgis.rows || postgis;
+                console.log(`✅ PostGIS enabled: v${(_d = postgisRows[0]) === null || _d === void 0 ? void 0 : _d.postgis_version}`);
             }
             catch (_e) {
                 console.log('⚠️  PostGIS not enabled. Run: CREATE EXTENSION IF NOT EXISTS postgis;');
             }
             // List existing tables
-            const tables = yield db_1.db.execute((0, drizzle_orm_1.sql) `
+            const tablesResult = yield db_1.db.execute((0, drizzle_orm_1.sql) `
             SELECT table_name FROM information_schema.tables
             WHERE table_schema = 'public'
             ORDER BY table_name
         `);
+            const tables = tablesResult.rows || tablesResult;
             console.log(`\n📋 Tables in database: ${tables.length}`);
             tables.forEach((t) => console.log(`   - ${t.table_name}`));
             console.log('\n✅ Database connection test passed!');

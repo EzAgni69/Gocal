@@ -32,39 +32,19 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.migrationClient = exports.db = void 0;
 const neon_http_1 = require("drizzle-orm/neon-http");
-const postgres_js_1 = require("drizzle-orm/postgres-js");
 const serverless_1 = require("@neondatabase/serverless");
-const postgres_1 = __importDefault(require("postgres"));
+const dotenv_1 = require("dotenv");
 const schema = __importStar(require("./schema"));
-const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL || 'postgresql://postgres:password@localhost:5434/vanij_db';
-const isNeon = connectionString.includes('neon.tech');
-/**
- * Stable Database Client Singleton
- */
-const globalForDb = global;
-function createDb() {
-    if (isNeon) {
-        const client = (0, serverless_1.neon)(connectionString);
-        return (0, neon_http_1.drizzle)(client, { schema });
-    }
-    else {
-        const queryClient = (0, postgres_1.default)(connectionString, {
-            max: process.env.DB_MAX_CONNECTIONS ? parseInt(process.env.DB_MAX_CONNECTIONS) : undefined,
-            onnotice: () => { },
-        });
-        return (0, postgres_js_1.drizzle)(queryClient, { schema });
-    }
+// Load environment variables
+(0, dotenv_1.config)({ path: "../../apps/backend/.env" }); // Try monorepo path
+(0, dotenv_1.config)({ path: ".env" }); // Fallback
+const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+if (!connectionString) {
+    throw new Error("DATABASE_URL is not set");
 }
-exports.db = (_a = globalForDb.db) !== null && _a !== void 0 ? _a : createDb();
-if (process.env.NODE_ENV !== 'production') {
-    globalForDb.db = exports.db;
-}
-// Export for migration scripts
-exports.migrationClient = isNeon ? null : (0, postgres_1.default)(connectionString, { max: 1 });
+const sql = (0, serverless_1.neon)(connectionString);
+exports.db = (0, neon_http_1.drizzle)(sql, { schema });
+exports.migrationClient = null; // For compatibility with index.ts exports

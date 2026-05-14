@@ -15,27 +15,30 @@ async function testConnection() {
 
     try {
         // Test basic connectivity
-        const result = await db.execute(sql`SELECT NOW() as current_time, version() as pg_version`);
+        const result: any = await db.execute(sql`SELECT NOW() as current_time, version() as pg_version`);
         console.log('✅ Connected to PostgreSQL');
-        console.log(`   Time: ${(result as any)[0]?.current_time}`);
-        console.log(`   Version: ${(result as any)[0]?.pg_version?.split(' ').slice(0, 2).join(' ')}\n`);
+        const rows = result.rows || result;
+        console.log(`   Time: ${rows[0]?.current_time}`);
+        console.log(`   Version: ${rows[0]?.pg_version?.split(' ').slice(0, 2).join(' ')}\n`);
 
         // Test PostGIS
         try {
-            const postgis = await db.execute(sql`SELECT PostGIS_Version() as postgis_version`);
-            console.log(`✅ PostGIS enabled: v${(postgis as any)[0]?.postgis_version}`);
+            const postgis: any = await db.execute(sql`SELECT PostGIS_Version() as postgis_version`);
+            const postgisRows = postgis.rows || postgis;
+            console.log(`✅ PostGIS enabled: v${postgisRows[0]?.postgis_version}`);
         } catch {
             console.log('⚠️  PostGIS not enabled. Run: CREATE EXTENSION IF NOT EXISTS postgis;');
         }
 
         // List existing tables
-        const tables = await db.execute(sql`
+        const tablesResult: any = await db.execute(sql`
             SELECT table_name FROM information_schema.tables
             WHERE table_schema = 'public'
             ORDER BY table_name
         `);
-        console.log(`\n📋 Tables in database: ${(tables as any[]).length}`);
-        (tables as any[]).forEach((t: any) => console.log(`   - ${t.table_name}`));
+        const tables = tablesResult.rows || tablesResult;
+        console.log(`\n📋 Tables in database: ${tables.length}`);
+        tables.forEach((t: any) => console.log(`   - ${t.table_name}`));
 
         console.log('\n✅ Database connection test passed!');
     } catch (error: any) {
