@@ -56,7 +56,7 @@ router.get('/', authenticate, requireRole('ADMIN', 'SUPER_ADMIN'), async (req: A
                 reporter: { columns: { id: true, name: true, email: true } },
                 vendor: { columns: { id: true, name: true, city: true } },
             },
-            orderBy: (reports, { desc }) => [desc(reports.createdAt)],
+            orderBy: (reports: any, { desc }: any) => [desc(reports.createdAt)],
         });
 
         res.json({ reports: result });

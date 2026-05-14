@@ -4726,3 +4726,7 @@
 2026-05-14 12:21:59 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
 2026-05-14 12:29:01 [info]: Server running at http://localhost:3001
 2026-05-14 12:29:09 [info]: Server running at http://localhost:3001
+2026-05-14 12:32:40 [info]: [ALL REQ] GET /api/vendors/home
+2026-05-14 12:32:40 [info]: [ALL REQ] GET /api/vendors/home
+2026-05-14 12:38:56 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
+2026-05-14 12:55:38 [info]: Server running at http://localhost:3001

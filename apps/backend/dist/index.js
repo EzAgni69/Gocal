@@ -94,6 +94,8 @@ app.use((err, req, res, next) => {
         res.status(500).json({ error: 'Internal Server Error', detail: err.message, stack: err.stack });
     }
 });
+// Export app for Vercel and testing
+exports.default = app;
 if (require.main === module) {
     app.listen(port, () => {
         logger_1.logger.info(`Server running at http://localhost:${port}`);

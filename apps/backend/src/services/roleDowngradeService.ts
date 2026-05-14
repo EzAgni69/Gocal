@@ -17,7 +17,7 @@ export async function deleteVendorWithDowngrade(
   vendorId: string,
   adminUserId: string
 ): Promise<DowngradeResult> {
-  return await db.transaction(async (tx) => {
+  return await db.transaction(async (tx: any) => {
     // Fetch the vendor (including soft-deleted to detect 409)
     const [vendor] = await tx
       .select()
@@ -83,7 +83,7 @@ export async function deleteVendorWithDowngrade(
       .where(eq(products.vendorId, vendorId));
 
     if (vendorProducts.length > 0) {
-      const productIds = vendorProducts.map((p) => p.id);
+      const productIds = vendorProducts.map((p: any) => p.id);
       await tx
         .delete(wishlistItems)
         .where(inArray(wishlistItems.productId, productIds));

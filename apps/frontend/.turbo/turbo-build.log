@@ -3,24 +3,30 @@
 > frontend@0.1.0 build
 > next build
 
-[1G[0K[1m[38;2;173;127;168m▲ Next.js 16.1.1[39m[22m (Turbopack)
+▲ Next.js 16.1.1 (Turbopack)
+- Environments: .env.local
 
-[37m[1m [22m[39m Creating an optimized production build ...
-[32m[1m✓[22m[39m Compiled successfully in 2.8s
-[?25l[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m.[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m..[39m[2K[1G[37m[1m [22m[39m Running TypeScript  [36m...[39m[2K[1G[?25h[?25l[37m[1m [22m[39m Finished TypeScript in 1646.8ms  [36m.[39m[2K[1G[?25h[37m[1m [22m[39m Finished TypeScript in 1646.8ms    [32m[1m✓[22m[39m Finished TypeScript in 1646.8ms 
-[?25l[37m[1m [22m[39m Collecting page data using 7 workers  [36m.[39m[2K[1G[37m[1m [22m[39m Collecting page data using 7 workers  [36m..[39m[2K[1G[?25h[37m[1m [22m[39m Collecting page data using 7 workers in 316.3ms    [32m[1m✓[22m[39m Collecting page data using 7 workers in 316.3ms 
-[?25l[37m[1m [22m[39m Generating static pages using 7 workers (0/6)  [36m[    ][39m[2K[1G[?25h[32m[1m✓[22m[39m Generating static pages using 7 workers (6/6) in 135.2ms
-[?25l[37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G[?25h[37m[1m [22m[39m Finalizing page optimization in 5.7ms    [32m[1m✓[22m[39m Finalizing page optimization in 5.7ms 
+  Creating an optimized production build ...
+✓ Compiled successfully in 3.7s
+  Finished TypeScript in 3.4s    ✓ Finished TypeScript in 3.4s 
+  Collecting page data using 7 workers in 309.6ms    ✓ Collecting page data using 7 workers in 309.6ms 
+✓ Generating static pages using 7 workers (12/12) in 200.6ms
+  Finalizing page optimization in 8.4ms    ✓ Finalizing page optimization in 8.4ms 
 
-[4mRoute (app)[24m
+Route (app)
 ┌ ○ /
 ├ ○ /_not-found
+├ ○ /about
 ├ ○ /admin
+├ ○ /contact
+├ ○ /favourites
+├ ○ /pricing
+├ ○ /request-card
 ├ ƒ /store/[uuid]
+├ ○ /vadodara
 └ ○ /vendor
 
 
 ○  (Static)   prerendered as static content
 ƒ  (Dynamic)  server-rendered on demand
 
-[?25h[1G[0K⠙[1G[0K

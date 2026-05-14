@@ -64,7 +64,7 @@ router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) 
             where: eq(reviews.vendorId, vendorId),
         });
 
-        const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
+        const avgRating = allReviews.reduce((sum: number, r: any) => sum + r.rating, 0) / allReviews.length;
         const reviewCount = allReviews.length;
 
         await db.update(vendors)
@@ -165,7 +165,7 @@ router.put('/:id', authenticate, async (req: AuthenticatedRequest, res: Response
             where: eq(reviews.vendorId, review.vendorId),
         });
 
-        const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
+        const avgRating = allReviews.reduce((sum: number, r: any) => sum + r.rating, 0) / allReviews.length;
 
         await db.update(vendors)
             .set({ rating: avgRating.toFixed(1) })
@@ -213,7 +213,7 @@ router.delete('/:id', authenticate, async (req: AuthenticatedRequest, res: Respo
         });
 
         if (allReviews.length > 0) {
-            const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
+            const avgRating = allReviews.reduce((sum: number, r: any) => sum + r.rating, 0) / allReviews.length;
             await db.update(vendors)
                 .set({
                     rating: avgRating.toFixed(1),
