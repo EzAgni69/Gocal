@@ -12,6 +12,14 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase only if it hasn't been initialized already
+if (process.env.NODE_ENV === 'development') {
+  if (firebaseConfig.apiKey === "AIzaSy-dummy-key-for-build") {
+    console.warn("⚠️ Firebase is using the DUMMY API KEY. Please check your .env.local file.");
+  } else {
+    console.log("🔥 Firebase initialized with project:", firebaseConfig.projectId);
+  }
+}
+
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 export const auth = getAuth(app);
