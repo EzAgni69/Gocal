@@ -8,7 +8,9 @@ import { logger } from '../config/logger';
 const router = Router();
 
 // Ensure uploads directories exist
-const UPLOADS_BASE = path.join(process.cwd(), 'uploads');
+// Vercel's filesystem is read-only except /tmp, so use /tmp for serverless
+const isServerless = !!process.env.VERCEL;
+const UPLOADS_BASE = isServerless ? path.join('/tmp', 'uploads') : path.join(process.cwd(), 'uploads');
 const UPLOADS_PRODUCTS = path.join(UPLOADS_BASE, 'products');
 const UPLOADS_LOGOS = path.join(UPLOADS_BASE, 'logos');
 const UPLOADS_MAIN_PHOTOS = path.join(UPLOADS_BASE, 'main-photos');
