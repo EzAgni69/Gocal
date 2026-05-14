@@ -1,5 +1,14 @@
 {
     "$schema": "https://turbo.build/schema.json",
+    "globalEnv": [
+        "DATABASE_URL",
+        "GOOGLE_PLACES_API_KEY",
+        "PORT",
+        "JWT_SECRET",
+        "NODE_ENV",
+        "FIREBASE_SERVICE_ACCOUNT",
+        "GOOGLE_APPLICATION_CREDENTIALS"
+    ],
     "tasks": {
         "build": {
             "dependsOn": [

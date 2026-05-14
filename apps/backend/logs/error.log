@@ -1,0 +1,1272 @@
+2026-03-17 14:38:30 [error]: Translation error
+2026-03-17 14:38:30 [error]: Translation error
+2026-03-17 14:39:30 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:30 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:43 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:43 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:43 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:43 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:43 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:44 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:44 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:44 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:44 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:44 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:44 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:44 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:44 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:44 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:44 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:44 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:39:44 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 14:43:06 [error]: Error: Cloud Translation API has not been used in project 247882474478 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/translate.googleapis.com/overview?project=247882474478 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 16:33:16 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 16:33:16 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-17 18:38:33 [error]: PostgresError: column "draft_products" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-03-17 18:38:37 [error]: PostgresError: column "draft_products" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-03-17 18:38:37 [error]: PostgresError: column "draft_products" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-03-17 18:38:47 [error]: PostgresError: column "draft_products" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-03-17 18:38:47 [error]: PostgresError: column "draft_products" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-03-17 18:38:47 [error]: PostgresError: column "draft_products" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-03-17 18:38:48 [error]: PostgresError: column "draft_products" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-03-17 18:38:48 [error]: PostgresError: column "draft_products" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-03-17 23:20:31 [error]: PostgresError: column "draft_products" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-03-17 23:21:56 [error]: PostgresError: column "draft_products" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-03-17 23:25:51 [error]: PostgresError: column "draft_products" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-03-17 23:54:47 [error]: PostgresError: column "opening_hours" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-03-18 18:07:46 [error]: PostgresError: invalid input syntax for type uuid: "some-uuid"
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:38 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:42 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:43 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:43 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:43 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-03-19 13:56:43 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-04-29 16:04:21 [error]: Error fetching Postgres user in auth middleware
+2026-04-29 16:04:23 [error]: Error fetching Postgres user in auth middleware
+2026-05-01 17:01:13 [error]: PostgresError: column "business_label" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-05-01 17:01:17 [error]: PostgresError: column "business_label" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-05-01 17:01:41 [error]: PostgresError: column "business_label" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-05-01 17:01:42 [error]: PostgresError: column "business_label" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-05-01 17:01:43 [error]: PostgresError: column "business_label" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-05-01 17:01:43 [error]: PostgresError: column "business_label" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-05-01 17:02:00 [error]: PostgresError: column "business_label" does not exist
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:00 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:30:01 [error]: Error: Requests to this API translate method google.cloud.translate.v2.TranslateService.TranslateText are blocked.
+    at new ApiError (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:78:15)
+    at Util.parseHttpRespBody (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:213:38)
+    at Util.handleResp (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:154:117)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/build/src/util.js:535:22
+    at onResponse (/Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/retry-request/index.js:259:7)
+    at /Users/agni/Developer/Vanij/node_modules/@google-cloud/common/node_modules/teeny-request/src/index.ts:348:11
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-02 16:35:11 [error]: PostgresError: invalid input syntax for type uuid: "ChIJdWEDB3HFXzkR10dfVTVH7gU"
+    at ErrorResponse (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:815:30)
+    at handle (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:489:6)
+    at Socket.data (/Users/agni/Developer/Vanij/node_modules/postgres/cjs/src/connection.js:324:9)
+    at Socket.emit (node:events:508:28)
+    at Socket.emit (node:domain:489:12)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Socket.Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-05-04 18:39:54 [error]: Error fetching Postgres user in auth middleware
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_e1fb51e6-4736-457a-89b7-2159a07c82e1"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_da10c4c8-8170-44fa-b566-94ba7b344dd5"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_80f36da6-1898-4fdb-8fbb-f8c459bbe705"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_dd739696-8ed3-4d86-bd2f-d07cd2606a87"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_308f88a6-d568-4f4e-b27a-ba9eb3b4eeb2"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_2cb85db3-895a-496d-bbd1-69403215947d"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_7487bbb6-ed96-46cb-9886-0a80430f4d24"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_9340bbf1-af35-4501-8b37-8f96ebf00b13"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_f1e70c39-2572-4897-9553-2766b3ff7a47"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_1811039d-d3fb-4773-8b82-486cfdb7292f"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_70531844-2993-4c04-a7e7-a6d8fbdadced"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_8ec8f640-7c18-4578-a0f7-9878f1e9120e"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_468ec4d0-bef1-4707-8d27-00b8c2b9e987"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_68218a40-2bad-4a94-92c8-4b8b36a3637e"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_ac3e0de3-70d2-4bbc-821d-4b2c40cafbeb"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_954daacd-3bdd-48f7-bb1a-2c189f41f131"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_b3ebbcf0-0012-4a88-aa51-11e5c2caea25"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_5b162035-9f39-4cb3-b59d-b84bb4ab61de"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_5f9d5c14-85c3-4ea3-bc18-0f3da6d15892"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_698f248f-43e5-4de4-a432-5916bfea04a0"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_af4cef80-d3ed-4d94-9c73-5e9edeeb9304"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_2c4dc511-3f92-4d26-b480-0a424ac8b995"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_e52a1f7d-9ef9-4ec7-8dc1-2923133bf285"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_50243473-c33c-4120-bb8a-5b49710d4ee2"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_2d6e8cae-1e9f-4e09-9853-b83376aa8ccc"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_98b72814-e028-4600-a84f-c05ee1887e07"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_0ef3ffef-e18c-48e4-8778-45ba68816429"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_9e05288f-408c-44b8-8ab1-3deba1e478e4"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_49023331-6840-4788-9995-412e5ca37468"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_54c573c2-cea3-46be-9abb-5a0fd4cec718"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_6e18ba47-bc04-4b3c-a691-1771c6681068"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_bf31d650-37a9-442a-aae5-663b224497cc"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_e9f89c62-2d08-41af-b0ec-c158ca83e7dc"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_74f69fe8-cbb0-49d8-91e2-51adfa32fd62"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_336d476b-4eb0-4f1b-8f74-4f0815ca1708"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_967137f2-522d-42e5-9bd4-d498521db71e"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-05-11 15:37:43 [error]: Error: Sarvam API error! status: 429, message: {"error":{"message":"Rate limit exceeded","code":"rate_limit_exceeded_error","request_id":"20260511_a3782060-16d9-4309-8464-8dad5c00063c"}}
+    at /Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:176:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/agni/Developer/Vanij/apps/backend/src/services/translationService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
