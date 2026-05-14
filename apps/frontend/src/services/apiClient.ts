@@ -39,7 +39,9 @@ export async function apiClient(endpoint: string, options: RequestOptions = {}):
 
     // Build the full URL
     const isAbsoluteUrl = endpoint.startsWith('http://') || endpoint.startsWith('https://');
-    const url = isAbsoluteUrl ? endpoint : `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+    const cleanBaseUrl = API_BASE_URL.replace(/\/+$/, ''); // Remove trailing slashes
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const url = isAbsoluteUrl ? endpoint : `${cleanBaseUrl}${cleanEndpoint}`;
 
     console.log(`[apiClient] Request: ${options.method || 'GET'} ${url}`, options);
 
