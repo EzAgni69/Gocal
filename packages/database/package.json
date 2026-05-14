@@ -4,7 +4,7 @@
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "scripts": {
-        "build": "tsc",
+        "build": "if [ \"$VERCEL\" = \"1\" ]; then npm run db:migrate; fi && tsc",
         "db:generate": "drizzle-kit generate",
         "db:migrate": "drizzle-kit migrate",
         "db:push": "drizzle-kit push",
