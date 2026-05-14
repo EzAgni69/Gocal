@@ -1,5 +1,6 @@
-import { drizzle } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-serverless";
+import { Pool, neonConfig } from "@neondatabase/serverless";
+import ws from "ws";
 import { config } from "dotenv";
 import * as schema from "./schema";
 
@@ -7,15 +8,17 @@ import * as schema from "./schema";
 config({ path: "../../apps/backend/.env" }); // Try monorepo path
 config({ path: ".env" }); // Fallback
 
+// Required for neon serverless pool in Node.js
+neonConfig.webSocketConstructor = ws;
+
 const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 
 if (!connectionString) {
     throw new Error("DATABASE_URL is not set");
 }
 
-const sql = neon(connectionString);
-export const db = drizzle(sql, { schema });
+const pool = new Pool({ connectionString });
+export const db = drizzle(pool, { schema });
 
 export type Database = typeof db;
-export const migrationClient = null; // For compatibility with index.ts exports
-
+export const migrationClient = pool;

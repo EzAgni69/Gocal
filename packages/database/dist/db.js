@@ -32,19 +32,25 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.migrationClient = exports.db = void 0;
-const neon_http_1 = require("drizzle-orm/neon-http");
+const neon_serverless_1 = require("drizzle-orm/neon-serverless");
 const serverless_1 = require("@neondatabase/serverless");
+const ws_1 = __importDefault(require("ws"));
 const dotenv_1 = require("dotenv");
 const schema = __importStar(require("./schema"));
 // Load environment variables
 (0, dotenv_1.config)({ path: "../../apps/backend/.env" }); // Try monorepo path
 (0, dotenv_1.config)({ path: ".env" }); // Fallback
+// Required for neon serverless pool in Node.js
+serverless_1.neonConfig.webSocketConstructor = ws_1.default;
 const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 if (!connectionString) {
     throw new Error("DATABASE_URL is not set");
 }
-const sql = (0, serverless_1.neon)(connectionString);
-exports.db = (0, neon_http_1.drizzle)(sql, { schema });
-exports.migrationClient = null; // For compatibility with index.ts exports
+const pool = new serverless_1.Pool({ connectionString });
+exports.db = (0, neon_serverless_1.drizzle)(pool, { schema });
+exports.migrationClient = pool;

@@ -14,7 +14,7 @@ const users_1 = require("./schema/users");
 const drizzle_orm_1 = require("drizzle-orm");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        const emails = ['mehtanishant1030@gmail.com', 'mehtanishant3010@gmail.com'];
+        const emails = ['mehtanishant1030@gmail.com', 'mehtanishant3010@gmail.com', 'imgocal@gmail.com'];
         for (const email of emails) {
             console.log(`Updating role for ${email} to SUPER_ADMIN...`);
             try {
