@@ -9,12 +9,12 @@ async function seed() {
     let user = await db.query.users.findFirst();
     if (!user) {
         console.log("No users found. Creating a dummy user just for the sake of the mock vendors...");
-        const [newUser] = await db.insert(require('./schema').users).values({
+        const [newUser] = await (db.insert(require('./schema').users).values({
             email: "dummy_admin_seed@example.com",
             role: "SUPER_ADMIN",
             name: "Dummy System Admin",
             firebaseUid: "dummy-firebase-uid-seed"
-        }).returning();
+        }).returning() as any);
         user = newUser;
     }
 

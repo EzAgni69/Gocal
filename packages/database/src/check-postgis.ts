@@ -2,7 +2,7 @@ import { db, sql } from './index';
 
 async function check() {
     try {
-        const result = await db.execute(sql`SELECT extname FROM pg_extension WHERE extname = 'postgis'`);
+        const result = await db.execute(sql`SELECT extname FROM pg_extension WHERE extname = 'postgis'`) as any;
         if (result.length > 0) {
             console.log("PostGIS is installed!");
         } else {
