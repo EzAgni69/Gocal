@@ -4717,3 +4717,12 @@
 2026-05-14 11:36:05 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
 2026-05-14 11:36:05 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
 2026-05-14 11:36:55 [info]: [ALL REQ] GET /api/reviews/vendor/d69a2eca-3223-4ef5-b006-febfbfb7df5d
+2026-05-14 12:11:30 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
+2026-05-14 12:14:47 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
+2026-05-14 12:16:56 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
+2026-05-14 12:21:57 [info]: [ALL REQ] POST /api/auth/sync
+2026-05-14 12:21:57 [info]: [ALL REQ] GET /api/favorites
+2026-05-14 12:21:57 [info]: [ALL REQ] GET /api/wishlists
+2026-05-14 12:21:59 [info]: [ALL REQ] GET /api/places/search?query=popular+stores
+2026-05-14 12:29:01 [info]: Server running at http://localhost:3001
+2026-05-14 12:29:09 [info]: Server running at http://localhost:3001

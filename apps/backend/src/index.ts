@@ -114,7 +114,8 @@ app.use((err: any, req: any, res: any, next: any) => {
     }
 });
 
-// Export app for testing
+// Export app for Vercel and testing
+export default app;
 export { app };
 
 if (require.main === module) {
