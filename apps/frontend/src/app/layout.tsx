@@ -23,19 +23,19 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Gocal.co | Premium B2B Commerce",
-  description: "Experience the future of B2B commerce with Gocal.co",
+  title: "Gocal.ai | Premium B2B Commerce",
+  description: "Experience the future of B2B commerce with Gocal.ai",
   openGraph: {
-    title: "Gocal.co | Premium B2B Commerce",
-    description: "Experience the future of B2B commerce with Gocal.co",
-    url: "https://gocal.co",
-    siteName: "Gocal.co",
+    title: "Gocal.ai | Premium B2B Commerce",
+    description: "Experience the future of B2B commerce with Gocal.ai",
+    url: "https://gocal.ai",
+    siteName: "Gocal.ai",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Gocal.co | Premium B2B Commerce",
-    description: "Experience the future of B2B commerce with Gocal.co",
+    title: "Gocal.ai | Premium B2B Commerce",
+    description: "Experience the future of B2B commerce with Gocal.ai",
   },
 };
 

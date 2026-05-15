@@ -43,14 +43,16 @@ const ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:3001',
     process.env.FRONTEND_URL,           // e.g. https://vanij-frontend.vercel.app
+    'https://gocal.ai',
+    'https://www.gocal.ai',
 ].filter(Boolean) as string[];
 
 app.use(cors({
     origin: (origin, callback) => {
         // Allow requests with no origin (mobile apps, curl, server-to-server)
         if (!origin) return callback(null, true);
-        // Allow any Vercel preview deployment
-        if (/\.vercel\.app$/.test(origin)) return callback(null, true);
+        // Allow any Vercel preview deployment or Gocal domains
+        if (/\.vercel\.app$/.test(origin) || /\.gocal\.ai$/.test(origin) || origin === 'https://gocal.ai') return callback(null, true);
         if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
         callback(new Error(`CORS: origin ${origin} not allowed`));
     },

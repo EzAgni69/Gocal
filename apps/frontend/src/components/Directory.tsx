@@ -131,7 +131,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
   return (
     <div className="min-h-screen bg-luxury-cream">
       {/* Hero Section */}
-      <div className="relative h-[300px] sm:h-[350px] md:h-[380px] flex items-center justify-center overflow-hidden">
+      <div className="relative h-[340px] sm:h-[350px] md:h-[380px] flex items-center justify-center overflow-hidden">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-b from-luxury-black/80 via-luxury-black/50 to-luxury-cream z-10" />
@@ -144,7 +144,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
           />
         </div>
 
-        <div className="relative z-20 container mx-auto px-4 sm:px-6 text-center mt-6 sm:mt-10">
+        <div className="relative z-20 container mx-auto px-6 sm:px-6 text-center mt-12 sm:mt-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -153,7 +153,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
             <Badge variant="premium" className="mb-3 px-4 py-1 text-[10px] sm:text-xs uppercase tracking-[0.2em] border border-gold-500/30">
               Premier B2B Network
             </Badge>
-            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif font-medium mb-6 sm:mb-8 text-white leading-tight tracking-wide">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif font-medium mb-10 sm:mb-12 text-white leading-tight tracking-wide px-6">
               Curated Excellence <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 to-gold-600">For Your Business</span>
             </h1>
           </motion.div>
@@ -165,7 +165,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
             transition={{ delay: 0.3, duration: 0.6 }}
             className="glass p-2 sm:p-3 rounded-2xl sm:rounded-full shadow-2xl max-w-4xl mx-auto flex flex-col md:flex-row gap-2 border border-white/20"
           >
-            <div className="flex-1 flex items-center bg-white/10 rounded-xl sm:rounded-full px-4 sm:px-6 h-12 sm:h-14 hover:bg-white/20 transition-colors">
+            <div className="flex-1 flex items-center bg-white/10 rounded-xl sm:rounded-full px-4 sm:px-6 h-9 sm:h-14 hover:bg-white/20 transition-colors">
               <Search className="text-gold-400 w-5 h-5 mr-3" />
               <input
                 type="text"
@@ -176,7 +176,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
               />
             </div>
 
-            <div className="flex-1 flex items-center bg-white/10 rounded-xl sm:rounded-full px-4 sm:px-6 h-12 sm:h-14 hover:bg-white/20 transition-colors md:border-l border-white/10">
+            <div className="flex-1 flex items-center bg-white/10 rounded-xl sm:rounded-full px-4 sm:px-6 h-9 sm:h-14 hover:bg-white/20 transition-colors md:border-l border-white/10">
               <MapPin className="text-gold-400 w-5 h-5 mr-3" />
               <select
                 className="w-full bg-transparent outline-none text-white cursor-pointer appearance-none [&>option]:text-black"
@@ -190,7 +190,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
               </select>
             </div>
 
-            <div className="flex-1 flex items-center bg-white/10 rounded-xl sm:rounded-full px-4 sm:px-6 h-12 sm:h-14 hover:bg-white/20 transition-colors md:border-l border-white/10">
+            <div className="flex-1 flex items-center bg-white/10 rounded-xl sm:rounded-full px-4 sm:px-6 h-9 sm:h-14 hover:bg-white/20 transition-colors md:border-l border-white/10">
               <Lock className="text-gold-400 w-5 h-5 mr-3" />
               <select
                 className="w-full bg-transparent outline-none text-white cursor-pointer appearance-none [&>option]:text-black"
@@ -204,7 +204,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
               </select>
             </div>
 
-            <Button size="icon" className="h-12 sm:h-14 w-full md:w-14 rounded-xl md:rounded-full bg-gold-500 hover:bg-gold-600 text-luxury-black shrink-0">
+            <Button size="icon" className="h-7 sm:h-14 w-full md:w-14 rounded-xl md:rounded-full bg-gold-500 hover:bg-gold-600 text-luxury-black shrink-0">
               <ArrowRight className="w-5 sm:w-6 h-5 sm:h-6" />
             </Button>
           </motion.div>
