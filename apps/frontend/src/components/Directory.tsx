@@ -169,7 +169,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
               <Search className="text-gold-400 w-5 h-5 mr-3" />
               <input
                 type="text"
-                placeholder={t('searchPlaceholder')}
+                placeholder={t('Search')}
                 className="w-full bg-transparent outline-none text-white placeholder-gray-400 font-medium"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
