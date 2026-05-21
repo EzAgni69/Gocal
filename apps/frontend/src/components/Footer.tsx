@@ -42,7 +42,7 @@ export const Footer = () => {
                             </span>
                         </div>
                         <p className="text-gray-400 mb-6 max-w-sm leading-relaxed">
-                            India's premier B2B commerce platform connecting businesses with verified vendors across textiles, electronics, and more.
+                            India's premier B2C & B2B commerce platform connecting businesses with verified vendors across textiles, electronics, and more.
                         </p>
 
 

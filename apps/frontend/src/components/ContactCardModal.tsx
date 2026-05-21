@@ -103,7 +103,6 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
     const fontClass = getFontFamily();
 
     const handleCall = () => {
-        if (!requireAuth('call this vendor')) return;
         window.location.href = `tel:${vendor.phone}`;
     };
 

@@ -8,3 +8,9 @@ if (typeof global.TextEncoder === 'undefined') {
 if (typeof global.TextDecoder === 'undefined') {
   global.TextDecoder = TextDecoder as typeof global.TextDecoder;
 }
+
+// Polyfill ReadableStream for jsdom environment (required by Firebase/undici)
+import { ReadableStream } from 'stream/web';
+if (typeof global.ReadableStream === 'undefined') {
+  global.ReadableStream = ReadableStream as any;
+}

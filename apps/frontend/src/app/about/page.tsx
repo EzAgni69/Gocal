@@ -21,15 +21,15 @@ export default function AboutPage() {
             About Gocal
           </h1>
           <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-2xl mx-auto">
-            India's premier B2B commerce platform connecting businesses with verified vendors across multiple domains.
+            India's premier B2C & B2B commerce platform connecting businesses with verified vendors across multiple domains.
           </p>
         </motion.div>
 
         <motion.div
-           initial={{ opacity: 0, y: 30 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.6, delay: 0.2 }}
-           className="bg-white/70 border border-white p-8 md:p-12 rounded-3xl backdrop-blur-md shadow-[0_20px_50px_rgba(46,108,181,0.08)]"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="bg-white/70 border border-white p-8 md:p-12 rounded-3xl backdrop-blur-md shadow-[0_20px_50px_rgba(46,108,181,0.08)]"
         >
           <div className="space-y-12">
             <section>

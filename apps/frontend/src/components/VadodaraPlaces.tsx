@@ -59,13 +59,13 @@ export const VadodaraPlaces: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [hasSearched, setHasSearched] = useState(false);
-    
+
     // Location tracking
     const [locationAccess, setLocationAccess] = useState<'pending' | 'granted' | 'denied'>('pending');
     const [userLat, setUserLat] = useState<number | undefined>();
     const [userLng, setUserLng] = useState<number | undefined>();
     const [pincode, setPincode] = useState('');
-    
+
     // For direct linking to a vendor
     const [selectedVendorForModal, setSelectedVendorForModal] = useState<Vendor | null>(null);
     const searchParams = useSearchParams();
@@ -88,12 +88,12 @@ export const VadodaraPlaces: React.FC = () => {
             const sortedPlaces = [...result.places].sort((a, b) => {
                 const aOpen = a.regularOpeningHours?.openNow ? 1 : 0;
                 const bOpen = b.regularOpeningHours?.openNow ? 1 : 0;
-                
+
                 if (aOpen !== bOpen) return bOpen - aOpen;
 
                 const aScore = (a.rating || 0) * Math.log10((a.userRatingCount || 0) + 1);
                 const bScore = (b.rating || 0) * Math.log10((b.userRatingCount || 0) + 1);
-                
+
                 return bScore - aScore;
             });
             setPlaces(sortedPlaces);
@@ -193,7 +193,7 @@ export const VadodaraPlaces: React.FC = () => {
                         </Badge>
                         <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif font-medium mb-3 text-white leading-tight tracking-wide">
                             {t('Discover Local')}{' '}
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 to-gold-600">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 font-semibold drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
                                 {t('Stores & Services')}
                             </span>
                         </h1>
@@ -296,7 +296,7 @@ export const VadodaraPlaces: React.FC = () => {
 
                 {/* Main Content Area */}
                 <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 items-start">
-                    
+
                     {/* Filters Sidebar */}
                     <div className="w-full lg:w-64 shrink-0 top-24 sticky hidden lg:block bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
                         <h3 className="font-serif text-lg font-bold text-luxury-black mb-4">{t('Quick Browse')}</h3>
@@ -305,11 +305,10 @@ export const VadodaraPlaces: React.FC = () => {
                                 <button
                                     key={suggestion}
                                     onClick={() => handleSuggestedSearch(suggestion)}
-                                    className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                                        searchQuery === suggestion
+                                    className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${searchQuery === suggestion
                                             ? 'bg-gold-50 text-gold-700 border-l-4 border-gold-500 shadow-sm'
                                             : 'bg-transparent text-gray-600 hover:bg-gray-50 hover:text-luxury-black border-l-4 border-transparent'
-                                    }`}
+                                        }`}
                                 >
                                     {t(suggestion)}
                                 </button>
@@ -323,11 +322,10 @@ export const VadodaraPlaces: React.FC = () => {
                             <button
                                 key={suggestion}
                                 onClick={() => handleSuggestedSearch(suggestion)}
-                                className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
-                                    searchQuery === suggestion
+                                className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors border ${searchQuery === suggestion
                                         ? 'bg-gold-500 text-white border-gold-500 shadow-md'
                                         : 'bg-white text-gray-600 border-gray-200 hover:border-gold-300'
-                                }`}
+                                    }`}
                             >
                                 {t(suggestion)}
                             </button>
@@ -336,310 +334,310 @@ export const VadodaraPlaces: React.FC = () => {
 
                     {/* Results Container */}
                     <ErrorBoundary>
-                    <div className="flex-1 w-full relative min-h-[400px]">
-                        {/* Error State */}
-                        {error && (
-                            <div className="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                                <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100/50 rounded-full mb-4">
-                                    <Store className="w-8 h-8 text-red-500" />
-                                </div>
-                                <h3 className="text-xl font-medium text-gray-900">{t('Something went wrong')}</h3>
-                                <p className="text-gray-500 mt-2">{t(error)}</p>
-                                <Button
-                                    variant="outline"
-                                    onClick={() => handleSearch(searchQuery)}
-                                    className="mt-4 border-gray-200"
-                                >
-                                    {t('Try Again')}
-                                </Button>
-                            </div>
-                        )}
-
-                        {/* Loading State */}
-                        {isLoading && (
-                            <div className="absolute inset-0 z-10 bg-luxury-cream/50 backdrop-blur-sm flex flex-col items-center justify-center py-20 rounded-2xl">
-                                <Loader2 className="w-12 h-12 text-gold-500 animate-spin mb-4" />
-                                <p className="text-gray-500 animate-pulse">{t('Finding the best places...')}</p>
-                            </div>
-                        )}
-
-                        {/* Empty State */}
-                        {!isLoading && !error && places.length === 0 && hasSearched && (
-                            <div className="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                                <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-50 rounded-full mb-6">
-                                    <Search className="w-10 h-10 text-gray-400" />
-                                </div>
-                                <h3 className="text-xl font-medium text-gray-900 mb-2">{t('No places found')}</h3>
-                                <p className="text-gray-500 max-w-md mx-auto">{t('We couldn\'t find any results for')} &quot;{searchQuery}&quot;. {t('Try exploring our popular categories or adjusting your search.')}</p>
-                            </div>
-                        )}
-
-                        {/* Results Grid/List */}
-                        {!error && places.length > 0 && (
-                            <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={viewMode}
-                                    className={viewMode === 'grid' 
-                                        ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6"
-                                        : "flex flex-col gap-4"
-                                    }
-                                    variants={containerVariants}
-                                    initial="hidden"
-                                    animate="visible"
-                                    exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                                >
-                                    {places.map((place) => viewMode === 'grid' ? (
-                                        <motion.div
-                                            key={`grid-${place.id}`}
-                                            layout
-                                            variants={itemVariants}
-                                            initial="hidden"
-                                            whileInView="visible"
-                                            viewport={{ once: true, margin: "-50px" }}
-                                            className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl border border-gray-100 flex flex-col h-full cursor-pointer hover-lift card-shine"
-                                            whileHover={{ y: -8 }}
-                                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                        onClick={() => {
-                                            const vendorObj: Vendor = {
-                                                id: place.id,
-                                                name: place.displayName?.text || 'Unknown',
-                                                description: place.editorialSummary?.text || '',
-                                                shortDescription: '',
-                                                city: 'Vadodara',
-                                                category: place.primaryTypeDisplayName?.text || 'Store',
-                                                address: place.formattedAddress || '',
-                                                phone: place.nationalPhoneNumber || '',
-                                                email: '',
-                                                coverImage: place.photoUrl || DEFAULT_STORE_IMAGE,
-                                                isOpen: place.regularOpeningHours?.openNow || false,
-                                                rating: place.rating || 0,
-                                                reviewCount: place.userRatingCount || 0,
-                                                isPremium: false,
-                                            };
-                                            setSelectedVendorForModal(vendorObj);
-                                        }}
+                        <div className="flex-1 w-full relative min-h-[400px]">
+                            {/* Error State */}
+                            {error && (
+                                <div className="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                                    <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100/50 rounded-full mb-4">
+                                        <Store className="w-8 h-8 text-red-500" />
+                                    </div>
+                                    <h3 className="text-xl font-medium text-gray-900">{t('Something went wrong')}</h3>
+                                    <p className="text-gray-500 mt-2">{t(error)}</p>
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => handleSearch(searchQuery)}
+                                        className="mt-4 border-gray-200"
                                     >
-                                        {/* Image */}
-                                        <div className="relative h-[180px] overflow-hidden">
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent z-10" />
-                                            <motion.div
-                                                className="w-full h-full absolute inset-0"
-                                                whileHover={{ scale: 1.1 }}
-                                                transition={{ duration: 0.7, ease: "easeOut" }}
-                                            >
-                                                <Image
-                                                    src={place.photoUrl || DEFAULT_STORE_IMAGE}
-                                                    alt={t(place.displayName.text)}
-                                                    fill
-                                                    className="object-cover"
-                                                />
-                                            </motion.div>
+                                        {t('Try Again')}
+                                    </Button>
+                                </div>
+                            )}
 
-                                            {/* Status Badge */}
-                                            <div className="absolute top-3 left-3 z-20">
-                                                <Badge
-                                                    variant={place.regularOpeningHours?.openNow ? 'success' : 'secondary'}
-                                                    className="shadow-lg backdrop-blur-md bg-white/95"
-                                                >
-                                                    {place.regularOpeningHours?.openNow ? t('Open Now') : t('Closed')}
-                                                </Badge>
-                                            </div>
+                            {/* Loading State */}
+                            {isLoading && (
+                                <div className="absolute inset-0 z-10 bg-luxury-cream/50 backdrop-blur-sm flex flex-col items-center justify-center py-20 rounded-2xl">
+                                    <Loader2 className="w-12 h-12 text-gold-500 animate-spin mb-4" />
+                                    <p className="text-gray-500 animate-pulse">{t('Finding the best places...')}</p>
+                                </div>
+                            )}
 
-                                            {/* Category Badge */}
-                                            {place.primaryTypeDisplayName?.text && (
-                                                <div className="absolute top-3 right-3 z-20">
-                                                    <Badge variant="premium" className="text-[10px] tracking-wide shadow-lg">
-                                                        {t(place.primaryTypeDisplayName.text)}
-                                                    </Badge>
-                                                </div>
-                                            )}
+                            {/* Empty State */}
+                            {!isLoading && !error && places.length === 0 && hasSearched && (
+                                <div className="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                                    <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-50 rounded-full mb-6">
+                                        <Search className="w-10 h-10 text-gray-400" />
+                                    </div>
+                                    <h3 className="text-xl font-medium text-gray-900 mb-2">{t('No places found')}</h3>
+                                    <p className="text-gray-500 max-w-md mx-auto">{t('We couldn\'t find any results for')} &quot;{searchQuery}&quot;. {t('Try exploring our popular categories or adjusting your search.')}</p>
+                                </div>
+                            )}
 
-                                            {/* Favorite Button */}
-                                            <div className="absolute bottom-3 right-3 z-20 scale-110" onClick={(e) => e.stopPropagation()}>
-                                                <FavoriteButton place={place} size="sm" />
-                                            </div>
-                                        </div>
-
-                                        {/* Content */}
-                                        <div className="p-5 flex flex-col flex-grow">
-                                            <div className="flex justify-between items-start mb-3 gap-3">
-                                                <h3 className="text-xl font-bold text-luxury-charcoal font-serif line-clamp-1 group-hover:text-gold-600 transition-colors">
-                                                    {t(place.displayName.text)}
-                                                </h3>
-                                                {place.rating !== undefined && place.rating > 0 && (
-                                                    <div className="flex items-center bg-gold-50 border border-gold-200 px-2 py-1 rounded-lg shrink-0 shadow-sm">
-                                                        <Star className="w-3.5 h-3.5 text-gold-500 fill-current" />
-                                                        <span className="ml-1 text-sm font-bold text-gold-900">{place.rating}</span>
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            <p className="text-sm text-gray-500 flex items-start mb-3 line-clamp-2 leading-relaxed">
-                                                <MapPin className="w-4 h-4 mr-2 mt-0.5 text-gold-500 shrink-0" />
-                                                {t(place.shortFormattedAddress || place.formattedAddress || '')}
-                                            </p>
-
-                                            {place.userRatingCount ? (
-                                                <p className="text-xs text-gray-400 mb-4 font-medium tracking-wide uppercase">
-                                                    {t('Based on')} {place.userRatingCount} {t('reviews')}
-                                                </p>
-                                            ) : <div className="mb-4"></div>}
-
-                                            <div className="mt-auto pt-4 border-t border-gray-100 flex gap-3">
-                                                {place.nationalPhoneNumber && (
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="flex-1 h-10 border-gray-200 hover:border-gold-300 hover:bg-gold-50 hover:text-gold-700 transition-all text-sm font-medium rounded-xl"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            window.location.href = `tel:${place.nationalPhoneNumber}`;
-                                                        }}
-                                                    >
-                                                        <Phone className="w-4 h-4 mr-1.5" />
-                                                        {t('Call')}
-                                                    </Button>
-                                                )}
-                                                {place.websiteUri ? (
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="flex-1 h-10 border-gray-200 hover:border-gold-300 hover:bg-gold-50 hover:text-gold-700 transition-all text-sm font-medium rounded-xl"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            window.open(place.websiteUri, '_blank');
-                                                        }}
-                                                    >
-                                                        <ExternalLink className="w-4 h-4 mr-1.5" />
-                                                        {t('Website')}
-                                                    </Button>
-                                                ) : (
-                                                    <Button
-                                                        disabled
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="flex-1 h-10 cursor-not-allowed bg-gray-50 border-gray-200 text-gray-400 font-medium rounded-xl"
-                                                    >
-                                                        <Store className="w-4 h-4 mr-1.5" />
-                                                        {t('Listing Only')}
-                                                    </Button>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                ) : (
+                            {/* Results Grid/List */}
+                            {!error && places.length > 0 && (
+                                <AnimatePresence mode="wait">
                                     <motion.div
-                                        key={`list-${place.id}`}
-                                        layout
-                                        variants={itemVariants}
+                                        key={viewMode}
+                                        className={viewMode === 'grid'
+                                            ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6"
+                                            : "flex flex-col gap-4"
+                                        }
+                                        variants={containerVariants}
                                         initial="hidden"
-                                        whileInView="visible"
-                                        viewport={{ once: true, margin: "-50px" }}
-                                        className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 cursor-pointer hover-lift"
-                                    onClick={() => {
-                                        const vendorObj: Vendor = {
-                                            id: place.id,
-                                            name: place.displayName?.text || 'Unknown',
-                                            description: place.editorialSummary?.text || '',
-                                            shortDescription: '',
-                                            city: 'Vadodara',
-                                            category: place.primaryTypeDisplayName?.text || 'Store',
-                                            address: place.formattedAddress || '',
-                                            phone: place.nationalPhoneNumber || '',
-                                            email: '',
-                                            coverImage: place.photoUrl || DEFAULT_STORE_IMAGE,
-                                            isOpen: place.regularOpeningHours?.openNow || false,
-                                            rating: place.rating || 0,
-                                            reviewCount: place.userRatingCount || 0,
-                                            isPremium: false,
-                                        };
-                                        setSelectedVendorForModal(vendorObj);
-                                    }}
-                                >
-                                    <div className="flex flex-col w-full sm:w-auto flex-1 pr-4 mb-4 sm:mb-0">
-                                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1">
-                                            <h3 className="text-lg font-bold text-luxury-charcoal font-serif group-hover:text-gold-600 transition-colors line-clamp-1">
-                                                {t(place.displayName.text)}
-                                            </h3>
-                                            <div className="flex gap-2 items-center shrink-0">
-                                                {place.primaryTypeDisplayName?.text && (
-                                                    <Badge variant="premium" className="text-[10px] px-2 py-0.5">
-                                                        {t(place.primaryTypeDisplayName.text)}
-                                                    </Badge>
-                                                )}
-                                                <Badge
-                                                    variant={place.regularOpeningHours?.openNow ? 'success' : 'secondary'}
-                                                    className="text-[10px] px-2 py-0.5"
-                                                >
-                                                    {place.regularOpeningHours?.openNow ? t('Open Now') : t('Closed')}
-                                                </Badge>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-sm text-gray-500 mt-1">
-                                            <span className="flex items-center line-clamp-1">
-                                                <MapPin className="w-3.5 h-3.5 mr-1.5 text-gold-500 shrink-0" /> 
-                                                <span className="line-clamp-1">{t(place.shortFormattedAddress || place.formattedAddress || '')}</span>
-                                            </span>
-                                            {place.rating !== undefined && place.rating > 0 && (
-                                                <span className="flex items-center font-medium text-luxury-black shrink-0">
-                                                    <Star className="w-3.5 h-3.5 text-gold-500 mr-1 fill-current" />
-                                                    {place.rating} {place.userRatingCount ? <span className="text-gray-400 font-normal ml-1">({place.userRatingCount})</span> : ''}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="flex flex-row gap-2 w-full sm:w-auto shrink-0 border-t sm:border-t-0 pt-3 sm:pt-0 border-gray-100 justify-end sm:justify-start">
-                                        {place.nationalPhoneNumber && (
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="h-9 border-gray-200 hover:border-gold-300 hover:bg-gold-50"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    window.location.href = `tel:${place.nationalPhoneNumber}`;
+                                        animate="visible"
+                                        exit={{ opacity: 0, transition: { duration: 0.2 } }}
+                                    >
+                                        {places.map((place) => viewMode === 'grid' ? (
+                                            <motion.div
+                                                key={`grid-${place.id}`}
+                                                layout
+                                                variants={itemVariants}
+                                                initial="hidden"
+                                                whileInView="visible"
+                                                viewport={{ once: true, margin: "-50px" }}
+                                                className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl border border-gray-100 flex flex-col h-full cursor-pointer hover-lift card-shine"
+                                                whileHover={{ y: -8 }}
+                                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                                onClick={() => {
+                                                    const vendorObj: Vendor = {
+                                                        id: place.id,
+                                                        name: place.displayName?.text || 'Unknown',
+                                                        description: place.editorialSummary?.text || '',
+                                                        shortDescription: '',
+                                                        city: 'Vadodara',
+                                                        category: place.primaryTypeDisplayName?.text || 'Store',
+                                                        address: place.formattedAddress || '',
+                                                        phone: place.nationalPhoneNumber || '',
+                                                        email: '',
+                                                        coverImage: place.photoUrl || DEFAULT_STORE_IMAGE,
+                                                        isOpen: place.regularOpeningHours?.openNow || false,
+                                                        rating: place.rating || 0,
+                                                        reviewCount: place.userRatingCount || 0,
+                                                        isPremium: false,
+                                                    };
+                                                    setSelectedVendorForModal(vendorObj);
                                                 }}
                                             >
-                                                <Phone className="w-3.5 h-3.5 sm:mr-2" />
-                                                <span className="hidden sm:inline">{t('Call')}</span>
-                                            </Button>
-                                        )}
-                                        {place.websiteUri ? (
-                                            <Button
-                                                size="sm"
-                                                className="h-9 bg-luxury-black hover:bg-gold-600 text-white border-none"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    window.open(place.websiteUri, '_blank');
-                                                }}
-                                            >
-                                                <ExternalLink className="w-3.5 h-3.5 sm:mr-2" />
-                                                <span className="hidden sm:inline">{t('Website')}</span>
-                                            </Button>
+                                                {/* Image */}
+                                                <div className="relative h-[180px] overflow-hidden">
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent z-10" />
+                                                    <motion.div
+                                                        className="w-full h-full absolute inset-0"
+                                                        whileHover={{ scale: 1.1 }}
+                                                        transition={{ duration: 0.7, ease: "easeOut" }}
+                                                    >
+                                                        <Image
+                                                            src={place.photoUrl || DEFAULT_STORE_IMAGE}
+                                                            alt={t(place.displayName.text)}
+                                                            fill
+                                                            className="object-cover"
+                                                        />
+                                                    </motion.div>
+
+                                                    {/* Status Badge */}
+                                                    <div className="absolute top-3 left-3 z-20">
+                                                        <Badge
+                                                            variant={place.regularOpeningHours?.openNow ? 'success' : 'secondary'}
+                                                            className="shadow-lg backdrop-blur-md bg-white/95"
+                                                        >
+                                                            {place.regularOpeningHours?.openNow ? t('Open Now') : t('Closed')}
+                                                        </Badge>
+                                                    </div>
+
+                                                    {/* Category Badge */}
+                                                    {place.primaryTypeDisplayName?.text && (
+                                                        <div className="absolute top-3 right-3 z-20">
+                                                            <Badge variant="premium" className="text-[10px] tracking-wide shadow-lg">
+                                                                {t(place.primaryTypeDisplayName.text)}
+                                                            </Badge>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Favorite Button */}
+                                                    <div className="absolute bottom-3 right-3 z-20 scale-110" onClick={(e) => e.stopPropagation()}>
+                                                        <FavoriteButton place={place} size="sm" />
+                                                    </div>
+                                                </div>
+
+                                                {/* Content */}
+                                                <div className="p-5 flex flex-col flex-grow">
+                                                    <div className="flex justify-between items-start mb-3 gap-3">
+                                                        <h3 className="text-xl font-bold text-luxury-charcoal font-serif line-clamp-1 group-hover:text-gold-600 transition-colors">
+                                                            {t(place.displayName.text)}
+                                                        </h3>
+                                                        {place.rating !== undefined && place.rating > 0 && (
+                                                            <div className="flex items-center bg-gold-50 border border-gold-200 px-2 py-1 rounded-lg shrink-0 shadow-sm">
+                                                                <Star className="w-3.5 h-3.5 text-gold-500 fill-current" />
+                                                                <span className="ml-1 text-sm font-bold text-gold-900">{place.rating}</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    <p className="text-sm text-gray-500 flex items-start mb-3 line-clamp-2 leading-relaxed">
+                                                        <MapPin className="w-4 h-4 mr-2 mt-0.5 text-gold-500 shrink-0" />
+                                                        {t(place.shortFormattedAddress || place.formattedAddress || '')}
+                                                    </p>
+
+                                                    {place.userRatingCount ? (
+                                                        <p className="text-xs text-gray-400 mb-4 font-medium tracking-wide uppercase">
+                                                            {t('Based on')} {place.userRatingCount} {t('reviews')}
+                                                        </p>
+                                                    ) : <div className="mb-4"></div>}
+
+                                                    <div className="mt-auto pt-4 border-t border-gray-100 flex gap-3">
+                                                        {place.nationalPhoneNumber && (
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="flex-1 h-10 border-gray-200 hover:border-gold-300 hover:bg-gold-50 hover:text-gold-700 transition-all text-sm font-medium rounded-xl"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    window.location.href = `tel:${place.nationalPhoneNumber}`;
+                                                                }}
+                                                            >
+                                                                <Phone className="w-4 h-4 mr-1.5" />
+                                                                {t('Call')}
+                                                            </Button>
+                                                        )}
+                                                        {place.websiteUri ? (
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="flex-1 h-10 border-gray-200 hover:border-gold-300 hover:bg-gold-50 hover:text-gold-700 transition-all text-sm font-medium rounded-xl"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    window.open(place.websiteUri, '_blank');
+                                                                }}
+                                                            >
+                                                                <ExternalLink className="w-4 h-4 mr-1.5" />
+                                                                {t('Website')}
+                                                            </Button>
+                                                        ) : (
+                                                            <Button
+                                                                disabled
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="flex-1 h-10 cursor-not-allowed bg-gray-50 border-gray-200 text-gray-400 font-medium rounded-xl"
+                                                            >
+                                                                <Store className="w-4 h-4 mr-1.5" />
+                                                                {t('Listing Only')}
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </motion.div>
                                         ) : (
-                                            <Button
-                                                disabled
-                                                size="sm"
-                                                className="h-9 cursor-not-allowed bg-gray-50 border-gray-200 text-gray-400"
+                                            <motion.div
+                                                key={`list-${place.id}`}
+                                                layout
+                                                variants={itemVariants}
+                                                initial="hidden"
+                                                whileInView="visible"
+                                                viewport={{ once: true, margin: "-50px" }}
+                                                className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 cursor-pointer hover-lift"
+                                                onClick={() => {
+                                                    const vendorObj: Vendor = {
+                                                        id: place.id,
+                                                        name: place.displayName?.text || 'Unknown',
+                                                        description: place.editorialSummary?.text || '',
+                                                        shortDescription: '',
+                                                        city: 'Vadodara',
+                                                        category: place.primaryTypeDisplayName?.text || 'Store',
+                                                        address: place.formattedAddress || '',
+                                                        phone: place.nationalPhoneNumber || '',
+                                                        email: '',
+                                                        coverImage: place.photoUrl || DEFAULT_STORE_IMAGE,
+                                                        isOpen: place.regularOpeningHours?.openNow || false,
+                                                        rating: place.rating || 0,
+                                                        reviewCount: place.userRatingCount || 0,
+                                                        isPremium: false,
+                                                    };
+                                                    setSelectedVendorForModal(vendorObj);
+                                                }}
                                             >
-                                                <Store className="w-3.5 h-3.5 sm:mr-2" />
-                                                <span className="hidden sm:inline">{t('Listing Only')}</span>
-                                            </Button>
-                                        )}
-                                        <div 
-                                            className="flex items-center justify-center p-2 rounded-md hover:bg-gray-100 transition-colors ml-1"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            <FavoriteButton place={place} size="sm" />
-                                        </div>
-                                    </div>
-                                </motion.div>
-                                    ))}
-                                </motion.div>
-                            </AnimatePresence>
-                        )}
-                    </div>
+                                                <div className="flex flex-col w-full sm:w-auto flex-1 pr-4 mb-4 sm:mb-0">
+                                                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1">
+                                                        <h3 className="text-lg font-bold text-luxury-charcoal font-serif group-hover:text-gold-600 transition-colors line-clamp-1">
+                                                            {t(place.displayName.text)}
+                                                        </h3>
+                                                        <div className="flex gap-2 items-center shrink-0">
+                                                            {place.primaryTypeDisplayName?.text && (
+                                                                <Badge variant="premium" className="text-[10px] px-2 py-0.5">
+                                                                    {t(place.primaryTypeDisplayName.text)}
+                                                                </Badge>
+                                                            )}
+                                                            <Badge
+                                                                variant={place.regularOpeningHours?.openNow ? 'success' : 'secondary'}
+                                                                className="text-[10px] px-2 py-0.5"
+                                                            >
+                                                                {place.regularOpeningHours?.openNow ? t('Open Now') : t('Closed')}
+                                                            </Badge>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-sm text-gray-500 mt-1">
+                                                        <span className="flex items-center line-clamp-1">
+                                                            <MapPin className="w-3.5 h-3.5 mr-1.5 text-gold-500 shrink-0" />
+                                                            <span className="line-clamp-1">{t(place.shortFormattedAddress || place.formattedAddress || '')}</span>
+                                                        </span>
+                                                        {place.rating !== undefined && place.rating > 0 && (
+                                                            <span className="flex items-center font-medium text-luxury-black shrink-0">
+                                                                <Star className="w-3.5 h-3.5 text-gold-500 mr-1 fill-current" />
+                                                                {place.rating} {place.userRatingCount ? <span className="text-gray-400 font-normal ml-1">({place.userRatingCount})</span> : ''}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex flex-row gap-2 w-full sm:w-auto shrink-0 border-t sm:border-t-0 pt-3 sm:pt-0 border-gray-100 justify-end sm:justify-start">
+                                                    {place.nationalPhoneNumber && (
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-9 border-gray-200 hover:border-gold-300 hover:bg-gold-50"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                window.location.href = `tel:${place.nationalPhoneNumber}`;
+                                                            }}
+                                                        >
+                                                            <Phone className="w-3.5 h-3.5 sm:mr-2" />
+                                                            <span className="hidden sm:inline">{t('Call')}</span>
+                                                        </Button>
+                                                    )}
+                                                    {place.websiteUri ? (
+                                                        <Button
+                                                            size="sm"
+                                                            className="h-9 bg-luxury-black hover:bg-gold-600 text-white border-none"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                window.open(place.websiteUri, '_blank');
+                                                            }}
+                                                        >
+                                                            <ExternalLink className="w-3.5 h-3.5 sm:mr-2" />
+                                                            <span className="hidden sm:inline">{t('Website')}</span>
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            disabled
+                                                            size="sm"
+                                                            className="h-9 cursor-not-allowed bg-gray-50 border-gray-200 text-gray-400"
+                                                        >
+                                                            <Store className="w-3.5 h-3.5 sm:mr-2" />
+                                                            <span className="hidden sm:inline">{t('Listing Only')}</span>
+                                                        </Button>
+                                                    )}
+                                                    <div
+                                                        className="flex items-center justify-center p-2 rounded-md hover:bg-gray-100 transition-colors ml-1"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <FavoriteButton place={place} size="sm" />
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </motion.div>
+                                </AnimatePresence>
+                            )}
+                        </div>
                     </ErrorBoundary>
                 </div>
 

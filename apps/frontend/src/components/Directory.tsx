@@ -41,8 +41,8 @@ const itemVariants: Variants = {
 };
 
 export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
-  const { 
-    language, 
+  const {
+    language,
     requireAuth,
     addToFavorites,
     removeFromFavorites,
@@ -86,7 +86,6 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
 
   const handleCallNow = (e: React.MouseEvent, vendor: Vendor) => {
     e.stopPropagation();
-    if (!requireAuth('call this vendor')) return;
     window.location.href = `tel:${vendor.phone}`;
   };
 
@@ -151,7 +150,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
             transition={{ duration: 0.8 }}
           >
             <Badge variant="premium" className="mb-3 px-4 py-1 text-[10px] sm:text-xs uppercase tracking-[0.2em] border border-gold-500/30">
-              Premier B2B Network
+              B2C & B2B Network
             </Badge>
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif font-medium mb-10 sm:mb-12 text-white leading-tight tracking-wide px-6">
               Curated Excellence <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 to-gold-600">For Your Business</span>
@@ -222,27 +221,27 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1 bg-white border border-gray-200 p-1 rounded-lg shadow-sm">
-                <button
-                    onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded-md flex items-center justify-center transition-colors ${viewMode === 'grid' ? 'bg-gold-50 text-gold-600' : 'text-gray-500 hover:bg-gray-100'}`}
-                    aria-label="Grid View"
-                >
-                    <LayoutGrid className="w-5 h-5" />
-                </button>
-                <button
-                    onClick={() => setViewMode('list')}
-                    className={`p-2 rounded-md flex items-center justify-center transition-colors ${viewMode === 'list' ? 'bg-gold-50 text-gold-600' : 'text-gray-500 hover:bg-gray-100'}`}
-                    aria-label="List View"
-                >
-                    <List className="w-5 h-5" />
-                </button>
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-2 rounded-md flex items-center justify-center transition-colors ${viewMode === 'grid' ? 'bg-gold-50 text-gold-600' : 'text-gray-500 hover:bg-gray-100'}`}
+                aria-label="Grid View"
+              >
+                <LayoutGrid className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-2 rounded-md flex items-center justify-center transition-colors ${viewMode === 'list' ? 'bg-gold-50 text-gold-600' : 'text-gray-500 hover:bg-gray-100'}`}
+                aria-label="List View"
+              >
+                <List className="w-5 h-5" />
+              </button>
             </div>
-{/* <Button variant="outline" className="hidden sm:flex text-sm md:text-base">View Operations Map</Button> */}
+            {/* <Button variant="outline" className="hidden sm:flex text-sm md:text-base">View Operations Map</Button> */}
           </div>
         </div>
 
         <motion.div
-          className={viewMode === 'grid' 
+          className={viewMode === 'grid'
             ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
             : "flex flex-col gap-4 max-w-4xl mx-auto"}
           variants={containerVariants}
@@ -260,7 +259,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
             >
               <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent group-hover:from-black/60 transition-colors z-10" />
-                <motion.div 
+                <motion.div
                   className="w-full h-full absolute inset-0"
                   whileHover={{ scale: 1.1 }}
                   transition={{ duration: 0.7, ease: "easeOut" }}
@@ -313,24 +312,23 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                     onClick={(e) => {
                       e.stopPropagation();
                       if (!requireAuth('like this vendor')) return;
-                      
+
                       if (isFavorite(vendor.id)) {
                         removeFromFavorites(vendor.id);
                       } else {
                         // Adapt mock vendor to GooglePlaceResponse-like structure if strictly required
                         // but backend stores placeData as jsonb which is flexible.
-                        addToFavorites(vendor as any); 
+                        addToFavorites(vendor as any);
                       }
                     }}
                     className="p-2 rounded-full backdrop-blur-md bg-white/70 hover:bg-white transition-colors duration-300 shadow-sm"
                     aria-label={isFavorite(vendor.id) ? "Remove from favorites" : "Add to favorites"}
                   >
-                    <Heart 
-                      className={`w-5 h-5 transition-colors duration-300 ${
-                        isFavorite(vendor.id) 
-                          ? "fill-red-500 text-red-500" 
+                    <Heart
+                      className={`w-5 h-5 transition-colors duration-300 ${isFavorite(vendor.id)
+                          ? "fill-red-500 text-red-500"
                           : "text-gray-600 hover:text-red-500"
-                      }`} 
+                        }`}
                     />
                   </button>
                 </div>
@@ -429,7 +427,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                       {t('Visit Website')}
                     </Button>
                   )}
-                  
+
                   {vendor.planType === 'card_website' && vendor.websiteUuid && (
                     <Button
                       onClick={(e) => {
@@ -581,19 +579,18 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                     onClick={(e) => {
                       e.stopPropagation();
                       if (!requireAuth('like this vendor')) return;
-                      
+
                       if (isFavorite(vendor.id)) {
                         removeFromFavorites(vendor.id);
                       } else {
-                        addToFavorites(vendor as any); 
+                        addToFavorites(vendor as any);
                       }
                     }}
                     aria-label={isFavorite(vendor.id) ? "Remove from favorites" : "Add to favorites"}
                   >
-                    <Heart 
-                      className={`w-4 h-4 transition-colors ${
-                        isFavorite(vendor.id) ? "fill-red-500 text-red-500" : "text-gray-400 hover:text-red-500"
-                      }`} 
+                    <Heart
+                      className={`w-4 h-4 transition-colors ${isFavorite(vendor.id) ? "fill-red-500 text-red-500" : "text-gray-400 hover:text-red-500"
+                        }`}
                     />
                   </button>
                 </div>

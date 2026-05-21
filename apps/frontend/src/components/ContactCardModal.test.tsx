@@ -59,6 +59,9 @@ const mockContext = {
   wishlist: [],
   addToWishlist: jest.fn(),
   removeFromWishlist: jest.fn(),
+  isFavorite: jest.fn(() => false),
+  addToFavorites: jest.fn(),
+  removeFromFavorites: jest.fn(),
 };
 
 describe('ContactCardModal', () => {
