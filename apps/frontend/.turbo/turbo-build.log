@@ -1,5 +1,4 @@
 
-
 > frontend@0.1.0 build
 > next build
 
@@ -7,11 +6,15 @@
 - Environments: .env.local
 
   Creating an optimized production build ...
-✓ Compiled successfully in 3.7s
-  Finished TypeScript in 3.4s    ✓ Finished TypeScript in 3.4s 
-  Collecting page data using 7 workers in 309.6ms    ✓ Collecting page data using 7 workers in 309.6ms 
-✓ Generating static pages using 7 workers (12/12) in 200.6ms
-  Finalizing page optimization in 8.4ms    ✓ Finalizing page optimization in 8.4ms 
+✓ Compiled successfully in 3.0s
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/12) ...
+  Generating static pages using 7 workers (3/12) 
+  Generating static pages using 7 workers (6/12) 
+  Generating static pages using 7 workers (9/12) 
+✓ Generating static pages using 7 workers (12/12) in 171.8ms
+  Finalizing page optimization ...
 
 Route (app)
 ┌ ○ /

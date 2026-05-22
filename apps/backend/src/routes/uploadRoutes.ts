@@ -1,38 +1,11 @@
 import { Router, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
 import { authenticate, AuthenticatedRequest } from '../middleware/auth';
 import { logger } from '../config/logger';
+import { bucket } from '../config/firebase';
 
 const router = Router();
-
-// Ensure uploads directories exist
-// Vercel's filesystem is read-only except /tmp, so use /tmp for serverless
-const isServerless = !!process.env.VERCEL;
-const UPLOADS_BASE = isServerless ? path.join('/tmp', 'uploads') : path.join(process.cwd(), 'uploads');
-const UPLOADS_PRODUCTS = path.join(UPLOADS_BASE, 'products');
-const UPLOADS_LOGOS = path.join(UPLOADS_BASE, 'logos');
-const UPLOADS_MAIN_PHOTOS = path.join(UPLOADS_BASE, 'main-photos');
-const UPLOADS_GALLERY = path.join(UPLOADS_BASE, 'gallery');
-const UPLOADS_QR_CODES = path.join(UPLOADS_BASE, 'qr-codes');
-
-[UPLOADS_PRODUCTS, UPLOADS_LOGOS, UPLOADS_MAIN_PHOTOS, UPLOADS_GALLERY, UPLOADS_QR_CODES].forEach(dir => {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-    }
-});
-
-const createStorage = (uploadDir: string) => multer.diskStorage({
-    destination: (_req, _file, cb) => {
-        cb(null, uploadDir);
-    },
-    filename: (_req, file, cb) => {
-        const ext = path.extname(file.originalname).toLowerCase();
-        const unique = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}${ext}`;
-        cb(null, unique);
-    },
-});
 
 const fileFilter = (_req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     const allowed = /jpeg|jpg|png|webp|gif|avif/;
@@ -45,17 +18,27 @@ const fileFilter = (_req: any, file: Express.Multer.File, cb: multer.FileFilterC
     }
 };
 
-const createUpload = (uploadDir: string) => multer({
-    storage: createStorage(uploadDir),
+const upload = multer({
+    storage: multer.memoryStorage(),
     limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB limit per image
     fileFilter,
 });
 
-const uploadProduct = createUpload(UPLOADS_PRODUCTS);
-const uploadLogo = createUpload(UPLOADS_LOGOS);
-const uploadMainPhoto = createUpload(UPLOADS_MAIN_PHOTOS);
-const uploadGallery = createUpload(UPLOADS_GALLERY);
-const uploadQrCode = createUpload(UPLOADS_QR_CODES);
+export const uploadToGcs = async (file: Express.Multer.File, folder: string): Promise<string> => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const uniqueName = `uploads/${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}${ext}`;
+    const blob = bucket.file(uniqueName);
+
+    await blob.save(file.buffer, {
+        metadata: {
+            contentType: file.mimetype,
+        },
+    });
+
+    await blob.makePublic();
+
+    return `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+};
 
 /**
  * POST /api/upload/product-image
@@ -65,7 +48,7 @@ router.post(
     '/product-image',
     authenticate,
     (req: AuthenticatedRequest, res: Response, next) => {
-        uploadProduct.single('image')(req as any, res as any, (err) => {
+        upload.single('image')(req as any, res as any, (err) => {
             if (err instanceof multer.MulterError) {
                 if (err.code === 'LIMIT_FILE_SIZE') {
                     res.status(413).json({ error: 'Image must be smaller than 5 MB' });
@@ -81,7 +64,7 @@ router.post(
             next();
         });
     },
-    (req: AuthenticatedRequest, res: Response) => {
+    async (req: AuthenticatedRequest, res: Response) => {
         if (!req.file) {
             res.status(400).json({ error: 'No image file provided' });
             return;
@@ -93,12 +76,14 @@ router.post(
             return;
         }
 
-        const baseUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
-        const imageUrl = `${baseUrl}/uploads/products/${req.file.filename}`;
-
-        logger.info(`[upload] Product image uploaded: ${req.file.filename} by user ${userId}`);
-
-        res.status(201).json({ imageUrl });
+        try {
+            const imageUrl = await uploadToGcs(req.file, 'products');
+            logger.info(`[upload] Product image uploaded to GCS by user ${userId}`);
+            res.status(201).json({ imageUrl });
+        } catch (err: any) {
+            logger.error(`[upload] Failed to upload product image to GCS: ${err.message}`, { error: err });
+            res.status(500).json({ error: 'Failed to upload image' });
+        }
     }
 );
 
@@ -110,7 +95,7 @@ router.post(
     '/logo',
     authenticate,
     (req: AuthenticatedRequest, res: Response, next) => {
-        uploadLogo.single('image')(req as any, res as any, (err) => {
+        upload.single('image')(req as any, res as any, (err) => {
             if (err instanceof multer.MulterError) {
                 if (err.code === 'LIMIT_FILE_SIZE') {
                     res.status(413).json({ error: 'Image must be smaller than 5 MB' });
@@ -126,7 +111,7 @@ router.post(
             next();
         });
     },
-    (req: AuthenticatedRequest, res: Response) => {
+    async (req: AuthenticatedRequest, res: Response) => {
         if (!req.file) {
             res.status(400).json({ error: 'No image file provided' });
             return;
@@ -137,12 +122,14 @@ router.post(
             return;
         }
 
-        const baseUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
-        const imageUrl = `${baseUrl}/uploads/logos/${req.file.filename}`;
-
-        logger.info(`[upload] Logo uploaded: ${req.file.filename} by user ${req.user.id}`);
-
-        res.status(201).json({ imageUrl });
+        try {
+            const imageUrl = await uploadToGcs(req.file, 'logos');
+            logger.info(`[upload] Logo uploaded to GCS by user ${req.user.id}`);
+            res.status(201).json({ imageUrl });
+        } catch (err: any) {
+            logger.error(`[upload] Failed to upload logo to GCS: ${err.message}`, { error: err });
+            res.status(500).json({ error: 'Failed to upload image' });
+        }
     }
 );
 
@@ -154,7 +141,7 @@ router.post(
     '/main-photo',
     authenticate,
     (req: AuthenticatedRequest, res: Response, next) => {
-        uploadMainPhoto.single('image')(req as any, res as any, (err) => {
+        upload.single('image')(req as any, res as any, (err) => {
             if (err instanceof multer.MulterError) {
                 if (err.code === 'LIMIT_FILE_SIZE') {
                     res.status(413).json({ error: 'Image must be smaller than 5 MB' });
@@ -170,7 +157,7 @@ router.post(
             next();
         });
     },
-    (req: AuthenticatedRequest, res: Response) => {
+    async (req: AuthenticatedRequest, res: Response) => {
         if (!req.file) {
             res.status(400).json({ error: 'No image file provided' });
             return;
@@ -181,12 +168,14 @@ router.post(
             return;
         }
 
-        const baseUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
-        const imageUrl = `${baseUrl}/uploads/main-photos/${req.file.filename}`;
-
-        logger.info(`[upload] Main photo uploaded: ${req.file.filename} by user ${req.user.id}`);
-
-        res.status(201).json({ imageUrl });
+        try {
+            const imageUrl = await uploadToGcs(req.file, 'main-photos');
+            logger.info(`[upload] Main photo uploaded to GCS by user ${req.user.id}`);
+            res.status(201).json({ imageUrl });
+        } catch (err: any) {
+            logger.error(`[upload] Failed to upload main photo to GCS: ${err.message}`, { error: err });
+            res.status(500).json({ error: 'Failed to upload image' });
+        }
     }
 );
 
@@ -198,7 +187,7 @@ router.post(
     '/gallery',
     authenticate,
     (req: AuthenticatedRequest, res: Response, next) => {
-        uploadGallery.array('images', 6)(req as any, res as any, (err) => {
+        upload.array('images', 6)(req as any, res as any, (err) => {
             if (err instanceof multer.MulterError) {
                 if (err.code === 'LIMIT_FILE_SIZE') {
                     res.status(413).json({ error: 'Each image must be smaller than 5 MB' });
@@ -218,7 +207,7 @@ router.post(
             next();
         });
     },
-    (req: AuthenticatedRequest, res: Response) => {
+    async (req: AuthenticatedRequest, res: Response) => {
         const files = (req as any).files as Express.Multer.File[];
         if (!files || files.length === 0) {
             res.status(400).json({ error: 'No image files provided' });
@@ -230,12 +219,15 @@ router.post(
             return;
         }
 
-        const baseUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
-        const imageUrls = files.map(f => `${baseUrl}/uploads/gallery/${f.filename}`);
-
-        logger.info(`[upload] ${files.length} gallery image(s) uploaded by user ${req.user.id}`);
-
-        res.status(201).json({ imageUrls });
+        try {
+            const uploadPromises = files.map(file => uploadToGcs(file, 'gallery'));
+            const imageUrls = await Promise.all(uploadPromises);
+            logger.info(`[upload] ${files.length} gallery image(s) uploaded to GCS by user ${req.user.id}`);
+            res.status(201).json({ imageUrls });
+        } catch (err: any) {
+            logger.error(`[upload] Failed to upload gallery images to GCS: ${err.message}`, { error: err });
+            res.status(500).json({ error: 'Failed to upload images' });
+        }
     }
 );
 
@@ -247,7 +239,7 @@ router.post(
     '/qr-code',
     authenticate,
     (req: AuthenticatedRequest, res: Response, next) => {
-        uploadQrCode.single('image')(req as any, res as any, (err) => {
+        upload.single('image')(req as any, res as any, (err) => {
             if (err instanceof multer.MulterError) {
                 if (err.code === 'LIMIT_FILE_SIZE') {
                     res.status(413).json({ error: 'Image must be smaller than 5 MB' });
@@ -263,7 +255,7 @@ router.post(
             next();
         });
     },
-    (req: AuthenticatedRequest, res: Response) => {
+    async (req: AuthenticatedRequest, res: Response) => {
         if (!req.file) {
             res.status(400).json({ error: 'No image file provided' });
             return;
@@ -274,12 +266,14 @@ router.post(
             return;
         }
 
-        const baseUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
-        const imageUrl = `${baseUrl}/uploads/qr-codes/${req.file.filename}`;
-
-        logger.info(`[upload] QR code uploaded: ${req.file.filename} by user ${req.user.id}`);
-
-        res.status(201).json({ imageUrl });
+        try {
+            const imageUrl = await uploadToGcs(req.file, 'qr-codes');
+            logger.info(`[upload] QR code uploaded to GCS by user ${req.user.id}`);
+            res.status(201).json({ imageUrl });
+        } catch (err: any) {
+            logger.error(`[upload] Failed to upload QR code to GCS: ${err.message}`, { error: err });
+            res.status(500).json({ error: 'Failed to upload image' });
+        }
     }
 );
 
