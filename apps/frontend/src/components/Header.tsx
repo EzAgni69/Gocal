@@ -294,7 +294,7 @@ export const Header = () => {
                                                 <CreditCard className="w-4 h-4 text-gold-500" />
                                                 {t('Pricing')}
                                             </button>
-                                            <button
+                                            {/* <button
                                                 onClick={() => {
                                                     setShowUserMenu(false);
                                                     // Navigate to profile or show settings
@@ -303,7 +303,7 @@ export const Header = () => {
                                             >
                                                 <Settings className="w-4 h-4 text-gray-400" />
                                                 {t('Settings')}
-                                            </button>
+                                            </button> */}
                                             {user.role === UserRole.VENDOR && (
                                                 <button
                                                     onClick={() => {
