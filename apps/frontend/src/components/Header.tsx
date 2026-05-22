@@ -124,17 +124,7 @@ export const Header = () => {
 
                     {/* Navigation Links */}
                     <div className="hidden md:flex items-center gap-1">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => router.push('/vadodara')}
-                            className={cn(
-                                "text-gray-600 font-medium hover:text-gold-600 hover:bg-gold-100/30 transition-all duration-300",
-                                pathname === '/vadodara' && "text-gold-600 bg-gold-100/30"
-                            )}
-                        >
-                            {t('Explore Vadodara')}
-                        </Button>
+
 
                     </div>
 
@@ -442,25 +432,7 @@ export const Header = () => {
                                         <span className="font-serif text-xl text-luxury-black group-hover:text-gold-600 transition-colors">{t('Home')}</span>
                                         <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gold-500" />
                                     </button>
-                                    <button
-                                        onClick={() => {
-                                            router.push('/vadodara');
-                                            setShowMobileMenu(false);
-                                        }}
-                                        className={cn(
-                                            "w-full flex items-center justify-between p-3 rounded-xl hover:bg-white transition-colors group",
-                                            pathname === '/vadodara' && "bg-white shadow-sm"
-                                        )}
-                                    >
-                                        <span className={cn(
-                                            "font-serif text-xl text-luxury-black transition-colors",
-                                            pathname === '/vadodara' ? "text-gold-600" : "group-hover:text-gold-600"
-                                        )}>Explore Vadodara</span>
-                                        <ChevronRight className={cn(
-                                            "w-4 h-4 transition-colors",
-                                            pathname === '/vadodara' ? "text-gold-600" : "text-gray-300 group-hover:text-gold-500"
-                                        )} />
-                                    </button>
+
                                     <button
                                         onClick={() => {
                                             router.push('/favourites');
