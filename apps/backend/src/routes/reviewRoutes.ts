@@ -9,7 +9,7 @@ const router = Router();
 const createReviewSchema = z.object({
     vendorId: z.string().uuid(),
     rating: z.number().int().min(1).max(5),
-    comment: z.string().min(1).max(1000).optional(),
+    comment: z.string().max(1000).optional().nullable(),
 });
 
 /**
@@ -130,7 +130,7 @@ router.put('/:id', authenticate, async (req: AuthenticatedRequest, res: Response
         const { id } = req.params;
         const validation = z.object({
             rating: z.number().int().min(1).max(5).optional(),
-            comment: z.string().min(1).max(1000).optional(),
+            comment: z.string().max(1000).optional().nullable(),
         }).safeParse(req.body);
 
         if (!validation.success) {
@@ -152,11 +152,17 @@ router.put('/:id', authenticate, async (req: AuthenticatedRequest, res: Response
             return;
         }
 
+        const updateData: any = {
+            ...validation.data,
+            updatedAt: new Date(),
+        };
+
+        if (validation.data.comment !== undefined) {
+            updateData.comment = validation.data.comment || null;
+        }
+
         const [updatedReview] = await db.update(reviews)
-            .set({
-                ...validation.data,
-                updatedAt: new Date(),
-            })
+            .set(updateData)
             .where(eq(reviews.id, id))
             .returning();
 

@@ -162,3 +162,68 @@ export function getAllOpeningHours(openingHours: OpeningHoursType | null | undef
         return { day, hours: 'Closed', isToday: index === today };
     });
 }
+
+function convert12hTo24h(time12h: string): string {
+    try {
+        const match = time12h.match(/^(\d+)(?::(\d+))?\s*(AM|PM)$/i);
+        if (!match) return '09:00';
+        
+        let hours = parseInt(match[1], 10);
+        const minutes = match[2] || '00';
+        const ampm = match[3].toUpperCase();
+        
+        if (ampm === 'PM' && hours < 12) hours += 12;
+        if (ampm === 'AM' && hours === 12) hours = 0;
+        
+        return `${hours.toString().padStart(2, '0')}:${minutes}`;
+    } catch (e) {
+        return '09:00';
+    }
+}
+
+/**
+ * Parse Google Places weekdayDescriptions to database OpeningHours format
+ */
+export function parseGoogleOpeningHours(weekdayDescriptions: string[] | null | undefined): OpeningHoursType {
+    const openingHours: OpeningHoursType = {};
+    if (!weekdayDescriptions) return openingHours;
+    
+    const dayMap: Record<string, string> = {
+        'monday': 'Mon',
+        'tuesday': 'Tue',
+        'wednesday': 'Wed',
+        'thursday': 'Thu',
+        'friday': 'Fri',
+        'saturday': 'Sat',
+        'sunday': 'Sun'
+    };
+
+    weekdayDescriptions.forEach(desc => {
+        const parts = desc.split(':');
+        if (parts.length < 2) return;
+        
+        const dayName = parts[0].trim().toLowerCase();
+        const dayKey = dayMap[dayName];
+        if (!dayKey) return;
+        
+        const hoursStr = parts.slice(1).join(':').trim();
+        
+        if (hoursStr.toLowerCase().includes('closed')) {
+            openingHours[dayKey] = { closed: true };
+        } else if (hoursStr.toLowerCase().includes('24 hours')) {
+            openingHours[dayKey] = { open: '00:00', close: '24:00' };
+        } else {
+            // Google uses en-dash (\u2013) or hyphen or double-hyphen for separator
+            const times = hoursStr.split(/[\u2013\u2014-]/);
+            if (times.length === 2) {
+                const openVal = convert12hTo24h(times[0].trim());
+                const closeVal = convert12hTo24h(times[1].trim());
+                openingHours[dayKey] = { open: openVal, close: closeVal };
+            } else {
+                openingHours[dayKey] = { closed: true };
+            }
+        }
+    });
+
+    return openingHours;
+}

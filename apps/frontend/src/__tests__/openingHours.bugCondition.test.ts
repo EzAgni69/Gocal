@@ -12,7 +12,7 @@
  */
 
 import * as fc from 'fast-check';
-import { formatOpeningHours, getAllOpeningHours } from '../utils/openingHours';
+import { formatOpeningHours, getAllOpeningHours, parseGoogleOpeningHours } from '../utils/openingHours';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -166,3 +166,41 @@ describe('Bug A — full-key mismatch: getAllOpeningHours with full day-name key
 // (openingHours.bugCondition.component.test.tsx) because it requires React rendering.
 // The utility-level tests above cover Bug A fully.
 // Bug B is validated by the component test file.
+
+describe('parseGoogleOpeningHours', () => {
+  it('correctly parses standard Google Places weekdayDescriptions', () => {
+    const weekdayDescriptions = [
+      'Monday: 9:00 AM – 9:00 PM',
+      'Tuesday: 9:00 AM – 9:00 PM',
+      'Wednesday: 9:00 AM – 9:00 PM',
+      'Thursday: 9:00 AM – 9:00 PM',
+      'Friday: 9:00 AM – 9:00 PM',
+      'Saturday: 10:00 AM – 6:00 PM',
+      'Sunday: Closed'
+    ];
+
+    const result = parseGoogleOpeningHours(weekdayDescriptions);
+    expect(result).toEqual({
+      Mon: { open: '09:00', close: '21:00' },
+      Tue: { open: '09:00', close: '21:00' },
+      Wed: { open: '09:00', close: '21:00' },
+      Thu: { open: '09:00', close: '21:00' },
+      Fri: { open: '09:00', close: '21:00' },
+      Sat: { open: '10:00', close: '18:00' },
+      Sun: { closed: true }
+    });
+  });
+
+  it('handles 24 hours and missing minutes', () => {
+    const weekdayDescriptions = [
+      'Monday: Open 24 hours',
+      'Tuesday: 9 AM – 9 PM'
+    ];
+
+    const result = parseGoogleOpeningHours(weekdayDescriptions);
+    expect(result).toEqual({
+      Mon: { open: '00:00', close: '24:00' },
+      Tue: { open: '09:00', close: '21:00' }
+    });
+  });
+});

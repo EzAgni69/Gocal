@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, MapPin, Star, Phone, Globe, Lock, CheckCircle, ArrowRight, Clock, Heart, LayoutGrid, List, Store, Share2, Check, ExternalLink, Loader2 } from 'lucide-react';
+import { Search, MapPin, Star, Phone, Globe, Lock, CheckCircle, ArrowRight, Clock, Heart, LayoutGrid, List, Store, Share2, Check, ExternalLink, Loader2, X } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Vendor } from '../types';
 import { VADODARA_PINCODES, CATEGORIES } from '../constants';
@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { ContactCardModal } from './ContactCardModal';
 import { ContactCardSelectorModal } from './ContactCardSelectorModal';
 import { useTranslation } from '../providers/TranslationProvider';
-import { formatOpeningHours } from '../utils/openingHours';
+import { formatOpeningHours, parseGoogleOpeningHours } from '../utils/openingHours';
 import Image from 'next/image';
 import { searchVadodaraPlaces, GooglePlaceResponse } from '../services/placesApi';
 import { FavoriteButton } from './FavoriteButton';
@@ -132,6 +132,9 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
             rating: place.rating || 0,
             reviewCount: place.userRatingCount || 0,
             isPremium: false,
+            websiteUrl: place.websiteUri,
+            planType: place.websiteUri ? 'card_website' : 'card_only',
+            openingHours: parseGoogleOpeningHours(place.regularOpeningHours?.weekdayDescriptions),
           };
           setSelectedVendor(vendorObj);
         }
@@ -176,6 +179,12 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
   const handleSuggestedSearch = (query: string) => {
     setSearchQuery(query);
     handleSearchGoogle(query, pincode);
+  };
+
+  const handleClearFilters = () => {
+    setSearchQuery('');
+    setPincode('');
+    handleSearchGoogle('popular stores', '');
   };
 
   useEffect(() => {
@@ -256,6 +265,9 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
       rating: place.rating || 0,
       reviewCount: place.userRatingCount || 0,
       isPremium: false,
+      websiteUrl: place.websiteUri,
+      planType: place.websiteUri ? 'card_website' : 'card_only',
+      openingHours: parseGoogleOpeningHours(place.regularOpeningHours?.weekdayDescriptions),
     };
     setSelectedVendor(vendorObj);
   };
@@ -306,15 +318,27 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
           >
             {locationAccess === 'denied' && (
               <div className="glass p-2 rounded-xl sm:rounded-2xl shadow-lg flex gap-2 border border-white/20 bg-red-500/10">
-                <div className="flex-1 flex items-center bg-white/10 rounded-lg sm:rounded-xl px-3 sm:px-4 h-10 hover:bg-white/20 transition-colors">
-                  <MapPin className="text-gold-400 w-4 h-4 mr-2" />
+                <div className="flex-1 flex items-center bg-white/10 rounded-lg sm:rounded-xl px-3 sm:px-4 h-10 hover:bg-white/20 transition-colors relative">
+                  <MapPin className="text-gold-400 w-4 h-4 mr-2 shrink-0" />
                   <input
                     type="text"
                     placeholder={t("Enter PIN code (e.g., 390001) for accurate results")}
-                    className="w-full bg-transparent outline-none text-white placeholder-gray-300 font-medium text-xs sm:text-sm"
+                    className="w-full bg-transparent outline-none text-white placeholder-gray-300 font-medium text-xs sm:text-sm pr-8"
                     value={pincode}
                     onChange={(e) => setPincode(e.target.value)}
                   />
+                  {pincode && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPincode('');
+                        handleSearchGoogle(searchQuery, '');
+                      }}
+                      className="absolute right-4 text-gray-400 hover:text-white transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               </div>
             )}
@@ -322,15 +346,27 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
               className="glass p-2 rounded-2xl sm:rounded-full shadow-2xl flex gap-2 border border-white/20"
               onSubmit={handleSubmit}
             >
-              <div className="flex-1 flex items-center bg-white/10 rounded-xl sm:rounded-full px-3 sm:px-6 h-12 sm:h-14 hover:bg-white/20 transition-colors">
-                <Search className="text-gold-400 w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+              <div className="flex-1 flex items-center bg-white/10 rounded-xl sm:rounded-full px-3 sm:px-6 h-12 sm:h-14 hover:bg-white/20 transition-colors relative">
+                <Search className="text-gold-400 w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 shrink-0" />
                 <input
                   type="text"
                   placeholder={t("Search stores...")}
-                  className="w-full bg-transparent outline-none text-white placeholder-gray-400 font-medium text-sm sm:text-base"
+                  className="w-full bg-transparent outline-none text-white placeholder-gray-400 font-medium text-sm sm:text-base pr-8"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('');
+                      handleSearchGoogle('popular stores', pincode);
+                    }}
+                    className="absolute right-4 text-gray-400 hover:text-white transition-colors"
+                  >
+                    <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                )}
               </div>
               <Button
                 type="submit"
@@ -393,7 +429,18 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
           
           {/* Quick Browse Sidebar */}
           <div className="w-full lg:w-64 shrink-0 top-24 sticky hidden lg:block bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-            <h3 className="font-serif text-lg font-bold text-luxury-black mb-4">{t('Quick Browse')}</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-serif text-lg font-bold text-luxury-black">{t('Quick Browse')}</h3>
+              {(searchQuery || pincode) && (
+                <button
+                  onClick={handleClearFilters}
+                  className="text-xs text-red-500 hover:text-red-700 font-semibold transition-colors flex items-center gap-1"
+                >
+                  <X className="w-3 h-3" />
+                  {t('Clear')}
+                </button>
+              )}
+            </div>
             <div className="space-y-2">
               {SUGGESTED_SEARCHES.map((suggestion) => (
                 <button
@@ -412,7 +459,16 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
           </div>
 
           {/* Mobile Filters Scroll */}
-          <div className="w-full lg:hidden overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar flex gap-2">
+          <div className="w-full lg:hidden overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar flex gap-2 items-center animate-fade-in">
+            {(searchQuery || pincode) && (
+              <button
+                onClick={handleClearFilters}
+                className="whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors border bg-red-50 border-red-200 text-red-600 hover:bg-red-100 flex items-center gap-1 shadow-sm shrink-0"
+              >
+                <X className="w-3.5 h-3.5" />
+                {t('Clear Filters')}
+              </button>
+            )}
             {SUGGESTED_SEARCHES.map((suggestion) => (
               <button
                 key={suggestion}

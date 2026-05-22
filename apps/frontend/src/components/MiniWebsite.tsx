@@ -641,7 +641,9 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                         />
                       ))}
                     </div>
-                    <p className="text-gray-600 font-light leading-relaxed mb-6 italic">"{review.comment}"</p>
+                    {review.comment && (
+                      <p className="text-gray-600 font-light leading-relaxed mb-6 italic">"{review.comment}"</p>
+                    )}
                     <div className="flex items-center gap-4">
                       <div className="relative w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
                         {review.user?.avatarUrl ? (
