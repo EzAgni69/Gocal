@@ -299,13 +299,19 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
               {t('Vadodara, Gujarat')}
             </Badge>
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif font-medium mb-3 text-white leading-tight tracking-wide">
-              {t('Discover Local')}{' '}
+              {t('Discover Best Local')}{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 font-semibold drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
                 {t('Stores & Services')}
               </span>
             </h1>
             <p className="text-sm sm:text-base text-gray-300 font-light mb-8 max-w-2xl mx-auto tracking-wide">
-              {t('Find the best shops, services, and businesses in Vadodara city')}
+              {t('"expand your Business / service  for free" ')}
+              <button
+                onClick={() => router.push('/request-card')}
+                className="text-gold-400 hover:text-gold-300 underline font-medium transition-colors ml-1 inline-flex items-center"
+              >
+                {t('Register here')}
+              </button>
             </p>
           </motion.div>
 

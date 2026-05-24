@@ -31,6 +31,7 @@ import { ReviewsList } from './ReviewsList';
 import { Review } from '../types';
 import { apiClient } from '../services/apiClient';
 import Image from 'next/image';
+import { FullScreenImageModal } from './FullScreenImageModal';
 
 
 interface ContactCardModalProps {
@@ -55,6 +56,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
     const [showAllHours, setShowAllHours] = React.useState(false);
     const [reviews, setReviews] = React.useState<Review[]>([]);
     const [reviewsLoading, setReviewsLoading] = React.useState(false);
+    const [fullScreenImage, setFullScreenImage] = React.useState<string | null>(null);
 
     useEffect(() => {
         if (isOpen) {
@@ -124,7 +126,8 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
         window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank');
     };
 
-    const handleShare = async () => {
+    const handleShare = async (e: React.MouseEvent) => {
+        e.stopPropagation();
         const shareData = {
             title: vendor.name,
             url: `${window.location.origin}/?vendor=${vendor.id}`,
@@ -214,12 +217,15 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Cover Image Header */}
-                        <div className="relative h-48 overflow-hidden">
+                        <div 
+                            className="relative h-48 overflow-hidden cursor-zoom-in"
+                            onClick={() => setFullScreenImage(vendor.coverImage)}
+                        >
                             <Image
                                 src={vendor.coverImage}
                                 alt={vendor.name}
                                 fill
-                                className="object-cover"
+                                className="object-cover hover:scale-105 transition-transform duration-500"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
@@ -243,7 +249,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
 
                             {/* Close Button */}
                             <button
-                                onClick={onClose}
+                                onClick={(e) => { e.stopPropagation(); onClose(); }}
                                 className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-colors"
                             >
                                 <X className="h-5 w-5" />
@@ -416,7 +422,11 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                             {vendor.miniWebsiteConfig?.qrCodeUrl && (
                                 <div className="mb-6">
                                     <h3 className="font-serif text-lg font-bold text-luxury-black mb-3">{t('Scan to Pay')}</h3>
-                                    <div className="flex justify-center p-4 bg-luxury-cream rounded-xl border" style={{ borderColor: accentColor + '40' }}>
+                                    <div 
+                                        className="flex justify-center p-4 bg-luxury-cream rounded-xl border cursor-zoom-in hover:opacity-95 transition-opacity" 
+                                        style={{ borderColor: accentColor + '40' }}
+                                        onClick={() => setFullScreenImage(vendor.miniWebsiteConfig!.qrCodeUrl!)}
+                                    >
                                         <Image
                                             src={vendor.miniWebsiteConfig.qrCodeUrl}
                                             alt={t("Payment QR Code")}
@@ -440,7 +450,10 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                     <div className="space-y-4">
                                         {vendor.products.map((product) => (
                                             <div key={product.id} className="flex gap-4 p-3 rounded-2xl bg-gray-50 border border-gray-100 group transition-all hover:bg-white hover:shadow-md hover:border-gold-200">
-                                                <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border border-gray-100">
+                                                <div 
+                                                    className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border border-gray-100 cursor-zoom-in"
+                                                    onClick={() => setFullScreenImage(product.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80')}
+                                                >
                                                     <Image
                                                         src={product.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80'}
                                                         alt={t(product.name)}
@@ -501,7 +514,8 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                         {vendor.galleryImages.map((img, index) => (
                                             <div
                                                 key={index}
-                                                className="relative aspect-square rounded-xl overflow-hidden border border-gold-100 hover:border-gold-300 transition-all cursor-pointer group"
+                                                className="relative aspect-square rounded-xl overflow-hidden border border-gold-100 hover:border-gold-300 transition-all cursor-zoom-in group"
+                                                onClick={() => setFullScreenImage(img.imageUrl)}
                                             >
                                                 <Image
                                                     src={img.imageUrl}
@@ -587,6 +601,14 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                         onClose={() => setShowReviewModal(false)}
                         onSubmit={handleSubmitReview}
                         vendorName={vendor.name}
+                    />
+
+                    {/* Full Screen Image Lightbox */}
+                    <FullScreenImageModal
+                        src={fullScreenImage}
+                        isOpen={!!fullScreenImage}
+                        onClose={() => setFullScreenImage(null)}
+                        alt={vendor.name}
                     />
                 </>
             )}

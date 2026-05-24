@@ -11,6 +11,7 @@ import { ReviewModal } from './ReviewModal';
 import { apiClient } from '../services/apiClient';
 import { formatOpeningHours, getAllOpeningHours } from '../utils/openingHours';
 import Image from 'next/image';
+import { FullScreenImageModal } from './FullScreenImageModal';
 
 
 interface MiniWebsiteProps {
@@ -35,6 +36,7 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
   const [reviews, setReviews] = useState<Review[]>(vendor.reviews || []);
   const [reviewsLoading, setReviewsLoading] = useState(false);
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
+  const [fullScreenImage, setFullScreenImage] = useState<string | null>(null);
 
   // Derived display values with fallbacks
   const businessLabel = vendor.miniWebsiteConfig?.businessLabel?.trim() || vendor.name;
@@ -132,7 +134,10 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
             </button>
             <div className="h-8 w-px bg-gray-200 hidden md:block"></div>
             <div className="flex items-center gap-4">
-            <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border border-gray-100 shadow-sm flex-shrink-0 bg-white">
+            <div 
+              className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border border-gray-100 shadow-sm flex-shrink-0 bg-white cursor-zoom-in hover:scale-105 transition-transform"
+              onClick={() => vendor.coverImage && setFullScreenImage(vendor.coverImage)}
+            >
                 {vendor.coverImage ? (
                   <Image src={vendor.coverImage} alt="logo" fill className="object-cover" />
                 ) : (
@@ -245,14 +250,17 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
               className="w-full"
             >
               {/* Luxury Hero Banner */}
-              <div className="relative w-full h-[60vh] md:h-[75vh] flex items-center justify-center overflow-hidden bg-black">
+              <div 
+                className="relative w-full h-[60vh] md:h-[75vh] flex items-center justify-center overflow-hidden bg-black cursor-zoom-in group/hero"
+                onClick={() => setFullScreenImage(vendor.coverImage)}
+              >
                 <motion.img 
                   initial={{ scale: 1.1 }}
                   animate={{ scale: 1 }}
                   transition={{ duration: 1.5, ease: 'easeOut' }}
                   src={vendor.coverImage} 
                   alt="Cover" 
-                  className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay" 
+                  className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay transition-opacity group-hover/hero:opacity-75" 
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/30"></div>
                 <div className="relative z-10 text-center px-6 max-w-4xl mx-auto mt-16 md:mt-20">
@@ -278,7 +286,7 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                     transition={{ delay: 0.6, duration: 0.8 }}
                   >
                     <button 
-                      onClick={() => setActiveTab('products')}
+                      onClick={(e) => { e.stopPropagation(); setActiveTab('products'); }}
                       className="mt-12 px-10 py-4 bg-white text-black text-xs uppercase tracking-[0.2em] font-bold hover:bg-gray-100 transition-colors shadow-[0_0_40px_rgba(255,255,255,0.3)]"
                     >
                       {t('Discover Products')}
@@ -394,19 +402,27 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                           </div>
                           <div>
                             <p className="font-bold text-black tracking-widest uppercase text-xs mb-3">Scan to Pay</p>
-                            <Image
-                              src={vendor.miniWebsiteConfig.qrCodeUrl}
-                              alt="Payment QR Code"
-                              width={200}
-                              height={200}
-                              className="rounded-lg border border-gray-100"
-                            />
+                            <div 
+                              className="cursor-zoom-in hover:opacity-95 transition-opacity"
+                              onClick={() => setFullScreenImage(vendor.miniWebsiteConfig!.qrCodeUrl!)}
+                            >
+                              <Image
+                                src={vendor.miniWebsiteConfig.qrCodeUrl}
+                                alt="Payment QR Code"
+                                width={200}
+                                height={200}
+                                className="rounded-lg border border-gray-100"
+                              />
+                            </div>
                           </div>
                         </div>
                       )}
                     </div>
                   </div>
-                  <div className="relative h-[500px] lg:h-[700px] overflow-hidden order-1 lg:order-2">
+                  <div 
+                    className="relative h-[500px] lg:h-[700px] overflow-hidden order-1 lg:order-2 cursor-zoom-in hover:opacity-95 transition-opacity"
+                    onClick={() => setFullScreenImage(vendor.coverImage || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop")}
+                  >
                     <Image 
                       src={vendor.coverImage || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop"} 
                       alt="Store front" 
@@ -442,7 +458,10 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                   const isInWishlist = wishlist.some(p => p.id === product.id);
                   return (
                     <div key={product.id} className="group cursor-pointer">
-                      <div className="relative aspect-[3/4] overflow-hidden bg-gray-100 mb-6">
+                      <div 
+                        className="relative aspect-[3/4] overflow-hidden bg-gray-100 mb-6 cursor-zoom-in"
+                        onClick={() => setFullScreenImage(product.image || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80")}
+                      >
                         <Image 
                           src={product.image || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80"} 
                           alt={product.name || 'Product'} 
@@ -560,7 +579,11 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
 
               <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
                 {vendor.galleryImages?.map((img, idx) => (
-                  <div key={idx} className="break-inside-avoid relative group overflow-hidden bg-gray-100">
+                  <div 
+                    key={idx} 
+                    className="break-inside-avoid relative group overflow-hidden bg-gray-100 cursor-zoom-in"
+                    onClick={() => setFullScreenImage(img.imageUrl || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80")}
+                  >
                     <Image src={img.imageUrl || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80"} alt={img.caption || "Gallery"} width={800} height={800} className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
                     {img.caption && (
                       <div className="absolute bottom-0 left-0 right-0 p-4 bg-black/60 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity">
@@ -681,6 +704,13 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
         onClose={() => setShowReviewModal(false)}
         onSubmit={handleSubmitReview}
         vendorName={vendor.name}
+      />
+
+      <FullScreenImageModal
+        src={fullScreenImage}
+        isOpen={!!fullScreenImage}
+        onClose={() => setFullScreenImage(null)}
+        alt={vendor.name}
       />
     </div>
   );
