@@ -60,6 +60,28 @@ interface AppContextType {
     loginRequiredAction: string;
     setLoginRequiredAction: (action: string) => void;
     requireAuth: (actionName: string) => boolean;
+
+    // Location state
+    pincode: string;
+    setPincode: (pin: string) => void;
+    resolvedArea: string | null;
+    setResolvedArea: (area: string | null) => void;
+    locationAccess: 'pending' | 'granted' | 'denied';
+    setLocationAccess: (access: 'pending' | 'granted' | 'denied') => void;
+    userLat: number | undefined;
+    setUserLat: (lat: number | undefined) => void;
+    userLng: number | undefined;
+    setUserLng: (lng: number | undefined) => void;
+
+    // Search & filters state
+    searchQuery: string;
+    setSearchQuery: (query: string) => void;
+    filterOpenNow: boolean;
+    setFilterOpenNow: (val: boolean) => void;
+    sortByReview: boolean;
+    setSortByReview: (val: boolean) => void;
+    sortByDistance: boolean;
+    setSortByDistance: (val: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -83,6 +105,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const [authModalMode, setAuthModalMode] = useState<AuthModalMode>('signin');
     const [showLoginRequiredModal, setShowLoginRequiredModal] = useState(false);
     const [loginRequiredAction, setLoginRequiredAction] = useState('');
+
+    // Location and Search states
+    const [pincode, setPincode] = useState('');
+    const [resolvedArea, setResolvedArea] = useState<string | null>(null);
+    const [locationAccess, setLocationAccess] = useState<'pending' | 'granted' | 'denied'>('pending');
+    const [userLat, setUserLat] = useState<number | undefined>();
+    const [userLng, setUserLng] = useState<number | undefined>();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filterOpenNow, setFilterOpenNow] = useState(false);
+    const [sortByReview, setSortByReview] = useState(false);
+    const [sortByDistance, setSortByDistance] = useState(false);
 
     // Sync Firebase Auth State and Fetch User Data
     const fetchUserData = async (token: string) => {
@@ -390,6 +423,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
             showLoginRequiredModal, setShowLoginRequiredModal,
             loginRequiredAction, setLoginRequiredAction,
             requireAuth,
+            // Location
+            pincode, setPincode,
+            resolvedArea, setResolvedArea,
+            locationAccess, setLocationAccess,
+            userLat, setUserLat,
+            userLng, setUserLng,
+            // Search & filters
+            searchQuery, setSearchQuery,
+            filterOpenNow, setFilterOpenNow,
+            sortByReview, setSortByReview,
+            sortByDistance, setSortByDistance,
         }}>
             {children}
         </AppContext.Provider>

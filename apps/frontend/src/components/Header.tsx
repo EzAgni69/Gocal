@@ -1,5 +1,5 @@
 'use client';
-import { ShoppingBag, User, Globe, ChevronDown, LogIn, LogOut, Settings, Heart, Menu, X, ChevronRight, Store, CreditCard, ShieldAlert } from 'lucide-react';
+import { ShoppingBag, User, Globe, ChevronDown, LogIn, LogOut, Settings, Heart, Menu, X, ChevronRight, Store, CreditCard, ShieldAlert, MapPin, Search, Clock, Star } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { UserRole, Language } from '../types';
 import { useRouter, usePathname } from 'next/navigation';
@@ -20,7 +20,17 @@ export const Header = () => {
         favoritesCount,
         // Auth
         user, isAuthenticated, logout,
-        setShowAuthModal, setAuthModalMode
+        setShowAuthModal, setAuthModalMode,
+        // Global Location & Search context
+        pincode, setPincode,
+        resolvedArea, setResolvedArea,
+        locationAccess, setLocationAccess,
+        userLat, setUserLat,
+        userLng, setUserLng,
+        searchQuery, setSearchQuery,
+        filterOpenNow, setFilterOpenNow,
+        sortByReview, setSortByReview,
+        sortByDistance, setSortByDistance
     } = useAppContext();
     const { t } = useTranslation();
     const router = useRouter();
@@ -28,6 +38,8 @@ export const Header = () => {
     const [scrolled, setScrolled] = useState(false);
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
+    const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+    const [showMobileSearch, setShowMobileSearch] = useState(false);
     const userMenuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -136,22 +148,44 @@ export const Header = () => {
                 </div>
 
                 {/* Mobile Top Bar Actions */}
-                <div className="flex md:hidden items-center gap-3">
+                <div className="flex md:hidden items-center gap-2">
+                     <button 
+                         onClick={() => {
+                             setShowLocationDropdown(!showLocationDropdown);
+                             setShowMobileSearch(false);
+                         }}
+                         className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-gold-50/95 border border-gold-200/50 text-luxury-black text-[11px] font-semibold max-w-[120px] sm:max-w-[140px] truncate transition-all active:scale-95"
+                     >
+                         <MapPin className="w-3.5 h-3.5 text-gold-500 shrink-0" />
+                         <span className="truncate">{resolvedArea || t('Vadodara')}</span>
+                         <ChevronDown className="w-3 h-3 text-gray-400 shrink-0" />
+                     </button>
+
                      <button
-                        onClick={() => setShowWishlistDrawer(true)}
-                        className="p-2 text-luxury-black hover:text-gold-600 transition-colors relative"
-                    >
-                        <ShoppingBag className="w-5 h-5" />
-                         {wishlist.length > 0 && (
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-gold-500 rounded-full" />
-                        )}
-                    </button>
+                         onClick={() => {
+                             setShowMobileSearch(!showMobileSearch);
+                             setShowLocationDropdown(false);
+                         }}
+                         className={cn(
+                             "p-2 rounded-full hover:bg-gold-50 text-luxury-black transition-all active:scale-95",
+                             showMobileSearch && "text-gold-600 bg-gold-50"
+                         )}
+                         aria-label="Search"
+                     >
+                         <Search className="w-5 h-5" />
+                     </button>
+
                      <button
-                        className="p-2 text-luxury-black hover:text-gold-600 transition-colors"
-                        onClick={() => setShowMobileMenu(true)}
-                    >
+                        className="p-2 text-luxury-black hover:text-gold-600 transition-all active:scale-95"
+                        onClick={() => {
+                            setShowMobileMenu(true);
+                            setShowMobileSearch(false);
+                            setShowLocationDropdown(false);
+                        }}
+                        aria-label={t("Menu")}
+                     >
                         <Menu className="w-6 h-6" />
-                    </button>
+                     </button>
                 </div>
 
                 {/* Desktop Actions */}
@@ -359,6 +393,188 @@ export const Header = () => {
                 </div>
             </div>
 
+            {/* Location Dropdown - Mobile only */}
+            <AnimatePresence>
+                {showLocationDropdown && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden bg-white/95 backdrop-blur-md border-t border-gold-100/50 md:hidden"
+                    >
+                        <div className="p-4 flex flex-col gap-3">
+                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">{t('Select Pincode / Location')}</label>
+                            <div className="flex gap-2">
+                                <div className="flex-1 flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
+                                    <MapPin className="text-gold-500 w-4 h-4 mr-2" />
+                                    <input 
+                                        type="text" 
+                                        placeholder={t('Enter 6-digit Pincode')}
+                                        value={pincode}
+                                        onChange={(e) => setPincode(e.target.value)}
+                                        className="bg-transparent outline-none w-full text-sm text-luxury-black placeholder-gray-400 font-medium"
+                                        maxLength={6}
+                                    />
+                                    {pincode && (
+                                        <button onClick={() => setPincode('')} className="text-gray-400 hover:text-luxury-black">
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    )}
+                                </div>
+                                <Button 
+                                    size="sm"
+                                    onClick={() => {
+                                        setShowLocationDropdown(false);
+                                    }}
+                                    className="bg-gold-500 hover:bg-gold-600 text-luxury-black rounded-xl font-bold px-4 h-[38px]"
+                                >
+                                    {t('Apply')}
+                                </Button>
+                            </div>
+                            
+                            {/* Geolocation Request Option */}
+                            {locationAccess !== 'granted' && (
+                                <button 
+                                    onClick={() => {
+                                        setShowLocationDropdown(false);
+                                        if (navigator.geolocation) {
+                                            navigator.geolocation.getCurrentPosition(
+                                                (position) => {
+                                                    setLocationAccess('granted');
+                                                    setUserLat(position.coords.latitude);
+                                                    setUserLng(position.coords.longitude);
+                                                    // Reverse geocoding lookup
+                                                    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json&accept-language=en`)
+                                                        .then(res => res.json())
+                                                        .then(data => {
+                                                            if (data && data.address) {
+                                                                const area = data.address.suburb || data.address.neighbourhood || data.address.residential || data.address.village || data.address.city_district;
+                                                                if (area) setResolvedArea(area);
+                                                            }
+                                                        })
+                                                        .catch(err => console.warn(err));
+                                                },
+                                                (err) => {
+                                                    console.warn(err);
+                                                    setLocationAccess('denied');
+                                                }
+                                            );
+                                        }
+                                    }}
+                                    className="text-xs text-gold-600 font-bold hover:text-gold-700 text-left flex items-center gap-1.5 mt-1"
+                                >
+                                    <Globe className="w-3.5 h-3.5" />
+                                    {t('Use My Current Location (GPS)')}
+                                </button>
+                            )}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Search and Filters Subbar - Mobile only */}
+            <AnimatePresence>
+                {showMobileSearch && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden bg-white/95 backdrop-blur-md border-t border-gold-100/50 md:hidden"
+                    >
+                        <div className="p-4 flex flex-col gap-3">
+                            {/* Search bar input */}
+                            <form 
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                }}
+                                className="flex gap-2"
+                            >
+                                <div className="flex-1 flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
+                                    <Search className="text-gray-400 w-4 h-4 mr-2" />
+                                    <input 
+                                        type="text" 
+                                        placeholder={t('Search stores & services...')}
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="bg-transparent outline-none w-full text-sm text-luxury-black placeholder-gray-400 font-medium"
+                                    />
+                                    {searchQuery && (
+                                        <button type="button" onClick={() => setSearchQuery('')} className="text-gray-400 hover:text-luxury-black">
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    )}
+                                </div>
+                            </form>
+
+                            {/* Filter Chips Scrollable */}
+                            <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
+                                <button
+                                    onClick={() => setFilterOpenNow(!filterOpenNow)}
+                                    className={cn(
+                                        "px-3 py-1.5 rounded-full text-xs font-semibold border transition-all shrink-0 flex items-center gap-1",
+                                        filterOpenNow 
+                                            ? "bg-gold-500 border-gold-500 text-luxury-black shadow-sm" 
+                                            : "bg-white border-gray-200 text-gray-600 hover:border-gold-300"
+                                    )}
+                                >
+                                    <Clock className="w-3.5 h-3.5" />
+                                    {t('Open Now')}
+                                </button>
+
+                                <button
+                                    onClick={() => {
+                                        setSortByReview(!sortByReview);
+                                        setSortByDistance(false);
+                                    }}
+                                    className={cn(
+                                        "px-3 py-1.5 rounded-full text-xs font-semibold border transition-all shrink-0 flex items-center gap-1",
+                                        sortByReview 
+                                            ? "bg-gold-500 border-gold-500 text-luxury-black shadow-sm" 
+                                            : "bg-white border-gray-200 text-gray-600 hover:border-gold-300"
+                                    )}
+                                >
+                                    <Star className="w-3.5 h-3.5" />
+                                    {t('Top Rated')}
+                                </button>
+
+                                <button
+                                    onClick={() => {
+                                        if (locationAccess === 'granted' || pincode) {
+                                            setSortByDistance(!sortByDistance);
+                                            setSortByReview(false);
+                                        }
+                                    }}
+                                    disabled={locationAccess !== 'granted' && !pincode}
+                                    className={cn(
+                                        "px-3 py-1.5 rounded-full text-xs font-semibold border transition-all shrink-0 flex items-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed",
+                                        sortByDistance 
+                                            ? "bg-gold-500 border-gold-500 text-luxury-black shadow-sm" 
+                                            : "bg-white border-gray-200 text-gray-600 hover:border-gold-300"
+                                    )}
+                                >
+                                    <MapPin className="w-3.5 h-3.5" />
+                                    {t('Nearest')}
+                                </button>
+
+                                {(filterOpenNow || sortByReview || sortByDistance) && (
+                                    <button
+                                        onClick={() => {
+                                            setFilterOpenNow(false);
+                                            setSortByReview(false);
+                                            setSortByDistance(false);
+                                        }}
+                                        className="px-3 py-1.5 rounded-full text-xs font-semibold border border-red-200 bg-red-50 text-red-600 transition-all shrink-0 flex items-center gap-1"
+                                    >
+                                        <X className="w-3.5 h-3.5" />
+                                        {t('Clear')}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Mobile Menu Drawer - Premium Redesign */}
             <AnimatePresence>
                 {showMobileMenu && (
@@ -444,6 +660,22 @@ export const Header = () => {
                                         <div className="flex items-center gap-2">
                                             {favoritesCount > 0 && (
                                                 <span className="text-xs font-bold text-white bg-gold-500 px-2 py-0.5 rounded-full">{favoritesCount}</span>
+                                            )}
+                                            <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gold-500" />
+                                        </div>
+                                    </button>
+
+                                    <button
+                                        onClick={() => {
+                                            setShowWishlistDrawer(true);
+                                            setShowMobileMenu(false);
+                                        }}
+                                        className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white transition-colors group"
+                                    >
+                                        <span className="font-serif text-xl text-luxury-black group-hover:text-gold-600 transition-colors">{t('Wishlist')}</span>
+                                        <div className="flex items-center gap-2">
+                                            {wishlist.length > 0 && (
+                                                <span className="text-xs font-bold text-white bg-gold-500 px-2 py-0.5 rounded-full">{wishlist.length}</span>
                                             )}
                                             <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gold-500" />
                                         </div>

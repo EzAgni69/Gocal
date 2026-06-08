@@ -113,6 +113,8 @@ export interface Vendor {
   offers?: { title: string; code: string; discount: string }[];
   miniWebsiteConfig?: MiniWebsiteConfig;
   websiteUrl?: string;
+  latitude?: string;
+  longitude?: string;
   createdAt?: string;
 }
 

@@ -57,36 +57,81 @@ const itemVariants: Variants = {
 
 const DEFAULT_STORE_IMAGE = 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&q=80';
 
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371; // Radius of the earth in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const d = R * c; // Distance in km
+  return d;
+}
+
+const PINCODE_TO_AREA: Record<string, string> = {
+  '390001': 'Raopura',
+  '390002': 'Fatehgunj',
+  '390003': 'Wadi',
+  '390004': 'Karelibaug',
+  '390005': 'Pratapnagar',
+  '390006': 'Jawaharnagar',
+  '390007': 'Alkapuri',
+  '390008': 'Makarpura',
+  '390009': 'Subhanpura',
+  '390010': 'Bajwa',
+  '390011': 'Gotri',
+  '390012': 'Gorwa',
+  '390013': 'New Sama',
+  '390014': 'Petrochemicals',
+  '390015': 'Subhanpura',
+  '390016': 'Harni Road',
+  '390017': 'Atladra',
+  '390018': 'Karelibaug',
+  '390019': 'Harni',
+  '390020': 'Bhayli',
+  '390021': 'Manjalpur',
+  '390022': 'Akota',
+  '390023': 'Gorwa',
+  '390024': 'Waghodia Road',
+  '390025': 'Tandalja',
+  '390026': 'Bil',
+  '390030': 'Chhani',
+  '391101': 'Padra',
+  '391240': 'Karjan',
+  '391750': 'Savli',
+  '391830': 'Waghodia'
+};
+
 export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
   const {
     language,
     requireAuth,
     addToFavorites,
     removeFromFavorites,
-    isFavorite
+    isFavorite,
+    pincode, setPincode,
+    resolvedArea, setResolvedArea,
+    locationAccess, setLocationAccess,
+    userLat, setUserLat,
+    userLng, setUserLng,
+    searchQuery, setSearchQuery,
+    filterOpenNow, setFilterOpenNow,
+    sortByReview, setSortByReview,
+    sortByDistance, setSortByDistance
   } = useAppContext();
   const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  // Unified State
-  const [searchQuery, setSearchQuery] = useState('');
-  const [pincode, setPincode] = useState('');
-  // We keep category filter for DB vendors only, although not in Vadodara search bar UI
-  // we can keep it out of the main hero since we are replacing it, or add it back if needed. 
-  // Let's stick to the simpler VadodaraPlaces search bar as requested: 
-  // "replace the seach bar from home screen with 'explore vadodra' search bar"
 
   // Google Places State
   const [places, setPlaces] = useState<GooglePlaceResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
-
-  // Location tracking
-  const [locationAccess, setLocationAccess] = useState<'pending' | 'granted' | 'denied'>('pending');
-  const [userLat, setUserLat] = useState<number | undefined>();
-  const [userLng, setUserLng] = useState<number | undefined>();
+  
+  const lastSearchRef = React.useRef({ query: '', pincode: '', lat: 0, lng: 0 });
 
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
   const [selectingGroup, setSelectingGroup] = useState<Vendor[] | null>(null);
@@ -150,6 +195,22 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
   // Google Search Trigger
   const handleSearchGoogle = async (query: string, searchPincode: string = pincode) => {
     if (!query.trim()) return;
+    
+    const currentLat = userLat || 0;
+    const currentLng = userLng || 0;
+    
+    // Check if it's the exact same query parameters
+    if (
+      lastSearchRef.current.query === query &&
+      lastSearchRef.current.pincode === searchPincode &&
+      lastSearchRef.current.lat === currentLat &&
+      lastSearchRef.current.lng === currentLng
+    ) {
+      return; // Skip duplicate search
+    }
+    
+    lastSearchRef.current = { query, pincode: searchPincode, lat: currentLat, lng: currentLng };
+
     setIsLoading(true);
     setError(null);
     setHasSearched(true);
@@ -192,42 +253,155 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setLocationAccess('granted');
-          setUserLat(position.coords.latitude);
-          setUserLng(position.coords.longitude);
-          handleSearchGoogle('popular stores', pincode);
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setUserLat(lat);
+          setUserLng(lng);
+
+          // Reverse geocoding lookup
+          fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=en`)
+            .then((res) => res.json())
+            .then((data) => {
+              if (data && data.address) {
+                const area = data.address.suburb || 
+                             data.address.neighbourhood || 
+                             data.address.residential || 
+                             data.address.village || 
+                             data.address.city_district || 
+                             data.address.county;
+                if (area) {
+                  setResolvedArea(area);
+                }
+              }
+            })
+            .catch((err) => console.warn('Nominatim geocode failed:', err));
         },
         (err) => {
           console.warn('Geolocation not available/denied:', err.message || err);
           setLocationAccess('denied');
-          handleSearchGoogle('popular stores', pincode);
         },
         { timeout: 5000 }
       );
     } else {
       setLocationAccess('denied');
-      handleSearchGoogle('popular stores', pincode);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // DB Vendors Filtering
-  const filteredVendors = vendors
-    .filter((v) => {
+  // Handle resolved area from pincode input
+  useEffect(() => {
+    if (pincode && pincode.length === 6) {
+      const area = PINCODE_TO_AREA[pincode];
+      if (area) {
+        setResolvedArea(area);
+      } else {
+        setResolvedArea(`PIN ${pincode}`);
+      }
+    } else if (!pincode && locationAccess !== 'granted') {
+      setResolvedArea(null);
+    }
+  }, [pincode, locationAccess]);
+
+  // Synchronized search query effect
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      handleSearchGoogle(searchQuery || 'popular stores', pincode);
+    }, 400);
+
+    return () => clearTimeout(delayDebounceFn);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, pincode, userLat, userLng]);
+
+  // DB Vendors Filtering and Sorting
+  const filteredVendors = useMemo(() => {
+    let result = vendors.filter((v) => {
       const term = searchQuery.toLowerCase();
       const matchesSearch = !term ||
         v.name.toLowerCase().includes(term) ||
         v.city.toLowerCase().includes(term) ||
         v.phone.toLowerCase().includes(term) ||
         (v.category && v.category.toLowerCase().includes(term));
+      
       const matchesPincode = pincode ? v.address?.includes(pincode) : true;
-      return matchesSearch && matchesPincode;
-    })
-    .sort((a, b) => {
-      if (!a.createdAt && !b.createdAt) return 0;
-      if (!a.createdAt) return 1;
-      if (!b.createdAt) return -1;
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      const matchesOpen = filterOpenNow ? v.isOpen : true;
+      
+      return matchesSearch && matchesPincode && matchesOpen;
     });
+
+    if (sortByReview) {
+      result = [...result].sort((a, b) => {
+        const ratingA = a.rating || 0;
+        const ratingB = b.rating || 0;
+        if (ratingA !== ratingB) return ratingB - ratingA;
+        return (b.reviewCount || 0) - (a.reviewCount || 0);
+      });
+    } else if (sortByDistance && userLat !== undefined && userLng !== undefined) {
+      result = [...result].sort((a, b) => {
+        const latA = parseFloat(a.latitude || '0');
+        const lngA = parseFloat(a.longitude || '0');
+        const latB = parseFloat(b.latitude || '0');
+        const lngB = parseFloat(b.longitude || '0');
+        
+        const distA = (latA && lngA) ? calculateDistance(userLat, userLng, latA, lngA) : Infinity;
+        const distB = (latB && lngB) ? calculateDistance(userLat, userLng, latB, lngB) : Infinity;
+        
+        return distA - distB;
+      });
+    } else {
+      result = [...result].sort((a, b) => {
+        const premiumA = a.isPremium ? 1 : 0;
+        const premiumB = b.isPremium ? 1 : 0;
+        if (premiumA !== premiumB) return premiumB - premiumA;
+
+        if (!a.createdAt && !b.createdAt) return 0;
+        if (!a.createdAt) return 1;
+        if (!b.createdAt) return -1;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+    }
+
+    return result;
+  }, [vendors, searchQuery, pincode, filterOpenNow, sortByReview, sortByDistance, userLat, userLng]);
+
+  // Google Places Filtering and Sorting
+  const filteredPlaces = useMemo(() => {
+    let result = places.filter((p) => {
+      const matchesOpen = filterOpenNow ? (p.regularOpeningHours?.openNow) : true;
+      return matchesOpen;
+    });
+
+    if (sortByReview) {
+      result = [...result].sort((a, b) => {
+        const ratingA = a.rating || 0;
+        const ratingB = b.rating || 0;
+        if (ratingA !== ratingB) return ratingB - ratingA;
+        return (b.userRatingCount || 0) - (a.userRatingCount || 0);
+      });
+    } else if (sortByDistance && userLat !== undefined && userLng !== undefined) {
+      result = [...result].sort((a, b) => {
+        const latA = a.location?.latitude;
+        const lngA = a.location?.longitude;
+        const latB = b.location?.latitude;
+        const lngB = b.location?.longitude;
+
+        const distA = (latA !== undefined && lngA !== undefined) ? calculateDistance(userLat, userLng, latA, lngA) : Infinity;
+        const distB = (latB !== undefined && lngB !== undefined) ? calculateDistance(userLat, userLng, latB, lngB) : Infinity;
+
+        return distA - distB;
+      });
+    } else {
+      result = [...result].sort((a, b) => {
+        const aOpen = a.regularOpeningHours?.openNow ? 1 : 0;
+        const bOpen = b.regularOpeningHours?.openNow ? 1 : 0;
+        if (aOpen !== bOpen) return bOpen - aOpen;
+        const aScore = (a.rating || 0) * Math.log10((a.userRatingCount || 0) + 1);
+        const bScore = (b.rating || 0) * Math.log10((b.userRatingCount || 0) + 1);
+        return bScore - aScore;
+      });
+    }
+
+    return result;
+  }, [places, filterOpenNow, sortByReview, sortByDistance, userLat, userLng]);
 
   const groupedVendors = useMemo(() => {
     return filteredVendors.reduce((acc, vendor) => {
@@ -294,9 +468,9 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <Badge variant="premium" className="mb-3 px-4 py-1 text-[10px] sm:text-xs uppercase tracking-[0.2em] border border-gold-500/30">
+            <Badge variant="premium" className="mb-3 px-4 py-1 text-[10px] sm:text-xs uppercase tracking-[0.2em] border border-gold-500/30 hidden md:inline-flex">
               <MapPin className="w-3 h-3 mr-1 inline" />
-              {t('Vadodara, Gujarat')}
+              {resolvedArea ? `${resolvedArea}, Vadodara` : t('Vadodara, Gujarat')}
             </Badge>
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif font-medium mb-3 text-white leading-tight tracking-wide">
               {t('Discover Best Local')}{' '}
@@ -320,7 +494,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="max-w-2xl mx-auto flex flex-col gap-3"
+            className="max-w-2xl mx-auto flex-col gap-3 hidden md:flex"
           >
             {locationAccess === 'denied' && (
               <div className="glass p-2 rounded-xl sm:rounded-2xl shadow-lg flex gap-2 border border-white/20 bg-red-500/10">
@@ -407,7 +581,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
               )}
             </h2>
             <p className="text-sm sm:text-base text-gray-500">
-              {groupedVendors.length + places.length} {t('places found')}
+              {groupedVendors.length + filteredPlaces.length} {t('places found')}
             </p>
           </div>
 
@@ -764,14 +938,14 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                   </div>
                 )}
 
-                {!isLoading && !error && places.length === 0 && (
+                {!isLoading && !error && filteredPlaces.length === 0 && (
                   <div className="text-center py-12 bg-white rounded-2xl border border-gray-100 shadow-sm">
                     <h3 className="text-lg font-medium text-gray-900 mb-2">{t('No Google places found')}</h3>
                     <p className="text-gray-500 max-w-md mx-auto">{t('Try adjusting your search terms.')}</p>
                   </div>
                 )}
 
-                {!error && places.length > 0 && (
+                {!error && filteredPlaces.length > 0 && (
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={viewMode}
@@ -784,7 +958,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
                       animate="visible"
                       exit={{ opacity: 0, transition: { duration: 0.2 } }}
                     >
-                      {places.map((place) => viewMode === 'grid' ? (
+                      {filteredPlaces.map((place) => viewMode === 'grid' ? (
                         <motion.div
                           key={`grid-${place.id}`}
                           layout
