@@ -24,27 +24,21 @@ const upload = multer({
     fileFilter,
 });
 
-import { randomUUID } from 'crypto';
-
 export const uploadToGcs = async (file: Express.Multer.File, folder: string): Promise<string> => {
     const ext = path.extname(file.originalname).toLowerCase();
     const uniqueName = `uploads/${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}${ext}`;
     const blob = bucket.file(uniqueName);
 
-    // Generate a secure token to allow read access to the file
-    const token = randomUUID();
-
     await blob.save(file.buffer, {
         metadata: {
             contentType: file.mimetype,
-            metadata: {
-                firebaseStorageDownloadTokens: token,
-            }
         },
     });
 
-    // Instead of blob.makePublic(), we construct a Firebase Storage download URL
-    return `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(blob.name)}?alt=media&token=${token}`;
+    // Note: We are no longer calling blob.makePublic() here to avoid Uniform Bucket-Level Access errors.
+    // The bucket 'vanij-32b55-uploads' must be made public via Google Cloud Console IAM (allUsers -> Storage Object Viewer).
+
+    return `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
 };
 
 /**
