@@ -16,6 +16,7 @@ import { updateVendor, addProduct, updateProduct, deleteProduct, importProductsC
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/Button';
 import Image from 'next/image';
+import { apiClient } from '../services/apiClient';
 
 interface VendorDashboardProps {
   vendor: Vendor;
@@ -46,6 +47,36 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showCSVHelp, setShowCSVHelp] = useState(false);
+
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const coverInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Only image files are accepted');
+      return;
+    }
+    setIsUploadingCover(true);
+    try {
+      const form = new FormData();
+      form.append('image', file);
+      const res = await apiClient('/api/upload/main-photo', { method: 'POST', body: form });
+      if (res.ok) {
+        const { imageUrl } = await res.json();
+        setCoverImage(imageUrl);
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Upload failed');
+      }
+    } catch {
+      alert('Network error during upload');
+    } finally {
+      setIsUploadingCover(false);
+      if (e.target) e.target.value = '';
+    }
+  };
 
   const config = VENDOR_CATEGORY_CONFIG[vendor.category] || {
     requiresImage: false,
@@ -202,7 +233,7 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
   return (
     <div className="flex min-h-screen pt-32 bg-[#FDFCFB] pb-8 font-sans selection:bg-gold-200">
       {/* Sidebar - Luxurious Dark Theme */}
-      <aside className="w-72 bg-[#0A0A0A] border-r border-white/5 text-white hidden lg:flex flex-col sticky top-32 h-[calc(100vh-8rem)] z-30 shadow-2xl overflow-hidden ml-6 rounded-[2.5rem] my-auto">
+      <aside className="w-72 shrink-0 bg-[#0A0A0A] border-r border-white/5 text-white hidden lg:flex flex-col sticky top-32 h-[calc(100vh-8rem)] z-30 shadow-2xl overflow-hidden ml-6 rounded-[2.5rem] my-auto">
         <div className="p-10 border-b border-white/5 bg-gradient-to-br from-white/5 to-transparent relative overflow-hidden">
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-gold-500/10 rounded-full blur-[80px]" />
           
@@ -250,7 +281,7 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 p-6 md:p-12 overflow-y-auto max-w-7xl mx-auto w-full">
+      <main className="flex-1 min-w-0 p-6 md:p-12 max-w-7xl mx-auto w-full">
         {/* Mobile Navigation */}
         <div className="lg:hidden flex items-center justify-between mb-8 bg-white p-5 rounded-[2rem] shadow-xl shadow-black/5 border border-gray-100">
            <button onClick={() => setIsMobileMenuOpen(true)} className="p-3 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
@@ -287,14 +318,13 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
                       <div className="relative h-56 rounded-3xl overflow-hidden bg-gray-100 group">
                         {coverImage && <Image src={coverImage} alt="Cover" fill className="object-cover transition-transform duration-1000 group-hover:scale-105" />}
                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} />
                           <button 
-                            onClick={() => {
-                              const url = prompt('Enter new cover image URL');
-                              if (url) setCoverImage(url);
-                            }}
-                            className="bg-white text-black px-6 py-3 rounded-full flex items-center gap-2 font-bold text-xs uppercase tracking-widest hover:scale-105 transition-transform"
+                            onClick={() => coverInputRef.current?.click()}
+                            disabled={isUploadingCover}
+                            className="bg-white text-black px-6 py-3 rounded-full flex items-center gap-2 font-bold text-xs uppercase tracking-widest hover:scale-105 transition-transform disabled:opacity-50"
                           >
-                            <Camera className="w-4 h-4" /> Change Image
+                            <Camera className="w-4 h-4" /> {isUploadingCover ? 'Uploading...' : 'Change Image'}
                           </button>
                         </div>
                       </div>
@@ -398,10 +428,10 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
                         <h4 className="text-2xl font-serif font-bold mb-2">{name || 'Your Business Name'}</h4>
                         <p className="text-sm text-gray-500 line-clamp-2 font-light italic mb-4">{shortDescription || 'Your short marketplace bio will appear here...'}</p>
                         <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-                          <div className="flex items-center gap-1 text-gold-500">
+                          <div className="flex items-center gap-1 text-gold-500 shrink-0">
                             {[1,2,3,4,5].map(s => <Sparkles key={s} className="w-3 h-3 fill-gold-500" />)}
                           </div>
-                          <span className="text-[10px] tracking-widest uppercase font-bold text-gray-400">{city}</span>
+                          <span className="text-[10px] tracking-widest uppercase font-bold text-gray-400 truncate max-w-[200px] text-right" title={address || city}>{address || city}</span>
                         </div>
                       </div>
                    </div>

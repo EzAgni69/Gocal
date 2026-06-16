@@ -204,23 +204,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
                         await fetchUserData(token);
                     } else {
                         console.error("Failed to sync user with backend");
-                        // Fallback purely on Firebase data if backend fails
-                        setUser({
-                            id: firebaseUser.uid,
-                            name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-                            email: firebaseUser.email || '',
-                            avatar: firebaseUser.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${firebaseUser.email}`,
-                        });
+                        // Log out to prevent inconsistent state
+                        await signOut(auth);
+                        setUser(null);
+                        alert("Failed to complete login process. Please try logging in again.");
                     }
                 } catch (error) {
                     console.error("Error during auth state sync:", error);
-                    // Fallback purely on Firebase data if backend is unreachable
-                    setUser({
-                        id: firebaseUser.uid,
-                        name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-                        email: firebaseUser.email || '',
-                        avatar: firebaseUser.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${firebaseUser.email}`,
-                    });
+                    // Log out to prevent inconsistent state
+                    await signOut(auth);
+                    setUser(null);
+                    alert("Network error: Failed to reach the server to complete login.");
                 }
             } else {
                 setUser(null);
