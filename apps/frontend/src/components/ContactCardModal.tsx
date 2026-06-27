@@ -130,7 +130,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
         e.stopPropagation();
         const shareData = {
             title: vendor.name,
-            url: `${window.location.origin}/?vendor=${vendor.id}`,
+            url: `${window.location.origin}/store/${vendor.websiteUuid || vendor.id}`,
         };
 
         if (navigator.share) {

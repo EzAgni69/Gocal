@@ -383,6 +383,16 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-2">
+                         <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 block px-1">City / Locations</label>
+                         <input 
+                          type="text" 
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          placeholder="e.g. Mumbai, Delhi, New York"
+                          className="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-black outline-none transition-all" 
+                         />
+                      </div>
+                      <div className="space-y-2">
                          <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 block px-1">Full Address</label>
                          <input 
                           type="text" 
@@ -391,16 +401,17 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
                           className="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-black outline-none transition-all" 
                          />
                       </div>
-                      <div className="space-y-2">
-                         <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 block px-1">External Website URL</label>
-                         <input 
-                          type="text" 
-                          value={websiteUrl}
-                          onChange={(e) => setWebsiteUrl(e.target.value)}
-                          placeholder="https://yourwebsite.com"
-                          className="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-black outline-none transition-all" 
-                         />
-                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 block px-1">External Website URL</label>
+                       <input 
+                        type="text" 
+                        value={websiteUrl}
+                        onChange={(e) => setWebsiteUrl(e.target.value)}
+                        placeholder="https://yourwebsite.com"
+                        className="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-black outline-none transition-all" 
+                       />
                     </div>
 
                     <Button 
@@ -431,7 +442,7 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
                           <div className="flex items-center gap-1 text-gold-500 shrink-0">
                             {[1,2,3,4,5].map(s => <Sparkles key={s} className="w-3 h-3 fill-gold-500" />)}
                           </div>
-                          <span className="text-[10px] tracking-widest uppercase font-bold text-gray-400 truncate max-w-[200px] text-right" title={address || city}>{address || city}</span>
+                          <span className="text-[10px] tracking-widest uppercase font-bold text-gray-400 truncate max-w-[200px] text-right" title={city || address}>{city || address}</span>
                         </div>
                       </div>
                    </div>

@@ -142,10 +142,9 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
     e.stopPropagation();
     const url = `${window.location.origin}/store/${vendor.websiteUuid || vendor.id}`;
     const title = vendor.name;
-    const text = `Check out ${vendor.name} on Gocal.co`;
 
     if (navigator.share) {
-      navigator.share({ title, text, url }).catch((err) => console.log('Error sharing', err));
+      navigator.share({ title, url }).catch((err) => console.log('Error sharing', err));
     } else {
       navigator.clipboard.writeText(url);
       setCopiedVendorId(vendor.id);
