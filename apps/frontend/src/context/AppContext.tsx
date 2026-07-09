@@ -15,6 +15,8 @@ import {
     updateProfile,
     RecaptchaVerifier,
     signInWithPhoneNumber,
+    sendPasswordResetEmail,
+    fetchSignInMethodsForEmail,
     ConfirmationResult
 } from 'firebase/auth';
 type AuthModalMode = 'signin' | 'signup' | 'phone';
@@ -47,6 +49,7 @@ interface AppContextType {
     sendPhoneOTP: (phoneNumber: string, appVerifier: RecaptchaVerifier) => Promise<ConfirmationResult>;
     confirmPhoneOTP: (confirmationResult: ConfirmationResult, otp: string) => Promise<boolean>;
     logout: () => Promise<void>;
+    resetPassword: (email: string) => Promise<void>;
 
     // Auth modal controls
     showAuthModal: boolean;
@@ -307,6 +310,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
         await signOut(auth);
     };
 
+    const resetPassword = async (email: string): Promise<void> => {
+        try {
+            await sendPasswordResetEmail(auth, email);
+        } catch (error: any) {
+            // Don't reveal whether email exists (security best practice)
+            // Firebase throws auth/user-not-found for non-existent emails,
+            // but we still show success to prevent email enumeration
+            if (error.code === 'auth/user-not-found') {
+                return; // Silently succeed
+            }
+            if (error.code === 'auth/invalid-email') {
+                throw new Error('Please enter a valid email address.');
+            }
+            if (error.code === 'auth/too-many-requests') {
+                throw new Error('Too many attempts. Please try again later.');
+            }
+            throw error;
+        }
+    };
+
     // Helper function to check auth and show login modal if needed
     const requireAuth = (actionName: string): boolean => {
         if (isAuthenticated) {
@@ -411,7 +434,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             // Favorites
             favorites, addToFavorites, removeFromFavorites, isFavorite, favoritesCount,
             // Auth
-            user, isAuthenticated, login, loginWithGoogle, register, sendPhoneOTP, confirmPhoneOTP, logout,
+            user, isAuthenticated, login, loginWithGoogle, register, sendPhoneOTP, confirmPhoneOTP, logout, resetPassword,
             showAuthModal, setShowAuthModal,
             authModalMode, setAuthModalMode,
             showLoginRequiredModal, setShowLoginRequiredModal,
