@@ -40,6 +40,10 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
         try {
             const dbUsers = await db.select().from(users).where(eq(users.firebaseUid, decodedToken.uid)).limit(1);
             if (dbUsers.length > 0) {
+                if (!dbUsers[0].isActive) {
+                    res.status(403).json({ error: 'Account has been deactivated' });
+                    return;
+                }
                 dbUserId = dbUsers[0].id;
                 dbUserRole = dbUsers[0].role;
             }

@@ -380,7 +380,10 @@ export const AuthModal: React.FC = () => {
             case 'signup':
                 return { title: 'Create Account', subtitle: 'Join Gocal.co to connect with local vendors' };
             case 'phone':
-                return { title: 'Phone Sign In', subtitle: otpSent ? 'Enter the OTP sent to your phone' : 'We\'ll send a verification code to your number' };
+                return { 
+                    title: 'Phone Sign In / Up', 
+                    subtitle: otpSent ? 'Enter the OTP sent to your phone' : 'Sign in or register with your phone number' 
+                };
         }
     };
 
@@ -514,7 +517,7 @@ export const AuthModal: React.FC = () => {
                                                 : 'text-gray-500 hover:text-gray-700'
                                             }`}
                                     >
-                                        Phone Sign In
+                                        Phone Sign In / Up
                                     </button>
                                     <button
                                         onClick={() => { switchToTab('signup'); resetForm(); }}

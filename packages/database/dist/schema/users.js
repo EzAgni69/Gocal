@@ -5,7 +5,7 @@ const pg_core_1 = require("drizzle-orm/pg-core");
 const enums_1 = require("./enums");
 exports.users = (0, pg_core_1.pgTable)('users', {
     id: (0, pg_core_1.uuid)('id').defaultRandom().primaryKey(),
-    email: (0, pg_core_1.varchar)('email', { length: 255 }).notNull().unique(),
+    email: (0, pg_core_1.varchar)('email', { length: 255 }).unique(),
     firebaseUid: (0, pg_core_1.varchar)('firebase_uid', { length: 128 }).unique(),
     name: (0, pg_core_1.varchar)('name', { length: 255 }).notNull(),
     phone: (0, pg_core_1.varchar)('phone', { length: 20 }),

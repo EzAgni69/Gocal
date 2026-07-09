@@ -12,8 +12,8 @@ const sql = postgres(connectionString);
 
 async function test() {
   try {
-    const result = await sql`SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'`;
-    console.log('Tables found:');
+    const result = await sql`SELECT column_name, is_nullable, column_default FROM information_schema.columns WHERE table_name = 'users'`;
+    console.log('Columns in users:');
     console.table(result);
   } catch (err) {
     console.error('Connection failed:', err);

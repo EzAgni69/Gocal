@@ -48,12 +48,24 @@ router.post('/sync', authLimiter, authenticate, async (req: AuthenticatedRequest
             }
         }
 
+        if (!dbUser && phone) {
+            // Fallback check by phone number
+            const usersByPhone = await db.select().from(users).where(eq(users.phone, phone)).limit(1);
+            if (usersByPhone.length > 0) {
+                const updatedUsers = await db.update(users)
+                    .set({ firebaseUid: uid })
+                    .where(eq(users.phone, phone))
+                    .returning();
+                dbUser = updatedUsers[0];
+            }
+        }
+
         if (!dbUser) {
             // Create a new user in Postgres
             const newUsers = await db.insert(users).values({
                 firebaseUid: uid,
-                email: email || '',
-                name: name || email?.split('@')[0] || 'Unknown User',
+                email: email || null,
+                name: name || email?.split('@')[0] || phone || 'User',
                 phone: phone || null,
                 avatarUrl: picture || null,
                 role: 'CONSUMER', // Default role
