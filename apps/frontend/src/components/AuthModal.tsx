@@ -81,6 +81,7 @@ export const AuthModal: React.FC = () => {
         register,
         sendPhoneOTP,
         confirmPhoneOTP,
+        updateUserName,
         resetPassword,
     } = useAppContext();
 
@@ -93,6 +94,9 @@ export const AuthModal: React.FC = () => {
     const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+
+    // First-time phone user name onboarding state
+    const [needsNamePrompt, setNeedsNamePrompt] = useState(false);
 
     // Error/success state
     const [error, setError] = useState('');
@@ -118,6 +122,7 @@ export const AuthModal: React.FC = () => {
         setShowForgotPassword(false);
         setForgotPasswordEmail('');
         setResetEmailSent(false);
+        setNeedsNamePrompt(false);
     }, []);
 
     const switchToTab = useCallback((mode: 'signin' | 'signup' | 'phone') => {
@@ -157,6 +162,27 @@ export const AuthModal: React.FC = () => {
         }
     };
 
+    // ─── Save Name for First-Time Phone User ──────────────────────────
+    const handleSaveName = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+        if (!name || !name.trim()) {
+            setError('Please enter your name');
+            return;
+        }
+        setIsLoading(true);
+        try {
+            await updateUserName(name.trim());
+            setShowAuthModal(false);
+            resetForm();
+        } catch (err: any) {
+            console.error('Error saving name:', err);
+            setError('Failed to save name. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     // ─── Main Form Handler ────────────────────────────────────────────
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -174,7 +200,15 @@ export const AuthModal: React.FC = () => {
                         return;
                     }
                     if (confirmationResult) {
-                        await confirmPhoneOTP(confirmationResult, otp);
+                        await confirmPhoneOTP(confirmationResult, otp, name);
+                        const currentDisplayName = auth.currentUser?.displayName;
+                        const hasValidName = (name && name.trim()) || (currentDisplayName && !currentDisplayName.startsWith('+'));
+                        if (!hasValidName) {
+                            setNeedsNamePrompt(true);
+                            setIsLoading(false);
+                            return;
+                        }
+                        setShowAuthModal(false);
                         resetForm();
                     }
                 } else {
@@ -374,6 +408,9 @@ export const AuthModal: React.FC = () => {
         if (showForgotPassword) {
             return { title: 'Reset Password', subtitle: 'Enter your email to receive a reset link' };
         }
+        if (needsNamePrompt) {
+            return { title: 'Welcome to Gocal!', subtitle: 'Please enter your name for your profile' };
+        }
         switch (authModalMode) {
             case 'signin':
                 return { title: 'Welcome Back', subtitle: 'Sign in to access your account' };
@@ -497,6 +534,30 @@ export const AuthModal: React.FC = () => {
                                     ← Back to Sign In
                                 </button>
                             </div>
+                        ) : needsNamePrompt ? (
+                            <form onSubmit={handleSaveName} className="space-y-4">
+                                <p className="text-sm text-gray-600 text-center mb-2">
+                                    Welcome! Since this is your first time signing in with your phone number, please enter your name so vendors know who you are.
+                                </p>
+                                <div className="relative">
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                    <input
+                                        type="text"
+                                        placeholder="Enter your full name"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        className="w-full h-12 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-luxury-black placeholder-gray-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
+                                        autoFocus
+                                    />
+                                </div>
+                                <Button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className="w-full h-12 bg-luxury-black hover:bg-gold-600 text-white font-semibold"
+                                >
+                                    {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Save & Continue'}
+                                </Button>
+                            </form>
                         ) : (
                             <>
                                 {/* Tabs */}
@@ -562,15 +623,27 @@ export const AuthModal: React.FC = () => {
                                                 className="space-y-4"
                                             >
                                                 {!otpSent ? (
-                                                    <div className="relative">
-                                                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                                                        <input
-                                                            type="tel"
-                                                            placeholder="Phone Number (e.g., +91...)"
-                                                            value={phone}
-                                                            onChange={(e) => setPhone(e.target.value)}
-                                                            className="w-full h-12 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-luxury-black placeholder-gray-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
-                                                        />
+                                                    <div className="space-y-3">
+                                                        <div className="relative">
+                                                            <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                                            <input
+                                                                type="text"
+                                                                placeholder="Full Name (Optional for returning users)"
+                                                                value={name}
+                                                                onChange={(e) => setName(e.target.value)}
+                                                                className="w-full h-12 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-luxury-black placeholder-gray-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
+                                                            />
+                                                        </div>
+                                                        <div className="relative">
+                                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                                            <input
+                                                                type="tel"
+                                                                placeholder="Phone Number (e.g., +91...)"
+                                                                value={phone}
+                                                                onChange={(e) => setPhone(e.target.value)}
+                                                                className="w-full h-12 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-luxury-black placeholder-gray-400 focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition-colors"
+                                                            />
+                                                        </div>
                                                     </div>
                                                 ) : (
                                                     <div className="space-y-3">

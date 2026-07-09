@@ -47,7 +47,8 @@ interface AppContextType {
     loginWithGoogle: () => Promise<boolean>;
     register: (name: string, email: string, password: string, phone?: string) => Promise<boolean>;
     sendPhoneOTP: (phoneNumber: string, appVerifier: RecaptchaVerifier) => Promise<ConfirmationResult>;
-    confirmPhoneOTP: (confirmationResult: ConfirmationResult, otp: string) => Promise<boolean>;
+    confirmPhoneOTP: (confirmationResult: ConfirmationResult, otp: string, name?: string) => Promise<boolean>;
+    updateUserName: (name: string) => Promise<void>;
     logout: () => Promise<void>;
     resetPassword: (email: string) => Promise<void>;
 
@@ -294,15 +295,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const confirmPhoneOTP = async (confirmationResult: ConfirmationResult, otp: string): Promise<boolean> => {
+    const confirmPhoneOTP = async (confirmationResult: ConfirmationResult, otp: string, name?: string): Promise<boolean> => {
         try {
-            await confirmationResult.confirm(otp);
-            setShowAuthModal(false);
+            const userCredential = await confirmationResult.confirm(otp);
+            if (name && name.trim()) {
+                await updateProfile(userCredential.user, {
+                    displayName: name.trim()
+                });
+            }
             return true;
         } catch (error) {
             console.error("Error confirming OTP:", error);
             throw error;
         }
+    };
+
+    const updateUserName = async (name: string): Promise<void> => {
+        if (!auth.currentUser) return;
+        await updateProfile(auth.currentUser, { displayName: name.trim() });
+        const token = await auth.currentUser.getIdToken();
+        await apiClient('/api/auth/sync', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
     };
 
     const logout = async () => {
@@ -434,7 +451,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             // Favorites
             favorites, addToFavorites, removeFromFavorites, isFavorite, favoritesCount,
             // Auth
-            user, isAuthenticated, login, loginWithGoogle, register, sendPhoneOTP, confirmPhoneOTP, logout, resetPassword,
+            user, isAuthenticated, login, loginWithGoogle, register, sendPhoneOTP, confirmPhoneOTP, updateUserName, logout, resetPassword,
             showAuthModal, setShowAuthModal,
             authModalMode, setAuthModalMode,
             showLoginRequiredModal, setShowLoginRequiredModal,
