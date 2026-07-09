@@ -11,6 +11,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation } from '../providers/TranslationProvider';
 import { Vendor } from '../types';
+import { getMiniWebsiteUrl } from '@/utils/urlHelpers';
 
 const DEFAULT_STORE_IMAGE = 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=400&q=80';
 
@@ -328,7 +329,7 @@ export const MyFavorites: React.FC = () => {
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     if(place.websiteUri) window.open(place.websiteUri, '_blank');
-                                                    else window.open(`/store/${(place as unknown as Vendor).websiteUuid}`, '_blank');
+                                                    else window.open(getMiniWebsiteUrl(place as unknown as Vendor), '_blank');
                                                 }}
                                             >
                                                 <ExternalLink className="w-3.5 h-3.5 mr-1" />

@@ -102,7 +102,7 @@ export const Header = () => {
         setShowUserMenu(false);
     };
 
-    if (pathname?.startsWith('/store/')) return null;
+    if (pathname?.startsWith('/store/') || pathname?.startsWith('/in')) return null;
 
     return (
         <motion.nav

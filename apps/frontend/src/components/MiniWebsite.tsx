@@ -20,6 +20,7 @@ interface MiniWebsiteProps {
   onBack: () => void;
   addToWishlist: (product: Product) => void;
   wishlist: Product[];
+  initialContactCardOpen?: boolean;
 }
 
 const tabContentVariants = {
@@ -28,8 +29,12 @@ const tabContentVariants = {
   exit: { opacity: 0, y: -30 }
 };
 
-export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBack, addToWishlist, wishlist }) => {
+import { ContactCardModal } from './ContactCardModal';
+import { getMiniWebsiteUrl } from '@/utils/urlHelpers';
+
+export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBack, addToWishlist, wishlist, initialContactCardOpen }) => {
   const [activeTab, setActiveTab] = useState<'home' | 'products' | 'offers' | 'gallery' | 'reviews'>('home');
+  const [isContactCardOpen, setIsContactCardOpen] = useState(initialContactCardOpen || false);
   const { t } = useTranslation();
   const { requireAuth } = useAppContext();
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -62,6 +67,16 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
       navigator.clipboard.writeText(url);
       setCopiedItem('link');
       setTimeout(() => setCopiedItem(null), 2000);
+    }
+  };
+
+  const handleShareWebsite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const url = getMiniWebsiteUrl(vendor);
+    if (navigator.share) {
+      navigator.share({ title: vendor.name, text: `Check out ${vendor.name}`, url }).catch((err) => console.log('Error sharing', err));
+    } else {
+      handleCopy(url, 'website_link');
     }
   };
 
@@ -196,6 +211,24 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
                 <MapPin className="w-4 h-4" />
               </a>
             )}
+            <button
+               onClick={() => setIsContactCardOpen(true)}
+               className="flex items-center justify-center w-10 h-10 bg-white border border-gray-100 text-black hover:bg-gray-50 transition-all hover:scale-110 shadow-sm rounded-full"
+               title="Contact Card"
+            >
+               <QrCode className="w-4 h-4" />
+            </button>
+            <button
+               onClick={(e) => handleShareWebsite(e)}
+               className="flex items-center justify-center w-10 h-10 bg-white border border-gray-100 text-black hover:bg-gray-50 transition-all hover:scale-110 shadow-sm rounded-full"
+               title="Share Website"
+            >
+               {copiedItem === 'website_link' ? (
+                 <Check className="w-4 h-4 text-green-500" />
+               ) : (
+                 <Share2 className="w-4 h-4" />
+               )}
+            </button>
             <button
                onClick={handleWhatsApp}
                className="hidden sm:flex items-center px-6 py-2.5 bg-black hover:bg-gray-900 text-white text-xs tracking-widest uppercase font-semibold transition-all hover:scale-105 shadow-xl shadow-black/10 rounded-full"
@@ -711,6 +744,12 @@ export const MiniWebsite: React.FC<MiniWebsiteProps> = ({ vendor, language, onBa
         isOpen={!!fullScreenImage}
         onClose={() => setFullScreenImage(null)}
         alt={vendor.name}
+      />
+
+      <ContactCardModal
+        vendor={vendor}
+        isOpen={isContactCardOpen}
+        onClose={() => setIsContactCardOpen(false)}
       />
     </div>
   );

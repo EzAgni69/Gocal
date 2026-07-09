@@ -32,6 +32,7 @@ import { Review } from '../types';
 import { apiClient } from '../services/apiClient';
 import Image from 'next/image';
 import { FullScreenImageModal } from './FullScreenImageModal';
+import { getContactCardUrl, getMiniWebsiteUrl } from '@/utils/urlHelpers';
 
 
 interface ContactCardModalProps {
@@ -130,7 +131,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
         e.stopPropagation();
         const shareData = {
             title: vendor.name,
-            url: `${window.location.origin}/store/${vendor.websiteUuid || vendor.id}`,
+            url: getContactCardUrl(vendor),
         };
 
         if (navigator.share) {
@@ -151,15 +152,15 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
         alert(`${label} copied to clipboard!`);
     };
 
-    const isFav = vendor ? isFavorite(vendor.id) : false;
+    const isFav = vendor && typeof isFavorite === 'function' ? isFavorite(vendor.id) : false;
     const handleFavorite = (e: React.MouseEvent) => {
         e.stopPropagation();
         if (!vendor) return;
-        if (!requireAuth('favorite this vendor')) return;
+        if (typeof requireAuth === 'function' && !requireAuth('favorite this vendor')) return;
         
-        if (isFav) {
+        if (isFav && typeof removeFromFavorites === 'function') {
             removeFromFavorites(vendor.id);
-        } else {
+        } else if (typeof addToFavorites === 'function') {
             addToFavorites(vendor as any);
         }
     };
@@ -570,7 +571,7 @@ export const ContactCardModal: React.FC<ContactCardModalProps> = ({ vendor, isOp
                                         variant={vendor.websiteUrl ? "outline" : "primary"}
                                         className={`w-full py-4`}
                                         style={!vendor.websiteUrl ? { backgroundColor: primaryColor, color: 'white' } : { borderColor: accentColor, color: primaryColor }}
-                                        onClick={() => window.location.href = `/store/${vendor.websiteUuid}`}
+                                        onClick={() => window.location.href = getMiniWebsiteUrl(vendor)}
                                     >
                                         <Store className="mr-2 h-4 w-4" />
                                         {t('Visit Website')}

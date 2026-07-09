@@ -17,6 +17,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/Button';
 import Image from 'next/image';
 import { apiClient } from '../services/apiClient';
+import { getMiniWebsiteUrl } from '@/utils/urlHelpers';
 
 interface VendorDashboardProps {
   vendor: Vendor;
@@ -267,7 +268,7 @@ export const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor: initia
 
         <div className="p-8 mt-auto border-t border-white/5">
            <a 
-            href={vendor.planType === 'card_only' || !vendor.websiteUuid ? `/vendor/${vendor.id}` : `/store/${vendor.websiteUuid}`} 
+            href={vendor.planType === 'card_only' || !vendor.websiteUuid ? `/vendor/${vendor.id}` : getMiniWebsiteUrl(vendor)} 
             target="_blank" 
             className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all group"
            >

@@ -203,10 +203,20 @@ router.get('/:id', async (req: AuthenticatedRequest, res: Response) => {
  */
 router.get('/store/:uuid', async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const { uuid } = req.params;
+        const { uuid: identifier } = req.params;
+        const isUuid = /^[0-9a-fA-F-]{36}$/.test(identifier);
 
         const vendor = await db.query.vendors.findFirst({
-            where: and(eq(vendors.websiteUuid, uuid), isNull(vendors.deletedAt)),
+            where: and(
+                isUuid
+                    ? or(
+                          eq(vendors.websiteUuid, identifier),
+                          eq(vendors.id, identifier),
+                          eq(vendors.slug, identifier)
+                      )
+                    : eq(vendors.slug, identifier),
+                isNull(vendors.deletedAt)
+            ),
             with: {
                 products: true,
                 galleryImages: true,

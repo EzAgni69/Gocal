@@ -27,7 +27,7 @@ export const Footer = () => {
     const currentYear = new Date().getFullYear();
 
     // Hide footer on mini-website/store pages
-    if (pathname?.startsWith('/store/')) return null;
+    if (pathname?.startsWith('/store/') || pathname?.startsWith('/in')) return null;
 
     return (
         <footer className="bg-luxury-black text-white">

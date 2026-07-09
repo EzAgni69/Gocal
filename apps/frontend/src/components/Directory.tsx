@@ -17,6 +17,7 @@ import Image from 'next/image';
 import { searchVadodaraPlaces, GooglePlaceResponse } from '../services/placesApi';
 import { FavoriteButton } from './FavoriteButton';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { getMiniWebsiteUrl } from '@/utils/urlHelpers';
 
 interface DirectoryProps {
   vendors: Vendor[];
@@ -140,7 +141,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
 
   const handleShare = (e: React.MouseEvent, vendor: Vendor) => {
     e.stopPropagation();
-    const url = `${window.location.origin}/store/${vendor.websiteUuid || vendor.id}`;
+    const url = getMiniWebsiteUrl(vendor);
     const title = vendor.name;
 
     if (navigator.share) {
@@ -812,7 +813,7 @@ export const Directory: React.FC<DirectoryProps> = ({ vendors }) => {
 
                             {vendor.planType === 'card_website' && vendor.websiteUuid && (
                               <Button
-                                onClick={(e) => { e.stopPropagation(); router.push(`/store/${vendor.websiteUuid}`); }}
+                                onClick={(e) => { e.stopPropagation(); router.push(getMiniWebsiteUrl(vendor)); }}
                                 variant={vendor.websiteUrl ? "outline" : "primary"}
                                 className={`flex-1 ${!vendor.websiteUrl ? 'bg-luxury-black hover:bg-gold-600 text-white border-none' : 'border-gray-200 hover:border-gold-300 hover:bg-gold-50'}`}
                               >
