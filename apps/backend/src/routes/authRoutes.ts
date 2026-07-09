@@ -74,6 +74,18 @@ router.post('/sync', authLimiter, authenticate, async (req: AuthenticatedRequest
             dbUser = newUsers[0];
         }
 
+        if (dbUser && name) {
+            // Update name in DB if the DB name is currently a phone number or if they updated it in Firebase
+            const isNamePhone = dbUser.name === dbUser.phone || dbUser.name === 'User';
+            if (name !== dbUser.name && (isNamePhone || name.trim().length > 0)) {
+                const updatedUsers = await db.update(users)
+                    .set({ name: name })
+                    .where(eq(users.firebaseUid, uid))
+                    .returning();
+                dbUser = updatedUsers[0];
+            }
+        }
+
         if (!dbUser.isActive) {
             res.status(403).json({ error: 'Account is deactivated' });
             return;

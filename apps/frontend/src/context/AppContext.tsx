@@ -314,12 +314,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (!auth.currentUser) return;
         await updateProfile(auth.currentUser, { displayName: name.trim() });
         const token = await auth.currentUser.getIdToken();
-        await apiClient('/api/auth/sync', {
+        const res = await apiClient('/api/auth/sync', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
+        if (res.ok) {
+            const data = await res.json();
+            setUser({
+                id: data.user.id || auth.currentUser.uid,
+                name: data.user.name || auth.currentUser.displayName || name.trim(),
+                email: data.user.email || auth.currentUser.email || '',
+                avatar: data.user.avatarUrl || auth.currentUser.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${auth.currentUser.email || name}`,
+                phone: data.user.phone,
+                role: data.user.role || 'CONSUMER',
+            });
+        }
     };
 
     const logout = async () => {
